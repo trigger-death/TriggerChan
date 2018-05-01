@@ -12,6 +12,15 @@
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
+# Database files
+*.db
+
+# Config file with sensitive information
+[Cc]onfig.json
+
+# No need to bring over migration data
+Migrations/
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

@@ -1,0 +1,9 @@
+{
+  "prefix": "t/",
+  "username": "trigger_chan#9840",
+  "client_id": "App Client Id",
+  "creator_client_id": "User Id for creator to use in t/about",
+  "tokens": {
+    "discord": "App Bot User Token"
+  }
+}
