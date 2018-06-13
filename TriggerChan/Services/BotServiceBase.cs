@@ -19,10 +19,11 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 		public SettingsService Settings { get; private set; }
 		public LoggingService Logging { get; private set; }
 		public AudioService Audio { get; private set; }
-		public YouTubeService YouTube { get; private set; }
 		public FunService Fun { get; private set; }
+		public DanbooruService Danbooru { get; private set; }
 		public SpoilerService Spoilers { get; private set; }
 		public HelpService Help { get; private set; }
+		public Random Random { get; private set; }
 		public StartupService Startup { get; private set; }
 
 		public void Initialize(ServiceProvider services) {
@@ -34,11 +35,12 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				Settings = services.GetService<SettingsService>();
 				Logging = services.GetService<LoggingService>();
 				Audio = services.GetService<AudioService>();
-				YouTube = services.GetService<YouTubeService>();
 				Fun = services.GetService<FunService>();
 				Spoilers = services.GetService<SpoilerService>();
 				Help = services.GetService<HelpService>();
+				Danbooru = services.GetService<DanbooruService>();
 				Startup = services.GetService<StartupService>();
+				Random = services.GetService<Random>();
 				OnInitialized(services);
 				IsInitialized = true;
 			}

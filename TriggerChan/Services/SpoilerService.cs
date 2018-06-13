@@ -271,17 +271,17 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 
 		private async Task OnReactionAdded(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3) {
 			//Console.WriteLine("OnReactionAdded START");
-			IMessage message;
+			/*IMessage message;
 			if (arg3.Message.IsSpecified && arg3.Message.Value != null)
 				message = arg3.Message.Value;
 			else
-				message = await arg2.GetMessageAsync(arg1.Id);
+				message = await arg2.GetMessageAsync(arg1.Id);*/
 			var user = arg3.User.Value;
 			var emote = arg3.Emote;
 
 			// Ignore those filthy robots
 			if (!user.IsBot && BotReactions.ViewSpoiler.Equals(emote)) {
-				await SpoilUser(message.Id, user);
+				await SpoilUser(arg1.Id, user);
 				//await message.RemoveReactionAsync(EmojiList.ViewSpoiler, user);
 			}
 			//Console.WriteLine("OnReactionAdded END");
@@ -289,17 +289,17 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 
 		private async Task OnReactionRemoved(Cacheable<IUserMessage, ulong> arg1, ISocketMessageChannel arg2, SocketReaction arg3) {
 			//Console.WriteLine("OnReactionRemoved START");
-			IMessage message;
+			/*IMessage message;
 			if (arg3.Message.IsSpecified && arg3.Message.Value != null)
 				message = arg3.Message.Value;
 			else
-				message = await arg2.GetMessageAsync(arg1.Id);
+				message = await arg2.GetMessageAsync(arg1.Id);*/
 			var user = arg3.User.Value;
 			var emote = arg3.Emote;
 
 			// Ignore those filthy robots
 			if (!user.IsBot && BotReactions.ViewSpoiler.Equals(emote)) {
-				await UnspoilUser(message.Id, user);
+				await UnspoilUser(arg1.Id, user);
 				//await message.RemoveReactionAsync(EmojiList.ViewSpoiler, user);
 			}
 			//Console.WriteLine("OnReactionRemoved END");
@@ -579,15 +579,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			};
 
 			return spoiler;
-
-
-
-			/*EmbedBuilder embed = new EmbedBuilder();
-			embed.WithAuthor(context.User);
-			embed.WithTitle(label);
-			var message = await ReplyAsync("", false, embed.Build());
-			await message.AddReactionAsync(BotEmoji.ViewSpoiler);
-			spoilers.AddSpoiler(message.Id, message.Channel.Id, spoilerContent, attach);*/
 		}
 
 		public async Task WriteSpoiler(ParsedSpoiler spoiler) {

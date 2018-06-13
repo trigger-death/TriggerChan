@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TriggersTools.DiscordBots.TriggerChan.Context;
 using TriggersTools.DiscordBots.TriggerChan.Info;
 using TriggersTools.DiscordBots.TriggerChan.Services;
+using TriggersTools.DiscordBots.TriggerChan.Util;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 	public class BotModuleBase : ModuleBase<BotCommandContext> {
@@ -20,27 +21,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		protected async override void AfterExecute(CommandInfo command) {
 			base.AfterExecute(command);
 			await HandleResult(Context, Context);
-			/*if (!Context.IsSuccess) {
-				bool errorStated = false;
-				ReactionInfo reaction = null;
-				if (Context.Error.HasValue)
-					reaction = BotReactions.GetReaction(Context.Error.Value.ToString());
-				else if (reaction == null && Context.CustomError.HasValue)
-					reaction = BotReactions.GetReaction(Context.CustomError.Value.ToString());
-				if (reaction != null) {
-					await Context.Message.AddReactionAsync(reaction.Emoji);
-					errorStated = true;
-				}
-				if (!errorStated) {
-					if (Context.Exception != null) {
-						await Context.Message.AddReactionAsync(BotReactions.Exception);
-						Console.WriteLine(Context.Exception.ToString());
-					}
-					if (Context.ErrorReason != null) {
-						await Context.Channel.SendMessageAsync(Context.ErrorReason);
-					}
-				}
-			}*/
 		}
 
 		public static async Task HandleResult(BotCommandContext context, IBotErrorResult result) {
@@ -67,6 +47,12 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			}
 		}
 
+		protected void InvalidArguments(string reason = "") {
+			Context.IsSuccess = false;
+			Context.ErrorReason = reason;
+			Context.CustomError = CustomCommandError.InvalidArgument;
+		}
+
 		public DiscordSocketClient Client => Context.Client;
 		public CommandService Commands => Context.Commands;
 		public IConfigurationRoot Config => Context.Config;
@@ -74,10 +60,11 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		public SettingsService Settings => Context.Settings;
 		public LoggingService Logging => Context.Logging;
 		public AudioService Audio => Context.Audio;
-		public YouTubeService YouTube => Context.YouTube;
 		public FunService Fun => Context.Fun;
 		public SpoilerService Spoilers => Context.Spoilers;
 		public HelpService Help => Context.Help;
+		public DanbooruService Danbooru => Context.Danbooru;
+		public Random Random => Context.Random;
 		public StartupService Startup => Context.Startup;
 	}
 }

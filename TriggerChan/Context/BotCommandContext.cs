@@ -33,9 +33,10 @@ namespace TriggersTools.DiscordBots.TriggerChan.Context {
 		public SettingsService Settings => serviceBase.Settings;
 		public LoggingService Logging => serviceBase.Logging;
 		public AudioService Audio => serviceBase.Audio;
-		public YouTubeService YouTube => serviceBase.YouTube;
 		public FunService Fun => serviceBase.Fun;
+		public Random Random => serviceBase.Random;
 		public SpoilerService Spoilers => serviceBase.Spoilers;
+		public DanbooruService Danbooru => serviceBase.Danbooru;
 		public HelpService Help => serviceBase.Help;
 		public StartupService Startup => serviceBase.Startup;
 	}

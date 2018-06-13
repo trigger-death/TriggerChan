@@ -302,7 +302,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 							}
 							catch { }
 						}
-						await context.Channel.SendMessageAsync($"Scaled dimensions cannot be larger than 1000x1000. The uploaded image size is {size.Width}x{size.Height}");
+						await context.Channel.SendMessageAsync($"Scaled dimensions cannot be larger than 1000x1000. The scaled image size is {size.Width}x{size.Height}");
 						return;
 					}
 					//IMessage scaledMsg = null;

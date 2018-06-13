@@ -12,20 +12,62 @@ namespace TriggersTools.DiscordBots.TriggerChan.Info {
 			AppContext.BaseDirectory, "Resources", "Asciify");
 		public static readonly string AudioDir = Path.Combine(
 			AppContext.BaseDirectory, "Resources", "Audio");
-		public static readonly string YouTubeDir = Path.Combine(
-			AppContext.BaseDirectory, "Resources", "YouTube");
+		public static readonly string MusicDir = Path.Combine(
+			AppContext.BaseDirectory, "Resources", "Music");
 
 		static BotResources() {
 			Directory.CreateDirectory(ImagesDir);
 			Directory.CreateDirectory(AsciifyDir);
 			Directory.CreateDirectory(AudioDir);
-			Directory.CreateDirectory(YouTubeDir);
+			Directory.CreateDirectory(MusicDir);
 		}
 
 		public static readonly string JavaScript = GetImage("JavaScript.png");
 		public static readonly string Merge_Conflict = GetImage("Merge_Conflict.png");
 		public static readonly string Well_I_Dont_Love_You = GetImage("Well_I_Dont_Love_You.png");
 		public static readonly string Man_of_Culture = GetImage("Man_of_Culture.png");
+
+		public static readonly string Juicy_Yuuji = GetImage("Juicy_Yuuji.png");
+		public static readonly string Amane_Seduced = GetImage("Amane_Seduced.png");
+		public static readonly string Amane_Wink = GetImage("Amane_Wink.png");
+		public static readonly string[] Amane = {
+			Amane_Seduced,
+			Amane_Wink,
+		};
+		public static readonly string Makina_Roger = GetImage("Makina_Roger.png");
+		public static readonly string Makina_Thehell = GetImage("Makina_Thehell.png");
+		public static readonly string[] Makina = {
+			Makina_Roger,
+			Makina_Thehell,
+		};
+		public static readonly string Michiru_Brag = GetImage("Michiru_Brag.png");
+		public static readonly string Michiru_Smug = GetImage("Michiru_Smug.png");
+		public static readonly string[] Michiru = {
+			Michiru_Brag,
+			Michiru_Smug,
+		};
+		public static readonly string Sachi_Glare = GetImage("Sachi_Glare.png");
+		public static readonly string Sachi_Scales = GetImage("Sachi_Scales.png");
+		public static readonly string[] Sachi = {
+			Sachi_Glare,
+			Sachi_Scales,
+		};
+		public static readonly string Yumiko_Cutter = GetImage("Yumiko_Cutter.png");
+		public static readonly string[] Yumiko = {
+			Yumiko_Cutter,
+		};
+		public static readonly string[] Grisaia = {
+			Juicy_Yuuji,
+			Amane_Seduced,
+			Amane_Wink,
+			Makina_Roger,
+			Makina_Thehell,
+			Michiru_Brag,
+			Michiru_Smug,
+			Sachi_Glare,
+			Sachi_Scales,
+			Yumiko_Cutter,
+		};
 
 
 		public static string GetAsciifyIn(ulong guildId, string ext) {
@@ -38,8 +80,10 @@ namespace TriggersTools.DiscordBots.TriggerChan.Info {
 			return Path.Combine(ImagesDir, filename);
 		}
 
-		public static string GetYouTube(ulong guildId, string ext) {
-			string file = Path.Combine(YouTubeDir, $"{guildId}");
+		public static string GetMusic(ulong guildId, string name, string ext) {
+			string file = Path.Combine(MusicDir, $"{guildId}");
+			Directory.CreateDirectory(file);
+			file = Path.Combine(file, name);
 			for (char c = 'A'; c < 'J'; c++) {
 				string newFile = $"{file}_{c}{ext}";
 				if (!File.Exists(newFile))
@@ -66,6 +110,34 @@ namespace TriggersTools.DiscordBots.TriggerChan.Info {
 			}
 			return null;
 		}
+
+		/*public static string GetYouTube(ulong guildId, string ext) {
+			for (char c = 'A'; c < 'J'; c++) {
+				string newFile = $"{file}_{c}{ext}";
+				if (!File.Exists(newFile))
+					return newFile;
+				FileStream stream = null;
+
+				try {
+					stream = File.OpenWrite(newFile);
+				}
+				catch (IOException) {
+					continue;
+				}
+				finally {
+					if (stream != null)
+						stream.Close();
+				}
+				try {
+					File.Delete(newFile);
+				}
+				catch (IOException) {
+					continue;
+				}
+				return newFile;
+			}
+			return null;
+		}*/
 
 		public static string GetAudio(string filename) {
 			return Path.Combine(AudioDir, filename);

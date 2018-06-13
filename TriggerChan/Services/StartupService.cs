@@ -58,7 +58,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			await Client.StartAsync();                                // Connect to the websocket
 			Client.Connected += OnDiscordConnected;
 
-
 			await Commands.AddModulesAsync(Assembly.GetEntryAssembly());     // Load commands and modules into the command service
 		}
 
@@ -107,7 +106,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 		}
 
 		public async Task SetDefaultStatus() {
-			await Client.SetGameAsync("with Scissor Blades", null, ActivityType.Playing);
+			await Client.SetGameAsync(Config["status"], null, ActivityType.Playing);
 		}
 	}
 }

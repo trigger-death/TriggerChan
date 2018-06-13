@@ -25,5 +25,11 @@ namespace TriggersTools.DiscordBots.TriggerChan.Util {
 			}
 			return text.Trim();
 		}
+		public static string ToPlayString(this TimeSpan time) {
+			string str = time.ToString(@"m\:ss");
+			if (str.StartsWith(':'))
+				str = "0" + str;
+			return str;
+		}
 	}
 }

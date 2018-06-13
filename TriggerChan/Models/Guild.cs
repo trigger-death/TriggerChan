@@ -52,8 +52,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Models {
 
 		public override SettingsType Type => SettingsType.Guild;
 
-		public Process YouTubeProcess { get; set; }
-
 		public AsciifyParameters Asciify { get; set; }
 
 		public bool IsAsciifying {

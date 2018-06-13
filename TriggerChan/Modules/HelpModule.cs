@@ -21,104 +21,86 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 
 		[Command("help", RunMode = RunMode.Async)]
 		[Summary("List all commands usable by you")]
-		public async Task HelpAsync() {
-			/*string prefix = await Settings.GetPrefix(Context);
-			var builder = new EmbedBuilder() {
-				Color = new Color(114, 137, 218),
-				Description = "These are the commands you can use"
-			};
-			Dictionary<string, CommandGroup> commands =
-				new Dictionary<string, CommandGroup>();
-
-			// Group together modules with the same name
-			foreach (var module in Commands.Modules) {
-				//string description = null;
-				CommandGroup group;
-				if (!commands.TryGetValue(module.Name, out group)) {
-					group = new CommandGroup(module.Name);
-					commands.Add(module.Name, group);
-				}
-				foreach (var cmd in module.Commands) {
-					if (cmd.IsDuplicate())
-						continue;
-					var result = await cmd.CheckPreconditionsAsync(Context);
-					if (result.IsSuccess)
-						group.Add(cmd);
-					//description += $"{prefix}{cmd.Aliases.First()}\n";
-				}
-				
-
-				if (!string.IsNullOrWhiteSpace(description)) {
-					builder.AddField(x => {
-						x.Name = module.Name;
-						x.Value = description;
-						x.IsInline = false;
-					});
-				}
-			}*/
-
+		public async Task HelpAsycn() {
 			await HelpBase();
-			return;
-
-			SettingsBase settings = await Settings.GetSettings(Context);
-			var groups = await Help.GetUsableCommandGroups(
-				Context, c => !c.IsDuplicate() && !c.IsLocked(settings));
-
-			List<CommandGroup> groupsFinal = new List<CommandGroup>();
-			foreach (var group in groups) {
-				List<CommandInfo> commandsFinal = new List<CommandInfo>();
-				HashSet<string> baseCommands = new HashSet<string>();
-				foreach (var cmd in group) {
-					if (baseCommands.Add(cmd.Aliases.First().Split(' ')[0])) {
-						commandsFinal.Add(cmd);
-					}
-				}
-				group.Clear();
-				group.AddRange(commandsFinal);
-			}
-
-			string prefix = await Settings.GetPrefix(Context);
-			var builder = new EmbedBuilder() {
-				Color = new Color(114, 137, 218),
-				Description = "These are the commands you can use"
-			};
-
-			foreach (CommandGroup group in groups) {
-				string description = null;
-				foreach (CommandInfo cmd in group) {
-					description += $"{prefix}{cmd.Aliases.First().Split(' ')[0]}\n";
-				}
-
-				if (!string.IsNullOrWhiteSpace(description)) {
-					builder.AddField(x => {
-						x.Name = group.Name;
-						x.Value = description;
-						x.IsInline = false;
-					});
-				}
-			}
-
-			await Context.Channel.SendMessageAsync("", false, builder.Build());
-			//await Help.ListCommands(Context, groups);
-
-			/*foreach (CommandGroup group in groups) {
-				string description = null;
-				foreach (CommandInfo cmd in group) {
-					description += $"{prefix}{cmd.Aliases.First()}\n";
-				}
-
-				if (!string.IsNullOrWhiteSpace(description)) {
-					builder.AddField(x => {
-						x.Name = group.Name;
-						x.Value = description;
-						x.IsInline = false;
-					});
-				}
-			}
-
-			await ReplyAsync("", false, builder.Build());*/
 		}
 
+		[Command("helpg", RunMode = RunMode.Async)]
+		[Parameters("<groupName>")]
+		[Summary("List all commands usable by you in the group")]
+		public async Task HelpGroup([Remainder] string groupName) {
+			string prefix = await Settings.GetPrefix(Context);
+			SettingsBase settings = await Settings.GetSettings(Context);
+			List<CommandInfo> results = await Help.GetUsableCommands(Context,
+				c => !c.IsDuplicateFunctionality());
+			CommandGroup group = Help.GetAllCommandGroups().FirstOrDefault(
+				g => string.Compare(g.Name, groupName, true) == 0);
+
+			if (group == null) {
+				await ReplyAsync($"No group found matching **{groupName}**");
+				return;
+			}
+
+			var builder = new EmbedBuilder() {
+				Color = new Color(114, 137, 218),
+				//Description = $"Found {group.Count} commands in group **{group.Name}**",
+			};
+
+			string description = null;
+			foreach (CommandInfo cmd in group) {
+				string alias = cmd.Aliases.First();
+				/*if (!all) {
+					if (!string.IsNullOrEmpty(description))
+						description += " **|** ";
+					description += $"{alias.Split(' ')[0]}";
+				}
+				else if (all) {
+					if (args) {*/
+						description += $"{prefix}{alias}";
+						if (cmd.HasParameters())
+							description += $" `{cmd.GetParameters()}`";
+						description += "\n";
+					/*}
+					else {
+						if (!string.IsNullOrEmpty(description))
+							description += " **|** ";
+						description += $"{alias}";
+					}
+				}*/
+			}
+
+			if (!string.IsNullOrWhiteSpace(description)) {
+				builder.AddField(x => {
+					x.Name = group.Name;
+					x.Value = description;
+					x.IsInline = false;
+				});
+			}
+
+			/*foreach (CommandInfo cmd in results) {
+
+				List<string> items = new List<string>();
+				//if (cmd.Parameters.Any())
+				//	items.Add($"__Parameters:__ {string.Join(", ", cmd.Parameters.Select(p => p.Name))}");
+				if (cmd.HasParameters())
+					items.Add($"__Parameters:__ `{cmd.GetParameters()}`");//{prefix}{cmd.Aliases.First()} 
+				if (cmd.Summary != null)
+					items.Add($"__Summary:__ {cmd.Summary}");
+				//if (cmd.HasUsage())
+				//	items.Add($"__Usage:__ {cmd.GetUsage()}");
+				if (cmd.Remarks != null)
+					items.Add($"__Remarks:__ {cmd.Remarks}");
+				string value = string.Join('\n', items.ToArray());
+				if (string.IsNullOrWhiteSpace(value))
+					value = "No information available";
+				string name = string.Join(", ", cmd.Aliases);
+				if (cmd.IsLocked(settings))
+					name = $"`🔒` {name}";
+				builder.AddField(name, value);
+			}*/
+
+			await ReplyAsync("", false, builder.Build());
+		}
 
 		public async Task HelpBase(bool all = false, bool args = false) {
 			SettingsBase settings = await Settings.GetSettings(Context);
@@ -213,7 +195,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			"Entering `allargs` will list every command as well as the parameters for the commands.\n" +
 			"Either of these options will DM the list to you.")]
 		[IsDuplicate(false)]
-		public async Task HelpAsync([Remainder]string searchTerm) {
+		public async Task HelpSearch([Remainder]string searchTerm) {
 			string prefix = await Settings.GetPrefix(Context);
 
 			if (string.Compare(searchTerm, "all", true) == 0) {
@@ -316,7 +298,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			if (!any)
 				embed.Description = "There are no locked commands";
 
-			await Context.Channel.SendMessageAsync("", false, embed.Build());
+			await ReplyAsync("", false, embed.Build());
 
 			//await Help.ListCommands(Context, groups);
 		}

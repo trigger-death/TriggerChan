@@ -9,20 +9,21 @@ using System.Threading.Tasks;
 namespace TriggersTools.DiscordBots.TriggerChan.Services {
 	public class LoggingService : BotServiceBase {
 
-		private string logDirectory { get; }
-		private string logFile => Path.Combine(logDirectory, $"{DateTime.UtcNow.ToString("yyyy-MM-dd")}.txt");
+		private string LogDirectory { get; }
+		private string logFile => Path.Combine(LogDirectory, $"{DateTime.UtcNow.ToString("yyyy-MM-dd")}.txt");
 
-		private static string errorDirectory { get; }
-		private static string errorFile => Path.Combine(errorDirectory, $"{DateTime.UtcNow.ToString("yyyy-MM-dd")}.txt");
+		private static string ErrorDirectory { get; }
+		private static string ErrorFile => Path.Combine(ErrorDirectory, $"{DateTime.UtcNow.ToString("yyyy-MM-dd")}.txt");
 
 		static LoggingService() {
-			errorDirectory = Path.Combine(AppContext.BaseDirectory, "Errors");
+			ErrorDirectory = Path.Combine(AppContext.BaseDirectory, "Errors");
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 			TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
 		}
 
 		private static void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e) {
-			WriteException(e.Exception);
+			if (!(e.Exception is AggregateException aggr))
+				WriteException(e.Exception);
 		}
 
 		private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {
@@ -33,14 +34,14 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			try {
 				Console.WriteLine($"Caught: { ex.GetType().Name}\n{ex.ToString()}");
 				string logText = $"{DateTime.UtcNow.ToString("hh:mm:ss")} [{ex.GetType().Name}] {ex.ToString()}";
-				File.AppendAllText(errorFile, logText);
+				File.AppendAllText(ErrorFile, logText);
 			}
 			catch (IOException) { }
 		}
 
 		// DiscordSocketClient and CommandService are injected automatically from the IServiceProvider
 		public LoggingService(DiscordSocketClient client, CommandService commands) {
-			logDirectory = Path.Combine(AppContext.BaseDirectory, "Logs");
+			LogDirectory = Path.Combine(AppContext.BaseDirectory, "Logs");
 
 			client.Log += OnLogAsync;
 			commands.Log += OnLogAsync;
@@ -50,9 +51,9 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			base.OnInitialized(services);
 		}
 
-		private Task OnLogAsync(LogMessage msg) {
-			if (!Directory.Exists(logDirectory))     // Create the log directory if it doesn't exist
-				Directory.CreateDirectory(logDirectory);
+		private async Task OnLogAsync(LogMessage msg) {
+			if (!Directory.Exists(LogDirectory))     // Create the log directory if it doesn't exist
+				Directory.CreateDirectory(LogDirectory);
 			if (!File.Exists(logFile))               // Create today's log file if it doesn't exist
 				File.Create(logFile).Dispose();
 
@@ -61,7 +62,8 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				File.AppendAllText(logFile, logText + "\n");     // Write the log text to a file
 			}
 			catch (IOException) { }
-			return Console.Out.WriteLineAsync(logText);       // Write the log text to the console
+			//if (msg.Severity < LogSeverity.Info || msg.Source.Contains("command"))
+				await Console.Out.WriteLineAsync(logText);       // Write the log text to the console
 		}
 	}
 }

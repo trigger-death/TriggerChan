@@ -16,5 +16,23 @@ namespace TriggersTools.DiscordBots.TriggerChan.Models {
 		public bool IsBotOwner { get; set; }
 
 		public string MALUsername { get; set; }
+		public string MFCUsername { get; set; }
+		public string SerealizedTimeZone { get; set; }
+
+		[NotMapped]
+		public TimeZoneInfo TimeZone {
+			get {
+				if (SerealizedTimeZone == null)
+					return null;
+				else
+					return TimeZoneInfo.FromSerializedString(SerealizedTimeZone);
+			}
+			set {
+				if (value == null)
+					SerealizedTimeZone = null;
+				else
+					SerealizedTimeZone = value.ToSerializedString();
+			}
+		}
 	}
 }

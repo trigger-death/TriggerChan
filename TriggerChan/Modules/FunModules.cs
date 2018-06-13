@@ -2,12 +2,14 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using TriggersTools.DiscordBots.TriggerChan.Context;
+using TriggersTools.DiscordBots.TriggerChan.Danbooru;
 using TriggersTools.DiscordBots.TriggerChan.Info;
 using TriggersTools.DiscordBots.TriggerChan.Models;
 using TriggersTools.DiscordBots.TriggerChan.Util;
@@ -22,6 +24,13 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		public Task Say([Remainder]string text)
 			=> ReplyAsync(text);
 
+		[Command("adminsay", RunMode = RunMode.Async)]
+		[Parameters("<text>")]
+		[Summary("Make the bot say something")]
+		[RequireUserPermissionOrBotOwner(GuildPermission.Administrator)]
+		public Task SayAdmin([Remainder]string text)
+			=> ReplyAsync(text);
+
 		[Command("talk", RunMode = RunMode.Async)]
 		[Parameters("<text>")]
 		[Summary("Make the bot say something with text-to-speech")]
@@ -33,7 +42,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		[Parameters("<text>")]
 		[Summary("Insert 👏 claps 👏 between 👏 words")]
 		public Task Clap([Remainder]string text) {
-			string[] words = text.Split(new char[] { ' ', '\t' }, System.StringSplitOptions.RemoveEmptyEntries);
+			string[] words = text.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 			text = string.Join(" 👏 ", words);
 			return ReplyAsync(text);
 		}
@@ -124,149 +133,325 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			guild.Asciify = null;
 		}
 
-		[Group("pinreact")]
-		public class PinReacting : BotModuleBase {
-			[Command("", RunMode = RunMode.Async)]
-			[Summary("Gets the number of pin reacts required to pin a message")]
-			public async Task Get() {
-				int count = await Fun.GetPinReactCount(Context);
-				if (count == 0) {
-					await ReplyAsync("**Pin-React:** disabled");
-				}
-				else {
-					await ReplyAsync($"**Pin-React Requires:** {count} {BotReactions.PinMessage}(s)");
-				}
+		[Command("pinreact", RunMode = RunMode.Async)]
+		[Summary("Gets the number of pin reacts required to pin a message")]
+		public async Task PinReactGet() {
+			int count = await Fun.GetPinReactCount(Context);
+			if (count == 0) {
+				await ReplyAsync("**Pin-React:** disabled");
 			}
+			else {
+				await ReplyAsync($"**Pin-React Requires:** {count} {BotReactions.PinMessage}(s)");
+			}
+		}
+		[Command("pinreact set", RunMode = RunMode.Async)]
+		[Summary("Sets the number of pin reacts required to pin a message. Use 0 to disable Pin-React")]
+		[RequireUserPermissionOrBotOwner(GuildPermission.ManageMessages)]
+		public async Task PinReactSet(int count) {
+			if (count < 0) {
+				Context.IsSuccess = false;
+				Context.CustomError = CustomCommandError.InvalidArgument;
+				Context.ErrorReason = "Count cannot be less than zero";
+			}
+			else {
+				await Fun.SetPinReactCount(Context, count);
+				Context.IsSuccess = false;
+				Context.CustomError = CustomCommandError.Success;
+			}
+		}
+		[Command("talkback", RunMode = RunMode.Async)]
+		[Summary("Get the current talkback state of the bot. Talkback is when the bot responds to certain phrases said by the user")]
+		public async Task TalkBackGet() {
+			bool enabled = await Fun.GetTalkBack(Context);
+			await ReplyAsync($"**Talkback:** {enabled}");
+		}
 
-			[Command("set", RunMode = RunMode.Async)]
-			[Summary("Sets the number of pin reacts required to pin a message. Use 0 to disable Pin-React")]
-			[RequireUserPermissionOrBotOwner(GuildPermission.ManageMessages)]
-			public async Task Set(int count) {
-				if (count < 0) {
-					Context.IsSuccess = false;
-					Context.CustomError = CustomCommandError.InvalidArgument;
-					Context.ErrorReason = "Count cannot be less than zero";
-				}
-				else {
-					await Fun.SetPinReactCount(Context, count);
-					Context.IsSuccess = false;
-					Context.CustomError = CustomCommandError.Success;
-				}
+		[Command("talkback set", RunMode = RunMode.Async)]
+		[Parameters("<enabled>")]
+		[Summary("Set the current talkback state of the bot. Talkback is when the bot responds to certain phrases said by the user")]
+		[RequireUserPermissionOrBotOwner(GuildPermission.ManageMessages)]
+		public async Task TalkbackSet(bool enabled) {
+			if (await Fun.SetTalkBack(Context, enabled)) {
+				Context.IsSuccess = false;
+				Context.CustomError = CustomCommandError.Success;
+			}
+			else {
+				await ReplyAsync($"TalkBack is already set to {enabled}");
 			}
 		}
 
-		[Group("talkback")]
-		public class TalkBack : BotModuleBase {
-			[Command("", RunMode = RunMode.Async)]
-			[Summary("Get the current talkback state of the bot. Talkback is when the bot responds to certain phrases said by the user")]
-			public async Task Get() {
-				bool enabled = await Fun.GetTalkBack(Context);
-				await ReplyAsync($"**Talkback:** {enabled}");
+		[Command("talkback cooldown", RunMode = RunMode.Async)]
+		[Summary("Gets the current cooldown before the bot can talkback to users again")]
+		public async Task TalkbackCurrentCooldown() {
+			TimeSpan cooldown = await Fun.GetTalkBackCooldown(Context);
+			Stopwatch timer = Settings.GetLocalChannel(Context).TalkBackTimer;
+			TimeSpan remaining = cooldown - timer.Elapsed;
+			if (timer == null || !timer.IsRunning || remaining <= TimeSpan.Zero) {
+				await ReplyAsync("**Current Talkback Cooldown:** finished");
 			}
-
-			[Command("set", RunMode = RunMode.Async)]
-			[Parameters("<enabled>")]
-			[Summary("Set the current talkback state of the bot. Talkback is when the bot responds to certain phrases said by the user")]
-			[RequireUserPermissionOrBotOwner(GuildPermission.ManageMessages)]
-			public async Task Set(bool enabled) {
-				if (await Fun.SetTalkBack(Context, enabled)) {
-					Context.IsSuccess = false;
-					Context.CustomError = CustomCommandError.Success;
+			else {
+				string time = "";
+				if (remaining.Days > 0) {
+					string plural = (remaining.Days != 1 ? "s" : "");
+					time += string.Format(" {0:%d} day{1}", remaining, plural);
 				}
-				else {
-					await ReplyAsync($"TalkBack is already set to {enabled}");
+				if (remaining.Hours > 0) {
+					string plural = (remaining.Hours != 1 ? "s" : "");
+					time += string.Format(" {0:%h} hour{1}", remaining, plural);
+				}
+				if (remaining.Minutes > 0) {
+					string plural = (remaining.Minutes != 1 ? "s" : "");
+					time += string.Format(" {0:%m} min{1}", remaining, plural);
+				}
+				if (remaining.Seconds > 0) {
+					string plural = (remaining.Seconds != 1 ? "s" : "");
+					time += string.Format(" {0:%s} sec{1}", remaining, plural);
+				}
+				await ReplyAsync($"**Current Talkback Cooldown:** {time}");
+			}
+		}
+		[Command("talkback cooldown reset")]
+		[Summary("Resets the current talkback cooldown")]
+		[RequireUserPermissionOrBotOwner(GuildPermission.ManageMessages)]
+		public async Task TalkbackResetCooldown() {
+			TimeSpan cooldown = await Fun.GetTalkBackCooldown(Context);
+			if (cooldown == TimeSpan.Zero) {
+				await ReplyAsync("**Talkback Cooldown:** none");
+			}
+			else {
+				await ReplyAsync($"**Talkback Cooldown:** {cooldown.ToDHMSString()}");
+			}
+		}
+
+		[Command("talkback cooldown get", RunMode = RunMode.Async)]
+		[Summary("Gets the default talkback cooldown")]
+		public async Task TalkbackGetCooldown() {
+			TimeSpan cooldown = await Fun.GetTalkBackCooldown(Context);
+			if (cooldown == TimeSpan.Zero) {
+				await ReplyAsync("**Talkback Cooldown:** none");
+			}
+			else {
+				await ReplyAsync($"**Talkback Cooldown:** {cooldown.ToDHMSString()}");
+			}
+		}
+
+		[Command("talkback cooldown set", RunMode = RunMode.Async)]
+		[Parameters("<[[hh:]mm:]ss>")]
+		[Summary("Gets the default talkback cooldown")]
+		[Remarks("The format for the time is `hh:mm:ss` or `none`")]
+		[RequireUserPermissionOrBotOwner(GuildPermission.ManageMessages)]
+		public async Task TalkbackSetCooldown(string time) {
+			TimeSpan cooldown;
+			bool error = false;
+			if (time == "none")
+				cooldown = TimeSpan.Zero;
+			else {
+				int colonCount = time.Split(':').Length - 1;
+				for (int i = colonCount; i < 2; i++) {
+					time = $"0:{time}";
+				}
+				if (!TimeSpan.TryParse(time, out cooldown))
+					error = true;
+			}
+			if (!error) {
+				await Fun.SetTalkBackCooldown(Context, cooldown);
+				Context.IsSuccess = false;
+				Context.CustomError = CustomCommandError.Success;
+			}
+			else {
+				Context.IsSuccess = false;
+				Context.Error = CommandError.ParseFailed;
+				Context.ErrorReason = "Failed to parse time";
+			}
+		}
+
+		/*[Command("danbooru")]
+		[Parameters("[[tags=]tag1[,tag2]] [minscore=5] [retries=1-10] [extra=extra,tags]")]
+		[Summary("Looks up a random sfw image on danbooru matching the search terms")]
+		[Remarks("Danbooru only allows searching for two main tags at once. " +
+			"Everything specified in extras will be manually searched for based on retries x 200 posts. " +
+			"Tags can start with '-' to be blacklisted and end with `*` to be open-ended.")]
+		[RequireNotNsfw]
+		public async Task DanbooruSfwSearch([Remainder] string parameters = "") {
+			await DanbooruSearchBase(false, DanbooruRating.Safe, parameters);
+		}*/
+
+		[Command("danbooru")]
+		[Parameters("[rating=sqe] [[tags=]tag1[,tag2]] [minscore=5] [retries=1-10] [extra=extra,tags...]")]
+		[Summary("Looks up a random image on danbooru matching the search terms")]
+		[Remarks("Danbooru only allows searching for two main tags at once. " +
+			"Everything specified in extras will be manually searched for based on retries x 200 posts. " +
+			"Tags can start with '-' to be blacklisted and end with `*` to be open-ended. " +
+			"Ratings can be any combination of 's' (safe), 'q' (questionable), and 'e' (explicit).")]
+		[RequireNsfw]
+		public async Task DanbooruNsfwSearch([Remainder] string arguments = "") {
+			await DanbooruSearchBase(true, DanbooruRating.Any, arguments);
+		}
+
+		[Command("hentai")]
+		[Parameters("[rating=sqe] [[tags=]tag1[,tag2]] [minscore=5] [retries=1-10] [extra=extra,tags]")]
+		[Summary("Looks up a random (nsfw by default) image on danbooru matching the search terms")]
+		[Remarks("Danbooru only allows searching for two main tags at once. " +
+			"Everything specified in extras will be manually searched for based on retries x 200 posts. " +
+			"Tags can start with '-' to be blacklisted and end with `*` to be open-ended. " +
+			"Ratings can be any combination of 's' (safe), 'q' (questionable), and 'e' (explicit).")]
+		[RequireNsfw]
+		public async Task HentaiSearch([Remainder] string arguments = "") {
+			await DanbooruSearchBase(true, DanbooruRating.NotSafe, arguments);
+		}
+
+		public async Task DanbooruSearchBase(bool nsfw, DanbooruRating defaultRating, string arguments) {
+			IUserMessage searchMessage = null;
+			DanbooruPost post = null;
+			try {
+				if (arguments.Contains('&') || arguments.Contains('?') || arguments.Contains('/')) {
+					InvalidArguments("Invalid characters in arguments");
+					return;
+				}
+				bool tagsSpecified = false;
+				int? retries = null;
+				int? minScore = null;
+				DanbooruRating? rating = null;
+				string tag1 = null;
+				string tag2 = null;
+				List<string> extraTags = null;
+				string[] args = arguments.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+				foreach (string arg in args) {
+					string[] parts = arg.Split(new char[] { '=' });
+					if (parts.Length == 1 || parts[0].ToLower() == "tags") {
+						if (tagsSpecified) {
+							InvalidArguments("Main tags already specified");
+							return;
+						}
+						tagsSpecified = true;
+						if (!string.IsNullOrEmpty(parts.Last())) {
+							string[] tags = parts.Last().Split(',');
+							if (tags.Length > 2) {
+								InvalidArguments("More than two main tags");
+							}
+							else {
+								tag1 = tags[0];
+								if (tags.Length == 2)
+									tag2 = tags[1];
+							}
+						}
+					}
+					else {
+						switch (parts[0].ToLower()) {
+						case "rating":
+							if (!nsfw) {
+								InvalidArguments("Ratings cannot be specified in a sfw channel");
+								return;
+							}
+							else if (!parts[1].Any()) {
+								InvalidArguments("No ratings specified");
+								return;
+							}
+							if (rating.HasValue) {
+								InvalidArguments("Rating already specified");
+								return;
+							}
+							DanbooruRating newRating = DanbooruRating.None;
+							foreach (char c in parts[1]) {
+								switch (c) {
+								case 's': newRating |= DanbooruRating.Safe; break;
+								case 'q': newRating |= DanbooruRating.Questionable; break;
+								case 'e': newRating |= DanbooruRating.Explicit; break;
+								default:
+									InvalidArguments($"Unknown rating character `{c}`");
+									return;
+								}
+							}
+							rating = newRating;
+							break;
+						case "extra":
+						case "extras":
+						case "extratags":
+							if (extraTags != null) {
+								InvalidArguments("Extra tags already specified");
+								return;
+							}
+							extraTags = new List<string>();
+							extraTags.AddRange(parts[1].Split(','));
+							break;
+						case "retries":
+							if (retries.HasValue) {
+								InvalidArguments("Retries already specified");
+								return;
+							}
+							if (int.TryParse(parts[1], out int result) && result >= 1) {
+								retries = result;
+							}
+							else {
+								InvalidArguments("Invalid retries");
+								return;
+							}
+							break;
+						case "minscore":
+							if (minScore.HasValue) {
+								InvalidArguments("Min Score already specified");
+								return;
+							}
+							if (int.TryParse(parts[1], out int result2)) {
+								minScore = result2;
+							}
+							else {
+								InvalidArguments("Invalid min score");
+								return;
+							}
+							break;
+						default:
+							InvalidArguments($"Unknown paramtere `{parts[0]}`");
+							return;
+						}
+					}
+				}
+				try {
+					extraTags = extraTags ?? new List<string>();
+					rating = rating ?? defaultRating;
+					searchMessage = await ReplyAsync("🔎 Searching for a random danbooru image...");
+					post = await Danbooru.Search(rating.Value, tag1, tag2, minScore ?? 5, retries ?? 1, extraTags);
+					
+				}
+				catch (InvalidTagsException ex) {
+					if (searchMessage != null)
+						await searchMessage.DeleteAsync();
+					await ReplyAsync(ex.Message);
+					return;
+				}
+				catch (IllegalNsfwTagsException ex) {
+					if (searchMessage != null)
+						await searchMessage.DeleteAsync();
+					await ReplyAsync(ex.Message);
+					return;
 				}
 			}
-
-			[Group("cooldown")]
-			public class Cooldown : BotModuleBase {
-
-				[Command("", RunMode = RunMode.Async)]
-				[Summary("Gets the current cooldown before the bot can talkback to users again")]
-				public async Task CurrentCooldown() {
-					TimeSpan cooldown = await Fun.GetTalkBackCooldown(Context);
-					Stopwatch timer = Settings.GetLocalChannel(Context).TalkBackTimer;
-					TimeSpan remaining = cooldown - timer.Elapsed;
-					if (timer == null || !timer.IsRunning || remaining <= TimeSpan.Zero) {
-						await ReplyAsync("**Current Talkback Cooldown:** finished");
-					}
-					else {
-						string time = "";
-						if (remaining.Days > 0) {
-							string plural = (remaining.Days != 1 ? "s" : "");
-							time += string.Format(" {0:%d} day{1}", remaining, plural);
-						}
-						if (remaining.Hours > 0) {
-							string plural = (remaining.Hours != 1 ? "s" : "");
-							time += string.Format(" {0:%h} hour{1}", remaining, plural);
-						}
-						if (remaining.Minutes > 0) {
-							string plural = (remaining.Minutes != 1 ? "s" : "");
-							time += string.Format(" {0:%m} min{1}", remaining, plural);
-						}
-						if (remaining.Seconds > 0) {
-							string plural = (remaining.Seconds != 1 ? "s" : "");
-							time += string.Format(" {0:%s} sec{1}", remaining, plural);
-						}
-						await ReplyAsync($"**Current Talkback Cooldown:** {time}");
-					}
-				}
-
-				[Command("reset")]
-				[Summary("Resets the current talkback cooldown")]
-				[RequireUserPermissionOrBotOwner(GuildPermission.ManageMessages)]
-				public async Task ResetCooldown() {
-					TimeSpan cooldown = await Fun.GetTalkBackCooldown(Context);
-					if (cooldown == TimeSpan.Zero) {
-						await ReplyAsync("**Talkback Cooldown:** none");
-					}
-					else {
-						await ReplyAsync($"**Talkback Cooldown:** {cooldown.ToDHMSString()}");
-					}
-				}
-
-				[Command("get", RunMode = RunMode.Async)]
-				[Summary("Gets the default talkback cooldown")]
-				public async Task GetCooldown() {
-					TimeSpan cooldown = await Fun.GetTalkBackCooldown(Context);
-					if (cooldown == TimeSpan.Zero) {
-						await ReplyAsync("**Talkback Cooldown:** none");
-					}
-					else {
-						await ReplyAsync($"**Talkback Cooldown:** {cooldown.ToDHMSString()}");
-					}
-				}
-
-				[Command("set", RunMode = RunMode.Async)]
-				[Parameters("<[[hh:]mm:]ss>")]
-				[Summary("Gets the default talkback cooldown")]
-				[Remarks("The format for the time is `hh:mm:ss` or `none`")]
-				[RequireUserPermissionOrBotOwner(GuildPermission.ManageMessages)]
-				public async Task SetCooldown(string time) {
-					TimeSpan cooldown;
-					bool error = false;
-					if (time == "none")
-						cooldown = TimeSpan.Zero;
-					else {
-						int colonCount = time.Split(':').Length - 1;
-						for (int i = colonCount; i < 2; i++) {
-							time = $"0:{time}";
-						}
-						if (!TimeSpan.TryParse(time, out cooldown))
-							error = true;
-					}
-					if (!error) {
-						await Fun.SetTalkBackCooldown(Context, cooldown);
-						Context.IsSuccess = false;
-						Context.CustomError = CustomCommandError.Success;
-					}
-					else {
-						Context.IsSuccess = false;
-						Context.Error = CommandError.ParseFailed;
-						Context.ErrorReason = "Failed to parse time";
-					}
-				}
+			catch (Exception ex) {
+				if (searchMessage != null)
+					await searchMessage.DeleteAsync();
+				await ReplyAsync("An error occurred while searching. The input may have been invalid.");
+				return;
 			}
+			var embed = Danbooru.MakeBaseEmbed();
+			if (post == null) {
+				embed.WithDescription("No matching results found");
+			}
+			else {
+				if (string.IsNullOrWhiteSpace(arguments))
+					arguments = "*none*";
+				else
+					arguments = Format.Sanitize(arguments);
+				embed.WithUrl(post.PostUrl);
+				embed.WithDescription(//$"**Post:** <{post.PostUrl}>\n" +
+					$"**Arguments:** {arguments}\n" +
+					$"**Score:** {post.Score}{(nsfw ? $" | **Rating:** {post.Rating}" : "")}\n" +
+					$"{post.LargeFileUrl}");
+				embed.WithImageUrl(post.LargeFileUrl);
+			}
+			IUserMessage message = await ReplyAsync("", false, embed.Build());
+			if (post != null)
+				await Danbooru.AddReactions(message);
+			await searchMessage.DeleteAsync();
 		}
 	}
 }

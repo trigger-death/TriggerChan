@@ -41,8 +41,8 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 			provider.GetRequiredService<AudioService>();      // Start the command handler service
 			provider.GetRequiredService<SettingsService>();      // Start the command handler service
 			provider.GetRequiredService<FunService>();      // Start the command handler service
+			provider.GetRequiredService<DanbooruService>();      // Start the command handler service
 			provider.GetRequiredService<HelpService>();      // Start the command handler service
-			provider.GetRequiredService<YouTubeService>();      // Start the command handler service
 
 			await provider.GetRequiredService<StartupService>().StartAsync(provider, services);       // Start the startup service
 			await Task.Delay(-1);                               // Keep the program alive
@@ -53,6 +53,7 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 				// Add discord to the collection
 				LogLevel = LogSeverity.Verbose,     // Tell the logger to give Verbose amount of info
 				MessageCacheSize = 1000,             // Cache 1,000 messages per channel
+				DefaultRetryMode = RetryMode.AlwaysRetry,
 			};
 			// Are we running on <= Windows 7?
 			// Standard websocket only works for Windows 8+.
@@ -73,7 +74,7 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 			.AddSingleton<SettingsService>()
 			.AddSingleton<FunService>()
 			.AddSingleton<HelpService>()
-			.AddSingleton<YouTubeService>()
+			.AddSingleton<DanbooruService>()
 			.AddSingleton<CommandHandler>()
 			.AddSingleton<Random>();                 // Add random to the collection
 			/*.AddDbContext<TriggerDatabaseContext>(options => {

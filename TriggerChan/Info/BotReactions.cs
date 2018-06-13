@@ -89,6 +89,12 @@ namespace TriggersTools.DiscordBots.TriggerChan.Info {
 		[Description("Pins a message with enough reacts")]
 		[Category(Actions)]
 		public static readonly Emoji PinMessage = new Emoji("📌");
+		[Description("Marks a result as okay with Discord's policies")]
+		[Category(Actions)]
+		public static readonly Emoji Agreeable = new Emoji(char.ConvertFromUtf32(0x1F197)); // Squared OK
+		[Description("Marks a result as against Discord's policies")]
+		[Category(Actions)]
+		public static readonly Emoji Dangerous = new Emoji(char.ConvertFromUtf32(0x1F694)); // Oncoming Police Car
 
 		//public static readonly Emoji UnmetPrecondition2 = new Emoji("🚫");
 		//public static readonly Emoji Unauthorized3 = new Emoji("👮");
