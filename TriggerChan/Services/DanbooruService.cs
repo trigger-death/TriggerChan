@@ -39,7 +39,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 
 		private WebRequest CreateRequest(string url) {
 			WebRequest request = WebRequest.Create(url);
-			request.Credentials = Credentials;
 			request.Method = "GET";
 			return request;
 		}
@@ -117,9 +116,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				return null;
 			return tagsStr.ToLower();
 		}
-
-		private NetworkCredential Credentials;
-
+		
 		protected override void OnInitialized(ServiceProvider services) {
 			/*Credentials = new NetworkCredential() {
 				UserName = Config["danbooru_user"],

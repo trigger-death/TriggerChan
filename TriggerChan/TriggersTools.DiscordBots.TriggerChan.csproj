@@ -24,6 +24,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.0.1" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta0004" />
     <PackageReference Include="TimeZoneNames" Version="3.3.2" />
+    <PackageReference Include="TriggersTools.SteinsGate.Divergence" Version="1.0.0" />
     <PackageReference Include="WebSocket4Net" Version="0.15.2" />
   </ItemGroup>
 

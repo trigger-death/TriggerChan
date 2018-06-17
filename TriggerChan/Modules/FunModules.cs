@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -13,6 +14,7 @@ using TriggersTools.DiscordBots.TriggerChan.Danbooru;
 using TriggersTools.DiscordBots.TriggerChan.Info;
 using TriggersTools.DiscordBots.TriggerChan.Models;
 using TriggersTools.DiscordBots.TriggerChan.Util;
+using TriggersTools.SteinsGate;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 	[Name("Fun")]
@@ -452,6 +454,28 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			if (post != null)
 				await Danbooru.AddReactions(message);
 			await searchMessage.DeleteAsync();
+		}
+
+		[Command("divergence")]
+		[Parameters("<text>")]
+		[Summary("Draws the text onto nixie tubes.")]
+		public async Task DivergenceMeter([Remainder] string text) {
+			try {
+				var args = new DivergenceArgs {
+					Scale = DivergenceScale.Medium,
+					Escape = DivergenceEscape.NewLines,
+					Authenticity = DivergenceAuthenticity.Lax,
+				};
+				using (Bitmap bitmap = Divergence.Draw(text, args))
+				using (MemoryStream stream = new MemoryStream()) {
+					bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+					stream.Position = 0;
+					await Context.Channel.SendFileAsync(stream, "Divergence.png");
+				}
+			}
+			catch (Exception ex) {
+				await ReplyAsync($"**Error:** {ex.Message}");
+			}
 		}
 	}
 }

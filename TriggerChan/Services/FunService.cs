@@ -17,6 +17,7 @@ using TriggersTools.DiscordBots.TriggerChan.Context;
 using TriggersTools.DiscordBots.TriggerChan.Info;
 using TriggersTools.DiscordBots.TriggerChan.Models;
 using TriggersTools.DiscordBots.TriggerChan.Util;
+using TriggersTools.SteinsGate;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Services {
 	public class FunService : BotServiceBase {
@@ -25,6 +26,9 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 		
 		protected override void OnInitialized(ServiceProvider services) {
 			base.OnInitialized(services);
+			Divergence.EnableLimits = true;
+			Divergence.MaxLength = 24;
+			Divergence.MaxLines = 3;
 			Client.MessageReceived += OnMessageReceived;
 			Client.ReactionAdded += OnReactionAdded;
 			InitILoveTriggerChanRegex();

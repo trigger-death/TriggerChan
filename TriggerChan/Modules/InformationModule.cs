@@ -4,6 +4,7 @@ using MALClient.Models.Models;
 using MALClient.XShared.Comm.Profile;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -14,6 +15,7 @@ using TriggersTools.DiscordBots.TriggerChan.MFC;
 using TriggersTools.DiscordBots.TriggerChan.Models;
 using TriggersTools.DiscordBots.TriggerChan.Services;
 using TriggersTools.DiscordBots.TriggerChan.Util;
+using TriggersTools.SteinsGate;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 	[Name("Information")]
@@ -467,7 +469,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			}
 		}
 
-		[Command("timezone"), Alias("tz")]
+		[Command("tz"), Alias("timezone")]
 		[Summary("Gets your timezone registed with the bot")]
 		[RequireContext(ContextType.Guild)]
 		public async Task GetMyTimeZone() {
@@ -481,6 +483,47 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			else {
 				await WriteTimeZoneEmbed(name, gUser.TimeZone);
 			}
+		}
+
+
+		[Command("tzd"), Alias("timezonedivergence")]
+		[Summary("Gets your timezone registed with the bot and display it on a divergence meter")]
+		public async Task GetMyTimeZoneDivergence() {
+			IUser user = Context.User;
+			GuildUser gUser = await Settings.GetGuildUser(Context.Guild.Id, user.Id);
+			string name = user.GetName(Context.Guild);
+			if (gUser.SerealizedTimeZone == null) {
+				await ReplyAsync($"You have not registered your timezone.\n" +
+					$"Register with the command `t/timezone assign ianaID/abbreviation`.");
+			}
+			else {
+				await WriteTimeZoneDivergence(name, gUser.TimeZone);
+			}
+		}
+
+		public async Task WriteTimeZoneDivergence(string username, TimeZoneInfo timeZone,
+			TimeZoneInfo yourTimeZone = null)
+		{
+			try {
+				DateTime date = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
+				//string time = $"{date:MM\\/dd\\/yy}\n{date.TimeOfDay:hh\\:mm\\:ss}";
+				string time = $"{date.TimeOfDay:hh\\:mm\\:ss}";
+				var args = new DivergenceArgs {
+					Scale = DivergenceScale.Small,
+					Escape = DivergenceEscape.NewLines,
+					Authenticity = DivergenceAuthenticity.Lax,
+				};
+				using (var bitmap = Divergence.Draw(time, args))
+				using (MemoryStream stream = new MemoryStream()) {
+					bitmap.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+					stream.Position = 0;
+					await Context.Channel.SendFileAsync(stream, "TimeZoneDivergence.png");
+				}
+			}
+			catch (Exception ex) {
+				await ReplyAsync($"**Error:** {ex.Message}");
+			}
+			await WriteTimeZoneEmbed(username, timeZone, yourTimeZone);
 		}
 
 		public async Task WriteTimeZoneEmbed(string username, TimeZoneInfo timeZone, TimeZoneInfo yourTimeZone = null) {
@@ -507,7 +550,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			await ReplyAsync(text);
 		}
 
-		[Command("timezone"), Alias("tz")]
+		[Command("tz"), Alias("timezone")]
 		[Summary("Gets the user's timezone registed with the bot and compares it to your time (if you have it registered)")]
 		[Parameters("<user>")]
 		[RequireContext(ContextType.Guild)]
@@ -523,7 +566,23 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			}
 		}
 
-		[Command("timezone assign"), Alias("tz assign")]
+		[Command("tzd"), Alias("timezonedivergence")]
+		[Summary("Gets the user's timezone registed with the bot and compares it to your time (if you have it registered) and display it on a divergence meter")]
+		[Parameters("<user>")]
+		[RequireContext(ContextType.Guild)]
+		public async Task GetTimeZoneDivergence(IUser user) {
+			GuildUser gUser = await Settings.GetGuildUser(Context.Guild.Id, user.Id);
+			string name = user.GetName(Context.Guild);
+			if (gUser.SerealizedTimeZone == null) {
+				await ReplyAsync($"{name} has not registered their timezone");
+			}
+			else {
+				GuildUser thisUser = await Settings.GetGuildUser(Context.Guild.Id, Context.User.Id);
+				await WriteTimeZoneDivergence(name, gUser.TimeZone, thisUser?.TimeZone);
+			}
+		}
+
+		[Command("tz assign"), Alias("timezone assign")]
 		[Summary("Registers your timezone with the bot")]
 		[Parameters("<iana id/abbreviation>")]
 		[RequireContext(ContextType.Guild)]
@@ -564,7 +623,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			}
 		}
 
-		[Command("timezone unassign"), Alias("tz unassign")]
+		[Command("tz unassign"), Alias("timezone unassign")]
 		[Summary("Unregisters your timezone with the bot")]
 		[RequireContext(ContextType.Guild)]
 		public async Task UnassignTimeZone() {
@@ -582,7 +641,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			}
 		}
 
-		[Command("timezone usercount"), Alias("tz usercount")]
+		[Command("tz usercount"), Alias("timezone usercount")]
 		[Summary("Gets the number of users that have registered timezones")]
 		[RequireContext(ContextType.Guild)]
 		public async Task GetTimeZoneUserCount() {
