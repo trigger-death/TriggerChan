@@ -58,7 +58,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			await Client.StartAsync();                                // Connect to the websocket
 			Client.Connected += OnDiscordConnected;
 
-			await Commands.AddModulesAsync(Assembly.GetEntryAssembly());     // Load commands and modules into the command service
+			await Commands.AddModulesAsync(Assembly.GetEntryAssembly(), services);     // Load commands and modules into the command service
 		}
 
 		private async Task OnDiscordConnected() {
@@ -106,7 +106,14 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 		}
 
 		public async Task SetDefaultStatus() {
-			await Client.SetGameAsync(Config["status"], null, ActivityType.Playing);
+			string status = Config["status"];
+			if (status != null) {
+				string activityStr = Config["activity"];
+				ActivityType activity = ActivityType.Playing;
+				if (activityStr != null && !Enum.TryParse<ActivityType>(activityStr, out activity))
+					activity = ActivityType.Playing;
+				await Client.SetGameAsync(status, null, activity);
+			}
 		}
 	}
 }

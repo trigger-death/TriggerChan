@@ -141,6 +141,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 					IEmbed oldEmbed = msg.Embeds.First();
 					if ((await ScoreReactions(msg)) < 0) {
 						try {
+							Console.WriteLine("REMOVING ALL REACTIONS!");
 							await msg.ModifyAsync((p) => {
 								IUser user = arg3.User.Value;
 								var embed = MakeBaseEmbed();
@@ -156,16 +157,19 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 							});
 							await msg.RemoveAllReactionsAsync();
 						}
-						catch { }
+						catch (Exception ex) {
+							Console.WriteLine(ex);
+							
+						}
 					}
 				}
 			}
 		}
 
 		public async Task<int> ScoreReactions(IUserMessage message) {
-			var agrees = await message.GetReactionUsersAsync(BotReactions.Agreeable);
-			var disagrees = await message.GetReactionUsersAsync(BotReactions.Dangerous);
-			return agrees.Count - disagrees.Count;
+			var agrees = (await message.GetReactionUsersAsync(BotReactions.Agreeable, 100).FirstOrDefault())?.Count ?? 0;
+			var disagrees = (await message.GetReactionUsersAsync(BotReactions.Dangerous, 100).FirstOrDefault())?.Count ?? 0;
+			return agrees - disagrees;
 		}
 
 		private static void AppendToQuery(ref string url, string name, object parameter) {

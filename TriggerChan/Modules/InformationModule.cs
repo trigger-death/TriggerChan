@@ -1,4 +1,5 @@
-﻿using Discord;
+﻿using AniListClient;
+using Discord;
 using Discord.Commands;
 using MALClient.Models.Models;
 using MALClient.XShared.Comm.Profile;
@@ -39,37 +40,40 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		}
 
 		public async Task WriteMALProfileEmbed(string username, string malUser) {
-			const string profileUrl = @"https://myanimelist.net/profile/";
-			//await ReplyAsync($"{name}'s MAL: <{profileUrl}{username}>");
-			var query = new ProfileQuery(malUser);
-			ProfileData profile = await query.GetProfileData();
-			if (profile == null) {
-				await ReplyAsync($"Could not find MAL profile for {Format.Sanitize(malUser)}");
-				return;
+			using (Context.Channel.EnterTypingState()) {
+				const string profileUrl = @"https://myanimelist.net/profile/";
+				//await ReplyAsync($"{name}'s MAL: <{profileUrl}{username}>");
+				var query = new ProfileQuery(malUser);
+				ProfileData profile = await query.GetProfileData();
+				if (profile == null) {
+					await ReplyAsync($"Could not find MAL profile for {Format.Sanitize(malUser)}");
+					return;
+				}
+				var embed = new EmbedBuilder() {
+					Url = $"{profileUrl}{malUser}",
+					ThumbnailUrl = profile.User.ImgUrl,
+					Title = $"{malUser}'s MAL Profile",
+					Color = new Color(114, 137, 218),
+				};
+				embed.WithFooter("MyAnimeList.net", @"https://myanimelist.cdn-dena.com/img/sp/icon/apple-touch-icon-256.png");
+				string desc = "";
+				desc += $"Days: {profile.AnimeDays.ToString("#,##0.#")}\n";
+				desc += $"Mean Score: {profile.AnimeMean.ToString("0.00")}\n";
+				desc += $"Completed: {profile.AnimeCompleted.ToString("#,##0")}\n";
+				desc += $"Episodes: {profile.AnimeEpisodes.ToString("#,###,##0")}\n";
+				embed.AddField($"Anime", desc, true);
+
+				desc = "";
+				desc += $"Days: {profile.MangaDays.ToString("#,##0.#")}\n";
+				desc += $"Mean Score: {profile.MangaMean.ToString("0.00")}\n";
+				desc += $"Completed: {profile.MangaCompleted.ToString("#,##0")}\n";
+				desc += $"Volumes: {profile.MangaVolumes.ToString("#,###,##0")}\n";
+				desc += $"Chapters: {profile.MangaChapters.ToString("#,###,##0")}\n";
+				embed.AddField($"Manga", desc, true);
+
+
+				await ReplyAsync("", false, embed.Build());
 			}
-			var embed = new EmbedBuilder() {
-				Url = $"{profileUrl}{malUser}",
-				ThumbnailUrl = profile.User.ImgUrl,
-				Title = $"{malUser}'s MAL Profile",
-				Color = new Color(114, 137, 218),
-			};
-			string desc = "";
-			desc += $"Days: {profile.AnimeDays.ToString("#,##0.#")}\n";
-			desc += $"Mean Score: {profile.AnimeMean.ToString("0.00")}\n";
-			desc += $"Completed: {profile.AnimeCompleted.ToString("#,##0")}\n";
-			desc += $"Episodes: {profile.AnimeEpisodes.ToString("#,###,##0")}\n";
-			embed.AddField($"Anime", desc, true);
-
-			desc = "";
-			desc += $"Days: {profile.MangaDays.ToString("#,##0.#")}\n";
-			desc += $"Mean Score: {profile.MangaMean.ToString("0.00")}\n";
-			desc += $"Completed: {profile.MangaCompleted.ToString("#,##0")}\n";
-			desc += $"Volumes: {profile.MangaVolumes.ToString("#,###,##0")}\n";
-			desc += $"Chapters: {profile.MangaChapters.ToString("#,###,##0")}\n";
-			embed.AddField($"Manga", desc, true);
-
-
-			await ReplyAsync("", false, embed.Build());
 		}
 
 		[Command("mal")]
@@ -91,21 +95,28 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		[Summary("Display the MAL user's profile")]
 		[Parameters("<malUser>")]
 		public async Task GetMALProfile(string url) {
-			url = url.Trim();
-			if (url.StartsWith('<') && url.EndsWith('>')) {
-				url = url.Substring(1, url.Length - 2);
-			}
-			RegexOptions options = RegexOptions.IgnoreCase;
-			string pattern = @"(^https?\:\/\/myanimelist\.net\/profile\/|^)((\-|\w)+)$";
-			Regex regex = new Regex(pattern, options);
-			if (!regex.IsMatch(url)) {
+			string username = ParseMALUserName(url);
+			if (username == null) {
 				Context.IsSuccess = false;
 				Context.CustomError = CustomCommandError.InvalidArgument;
 				Context.ErrorReason = "Invalid url or profile name";
 				return;
 			}
-			string username = url.Split('/').Last();
 			await WriteMALProfileEmbed(username, username);
+		}
+
+		private string ParseMALUserName(string url) {
+			url = url.Trim();
+			if (url.StartsWith('<') && url.EndsWith('>')) {
+				url = url.Substring(1, url.Length - 2);
+			}
+			const string pattern = @"(?:^https?\:\/\/myanimelist\.net\/profile\/|^)((?:\-|\w)+)\/?$";
+			RegexOptions options = RegexOptions.IgnoreCase;
+			Regex regex = new Regex(pattern, options);
+			Match match = regex.Match(url);
+			if (match.Success && match.Groups.Count > 0)
+				return match.Groups.Last().Value;
+			return null;
 		}
 
 		[Command("mal assign")]
@@ -113,20 +124,13 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		[Parameters("<profile url/username>")]
 		[RequireContext(ContextType.Guild)]
 		public async Task AssignMAL(string url) {
-			url = url.Trim();
-			if (url.StartsWith('<') && url.EndsWith('>')) {
-				url = url.Substring(1, url.Length - 2);
-			}
-			RegexOptions options = RegexOptions.IgnoreCase;
-			string pattern = @"(^https?\:\/\/myanimelist\.net\/profile\/|^)((\-|\w)+)$";
-			Regex regex = new Regex(pattern, options);
-			if (!regex.IsMatch(url)) {
+			string username = ParseMALUserName(url);
+			if (username == null) {
 				Context.IsSuccess = false;
 				Context.CustomError = CustomCommandError.InvalidArgument;
 				Context.ErrorReason = "Invalid url or profile name";
 				return;
 			}
-			string username = url.Split('/').Last();
 			using (var database = new BotDatabaseContext()) {
 				GuildUser gUser = await Settings.GetGuildUser(Context);
 				gUser.MALUsername = username;
@@ -237,6 +241,161 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 				Context.CustomError = CustomCommandError.DMSent;
 			}
 		}
+
+
+		[Command("ani")]
+		[Summary("Gets your AniList profile URL registed with the bot")]
+		[RequireContext(ContextType.Guild)]
+		public async Task GetMyAniList() {
+			IUser user = Context.User;
+			GuildUser gUser = await Settings.GetGuildUser(Context.Guild.Id, user.Id);
+			string name = user.GetName(Context.Guild);
+			if (gUser.AniListUsername == null) {
+				await ReplyAsync($"You have not registered your AniList account.\n" +
+					$"Register with the command `t/ani assign YourAniListUsername`.");
+			}
+			else {
+				await WriteAniListProfileEmbed(name, gUser.AniListUsername);
+			}
+		}
+
+		public async Task WriteAniListProfileEmbed(string username, string aniUser) {
+			using (Context.Channel.EnterTypingState()) {
+				AniListProfileData profile = null;
+				try {
+					profile = await AniListProfileData.Query(aniUser);
+				}
+				catch { }
+				if (profile == null) {
+					await ReplyAsync($"Could not find AniList profile for {Format.Sanitize(aniUser)}");
+					return;
+				}
+				var embed = new EmbedBuilder() {
+					Url = profile.ProfileUrl,
+					ThumbnailUrl = profile.AvatarUrl,
+					Title = $"{aniUser}'s AniList Profile",
+					Color = new Color(2, 169, 255),
+					//Color = new Color(18, 25, 35),
+				};
+				embed.WithFooter("AniList.co", @"https://anilist.co/img/icons/android-chrome-512x512.png");
+				string desc = "";
+				desc += $"Days: {profile.AnimeList.DaysSpent.ToString("#,##0.#")}\n";
+				desc += $"Mean Score: {profile.AnimeList.MeanScore.ToString("0.00")}\n";
+				desc += $"Completed: {profile.AnimeList.Completed.ToString("#,##0")}\n";
+				desc += $"Episodes: {profile.AnimeList.Episodes.ToString("#,###,##0")}\n";
+				embed.AddField($"Anime", desc, true);
+
+				desc = "";
+				desc += $"Mean Score: {profile.MangaList.MeanScore.ToString("0.00")}\n";
+				desc += $"Completed: {profile.MangaList.Completed.ToString("#,##0")}\n";
+				desc += $"Volumes: {profile.MangaList.Volumes.ToString("#,###,##0")}\n";
+				desc += $"Chapters: {profile.MangaList.Episodes.ToString("#,###,##0")}\n";
+				embed.AddField($"Manga", desc, true);
+
+
+				await ReplyAsync("", false, embed.Build());
+			}
+		}
+
+		[Command("ani")]
+		[Summary("Gets the user's AniList profile URL registed with the bot")]
+		[Parameters("<user>")]
+		[RequireContext(ContextType.Guild)]
+		public async Task GetAniList(IUser user) {
+			GuildUser gUser = await Settings.GetGuildUser(Context.Guild.Id, user.Id);
+			string name = user.GetName(Context.Guild);
+			if (gUser.AniListUsername == null) {
+				await ReplyAsync($"{name} has not registered their AniList account");
+			}
+			else {
+				await WriteAniListProfileEmbed(name, gUser.AniListUsername);
+			}
+		}
+
+		[Command("ani profile")]
+		[Summary("Display the AniList user's profile")]
+		[Parameters("<aniListUser>")]
+		public async Task GetAniListProfile(string url) {
+			string username = ParseAniListUserName(url);
+			if (username == null) {
+				Context.IsSuccess = false;
+				Context.CustomError = CustomCommandError.InvalidArgument;
+				Context.ErrorReason = "Invalid url or profile name";
+				return;
+			}
+			await WriteAniListProfileEmbed(username, username);
+		}
+		
+		private string ParseAniListUserName(string url) {
+			url = url.Trim();
+			if (url.StartsWith('<') && url.EndsWith('>')) {
+				url = url.Substring(1, url.Length - 2);
+			}
+			const string pattern = @"(?:^https?\:\/\/anilist\.co\/user\/|^)((?:\-|\w)+)\/?$";
+			RegexOptions options = RegexOptions.IgnoreCase;
+			Regex regex = new Regex(pattern, options);
+			Match match = regex.Match(url);
+			if (match.Success && match.Groups.Count > 0)
+				return match.Groups.Last().Value;
+			return null;
+		}
+
+		[Command("ani assign")]
+		[Summary("Registers your AniList profile with the bot")]
+		[Parameters("<profile url/username>")]
+		[RequireContext(ContextType.Guild)]
+		public async Task AssignAniList(string url) {
+			string username = ParseAniListUserName(url);
+			if (username == null) {
+				Context.IsSuccess = false;
+				Context.CustomError = CustomCommandError.InvalidArgument;
+				Context.ErrorReason = "Invalid url or profile name";
+				return;
+			}
+			using (var database = new BotDatabaseContext()) {
+				GuildUser gUser = await Settings.GetGuildUser(Context);
+				gUser.AniListUsername = username;
+				database.GuildUsers.Update(gUser);
+				await database.SaveChangesAsync();
+				Context.IsSuccess = false;
+				Context.CustomError = CustomCommandError.Success;
+			}
+		}
+
+		[Command("ani unassign")]
+		[Summary("Unregisters your AniList profile with the bot")]
+		[RequireContext(ContextType.Guild)]
+		public async Task UnassignAniList() {
+			using (var database = new BotDatabaseContext()) {
+				GuildUser gUser = await Settings.GetGuildUser(Context);
+				if (gUser.AniListUsername == null) {
+					await ReplyAsync("You do not have a registered AniList to unassign");
+					return;
+				}
+				gUser.AniListUsername = null;
+				database.GuildUsers.Update(gUser);
+				await database.SaveChangesAsync();
+				Context.IsSuccess = false;
+				Context.CustomError = CustomCommandError.Success;
+			}
+		}
+
+		[Command("ani usercount")]
+		[Summary("Gets the number of users that have registered AniList profiles")]
+		[RequireContext(ContextType.Guild)]
+		public async Task GetAniListUserCount() {
+			using (var database = new BotDatabaseContext()) {
+				ulong guildId = Context.Guild.Id;
+				var gUsers = database.GuildUsers.Where(u => u.GuildId == guildId);
+				int count = 0;
+				foreach (GuildUser gUser in gUsers) {
+					if (gUser.AniListUsername != null)
+						count++;
+				}
+				await ReplyAsync($"**Registered AniList Users:** {count}");
+			}
+		}
+		
 
 		[Command("mfc")]
 		[Summary("Gets your MFC (MyFigureCollection) profile URL registed with the bot")]

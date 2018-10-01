@@ -1,5 +1,7 @@
 {
   "status": "with Scissor Blades",
+  "activity_types": "Playing, Watching, Listening, Streaming",
+  "activity": "Playing",
   "prefix": "t/",
   "username": "trigger_chan#9840",
   "client_id": "App Client Id",

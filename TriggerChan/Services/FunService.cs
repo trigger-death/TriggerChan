@@ -290,7 +290,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 					//using (Stream stream = await client.GetStreamAsync(url)) {
 					Size size;
 					//using (Stream fileStream = File.OpenRead(inputFile)) {
-					using (var image = FreeImageAPI.FreeImageBitmap.FromFile(inputFile)) {
+					using (var image = System.Drawing.Image.FromFile(inputFile)) {
 						size = image.Size;
 					}
 					//}

@@ -16,17 +16,18 @@ namespace Maya.Music.Youtube {
 			string js = HttpHelper.DownloadString(jsUrl, null);//, proxy);
 
 			//Find "C" in this: var A = B.sig||C (B.s)
-			string functNamePattern = @"\""signature"",\s?([a-zA-Z0-9\$]+)\("; //Regex Formed To Find Word or DollarSign
+			/*string functNamePattern = @"\""signature"",\s?([a-zA-Z0-9\$]+)\("; //Regex Formed To Find Word or DollarSign
 
-			var funcName = Regex.Match(js, functNamePattern).Groups[1].Value;
+			string funcName = Regex.Match(js, functNamePattern).Groups[1].Value;
 
 			if (funcName.Contains("$")) {
 				funcName = "\\" + funcName; //Due To Dollar Sign Introduction, Need To Escape
-			}
+			}*/
 
-			string funcPattern = @"(?!h\.)" + @funcName + @"=function\(\w+\)\{.*?\}"; //Escape funcName string
-			var funcBody = Regex.Match(js, funcPattern, RegexOptions.Singleline).Value; //Entire sig function
-			var lines = funcBody.Split(';'); //Each line in sig function
+			//string funcPattern = @"(?!h\.)" + @funcName + @"=function\(\w+\)\{.*?\}"; //Escape funcName string
+			string funcPattern = @"(\w+)\s*=\s*function\(\s*(\w+)\s*\)\s*{\s*\2\s*=\s*\2\.split\(\""\""\)\s*;(.+)return\s*\2\.join\(\""\""\)\s*}\s*"; //Escape funcName string
+			string funcBody = Regex.Match(js, funcPattern, RegexOptions.Singleline).Value; //Entire sig function
+			string[] lines = funcBody.Split(';'); //Each line in sig function
 
 			string idReverse = "", idSlice = "", idCharSwap = ""; //Hold name for each cipher method
 			string functionIdentifier = "";

@@ -51,6 +51,8 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				GuildId = guildId,
 				UserId = userId,
 				MALUsername = null,
+				AniListUsername = null,
+				MFCUsername = null,
 				IsBotOwner = false,
 			};
 		}

@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -310,7 +309,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 				List<GuildEmote> emotes = new List<GuildEmote>(Context.Guild.Emotes);
 				emotes.Sort((a, b) => string.Compare(a.Name, b.Name, true));
 
-				using (MemoryStream stream = new MemoryStream(EmojiImageBuilder.CreateImage(emotes, columns))) {
+				using (MemoryStream stream = new MemoryStream(EmotePreviewBuilder.CreateImage(emotes, columns))) {
 					await Context.Channel.SendFileAsync(stream, "emotes.png");
 				}
 			}

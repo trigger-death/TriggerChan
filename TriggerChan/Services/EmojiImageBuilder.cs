@@ -17,7 +17,7 @@ using SixLabors.Primitives;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Services {
 
-	public class DownloadedGuildEmote {
+	public class DownloadedGuildEmote : IDisposable {
 		public Image<Rgba32> Image { get; set; }
 		public GuildEmote Emote { get; set; }
 		public string Name {
@@ -30,6 +30,10 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 		public DownloadedGuildEmote(GuildEmote emote, Image<Rgba32> image) {
 			Emote = emote;
 			Image = image;
+		}
+
+		public void Dispose() {
+			Image.Dispose();
 		}
 	}
 
@@ -51,7 +55,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 
 			int columns;
 			if (columnsRaw.HasValue)
-				columns = Math.Max(columnsRaw.Value, emotes.Count);
+				columns = Math.Min(columnsRaw.Value, emotes.Count);
 			else
 				columns = Math.Min(5, (int) Math.Floor(Math.Sqrt(emotes.Count)));
 			int rows = (emotes.Count + columns - 1) / columns;

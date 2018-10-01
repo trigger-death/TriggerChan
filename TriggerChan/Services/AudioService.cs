@@ -191,7 +191,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			lock (download) {
 				if (download.DownloadTask != null)
 					return;
-				string name = string.Join("_", download.Title.Split(Path.GetInvalidFileNameChars()));
+				string name = string.Join("_", download.Title.Split(Path.GetInvalidPathChars()));
 				download.FileName = BotResources.GetMusic(guildId, name, download.Extension);
 				download.DownloadTask = Task.Run(async () => { await MusicDownloader.Download(download); });
 			}
@@ -524,7 +524,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 
 		private Process CreateStream(string path) {
 			return Process.Start(new ProcessStartInfo {
-				FileName = @"C:\Users\Onii-chan\Downloads\Discord.Net-Example-1.0\Discord.Net-Example-1.0\src\bin\Debug\netcoreapp2.0\ffmpeg.exe",
+				FileName = @"ffmpeg.exe",
 				Arguments = $"-hide_banner -xerror -loglevel quiet -i \"{path}\" -ac 2 -f s16le -ar 48000 pipe:1",
 				//Arguments = $"-hide_banner -i \"{path}\" -sample_fmt s16 -ar 48000 -ac 2 -acodec libopus -b:a 192k -vbr on -compression_level 10 -map 0:a -f data pipe:1",
 				UseShellExecute = false,

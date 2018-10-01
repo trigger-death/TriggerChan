@@ -16,6 +16,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Models {
 		public bool IsBotOwner { get; set; }
 
 		public string MALUsername { get; set; }
+		public string AniListUsername { get; set; }
 		public string MFCUsername { get; set; }
 		public string SerealizedTimeZone { get; set; }
 
