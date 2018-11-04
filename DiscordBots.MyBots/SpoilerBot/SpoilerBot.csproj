@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net471;net462;netstandard2.0</TargetFrameworks>
+    <RootNamespace>TriggersTools.DiscordBots.SpoilerBot</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Database\SpoilerDbContext.cs" />
+    <Compile Remove="Database\SpoilerDbContextFactory.cs" />
+    <Compile Remove="Database\SpoilerDbProvider.cs" />
+    <Compile Remove="Model\Guild.cs" />
+    <Compile Remove="Model\SpoilerUser.cs" />
+    <Compile Remove="Services\SpoilerCommandHandlerService.cs" />
+    <Compile Remove="Services\SpoilerServiceBase - Copy.cs" />
+    <Compile Remove="Services\SpoilerServiceBase - Copy.SpoilerTasks.cs" />
+    <Compile Remove="Unused\Guild.cs" />
+    <Compile Remove="Unused\SpoilerCommandHandlerService.cs" />
+    <Compile Remove="Unused\SpoilerDbContext.cs" />
+    <Compile Remove="Unused\SpoilerDbContextFactory.cs" />
+    <Compile Remove="Unused\SpoilerDbProvider.cs" />
+    <Compile Remove="Unused\SpoilerServiceBase - Copy.cs" />
+    <Compile Remove="Unused\SpoilerServiceBase - Copy.SpoilerTasks.cs" />
+    <Compile Remove="Unused\SpoilerUser.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Unused\SpoilerDbContext.cs" />
+    <None Include="Unused\SpoilerDbContextFactory.cs" />
+    <None Include="Unused\SpoilerDbProvider.cs" />
+    <None Include="Unused\Guild.cs" />
+    <None Include="Unused\SpoilerUser.cs" />
+    <None Include="Unused\SpoilerCommandHandlerService.cs" />
+    <None Include="Unused\SpoilerServiceBase - Copy.cs" />
+    <None Include="Unused\SpoilerServiceBase - Copy.SpoilerTasks.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Commands\TriggersTools.DiscordBots.Commands.csproj" />
+    <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Core\TriggersTools.DiscordBots.Core.csproj" />
+    <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Database\TriggersTools.DiscordBots.Database.csproj" />
+    <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Implementation\TriggersTools.DiscordBots.Implementation.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,137 @@
+﻿{
+  "prefix": "s;",
+
+  "embed_color": "#00C27E",
+
+  "about_title": "<:LensOfTruthEye:501441037684834318> Lens of Truth the Spoiler Bot",
+  "help_title": "<:LensOfTruthEye:501441037684834318> Lens of Truth: Commands",
+  "reactions_title": "<:LensOfTruthEye:501441037684834318> Lens of Truth: Reactions",
+  "about_description": "The Lens of Truth will conceal spoilers from other users. Reacting to a spoiler with 🔍 will send the contents of the spoiler to your DM. Unreacting will remove the spoiler from your DM.",
+  "help_description": "The Lens of Truth will conceal spoilers from other users. Reacting to a spoiler with 🔍 will send the contents of the spoiler to your DM. Unreacting will remove the spoiler from your DM.",
+  "reactions_description": "The following reactions are used to interact with the Lens of Truth",
+
+  "about_links": [
+    {
+      "name": "GitHub Repo",
+      "url": "https://github.com/trigger-death/TriggerChan"
+    },
+    {
+      "name": "Invite Link",
+      "url": "https://discordapp.com/api/oauth2/authorize?client_id=497125828120018945&permissions=10304&scope=bot"
+    }
+  ],
+  "log": {
+    "debug": true,
+    "trace": true,
+    "print": true,
+    "notice": true
+  },
+  "config": {
+    "DiscordSocketConfig": {
+      "DefaultRetryMode": "AlwaysRetry",
+      "LogLevel": "Info",
+      "MessageCacheSize": 1000,
+      "AlwaysDownloadUsers": false,
+      "LargeThreshold": null
+    },
+    "CommandServiceConfig": {
+      "DefaultRunMode": "Async",
+      "SeparatorChar": " ",
+      "CaseSensitiveCommands": false,
+      "LogLevel": "Verbose",
+      "ThrowOnError": null,
+      "IgnoreExtraArgs": false
+    },
+    "ReliabilityConfig": {
+      "Enabled": true,
+      "Timeout": "0:00:30",
+      "AttemptReset": true,
+      "DebugSeverity": "Debug",
+      "InfoSeverity": "Info",
+      "CriticalSeverity": "Critical"
+    }
+  },
+  "socket_config": {
+    "Version": null,
+    "UserAgent": null,
+    "DefaultRetryMode": null,
+    "LogLevel": null,
+    "GatewayHost": null,
+    "ConnectionTimeout": null,
+    "ShardId": null,
+    "TotalShards": null,
+    "MessageCacheSize": null,
+    "LargeThreshold": null,
+    "WebSocketProvider": null,
+    "UdpSocketProvider": null,
+    "AlwaysDownloadUsers": null,
+    "HandlerTimeout": null
+  },
+  "status": {
+    // Activities: Playing, Watching, Listening, Streaming
+    "interval_min": "0:15",
+    "interval_max": "3:00",
+
+    "release": [
+      // Playing Games
+      "$PLAYING$",
+      "The Legend of Zelda",
+      "The Adventure of Link",
+      "A Link to the Past",
+      "Link's Awakening",
+      "Ocarina of Time",
+      "Majora's Mask",
+      "Oracle of Ages",
+      "Oracle of Seasons",
+      "Four Swords",
+      "The Wind Waker",
+      "Four Swords Adventures",
+      "The Minish Cap",
+      "Twilight Princess",
+      "Phantom Hourglass",
+      "Spirit Tracks",
+      "Skyward Sword",
+      "A Link Between Worlds",
+      "Tri Force Heroes",
+      "Breath of the Wild",
+
+      // Playing Dungeons
+      "the Water Temple",
+
+      // Playing Ocarina
+      // Notes: ▲ ► ◄ ▼ A (Turns into emoji on mobile ▶ ◀)
+      "▼ ► ◄ ▼ ► ◄", // Saria's Song
+      "◄ ▲ ► ◄ ▲ ►", // Zelda's Lullaby
+      "◄ ► ▼ ◄ ► ▼", // Song of Healing
+      "A ▼ ▲ A ▼ ▲", // Song of Storms
+      "► A ▼ ► A ▼", // Song of Time
+      "► ▼ A ▼ ► ▲", // Oath to Order
+      "A ▲ ◄ ► ◄ ►", // Minuet of Forest
+
+      // Watching
+      "$WATCHING$",
+      "I wonder what's for dinner?",
+      "over the Triforce",
+      "Dead Hand nightmares",
+
+      // Listening
+      "$LISTENING$",
+      "Theophany: Time's End",
+      "Theophany: Time's End II",
+      "Ballad of the Wind Fish",
+      "the Owl repeating himself",
+      "Saria's Song",
+      "New Wave Bossa Nova",
+      "Guru-Guru",
+      "Triforce Quartet",
+
+      // Streaming
+      "$STREAMING$"
+
+    ] /*,
+    "debug": [
+      "$PLAYING$",
+      "Golden Bug Hunting"
+    ]*/
+  }
+}

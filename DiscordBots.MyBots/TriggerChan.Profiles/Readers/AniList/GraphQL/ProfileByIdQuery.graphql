@@ -1,0 +1,38 @@
+query($userid: Int) {
+  user: User(id: $userid) {
+    id
+    name
+    avatar {
+      large
+      medium
+    }
+    stats {
+      watchedTime
+      chaptersRead
+      animeListScores {
+        meanScore
+        standardDeviation
+      }
+      mangaListScores {
+        meanScore
+        standardDeviation
+      }
+    }
+  }
+  anime: MediaListCollection(userId: $userid, type: ANIME) {
+    lists {
+      entries {
+        progress
+      }
+	  status
+    }
+  }
+  manga: MediaListCollection(userId: $userid, type: MANGA) {
+    lists {
+      entries {
+        progressVolumes
+      }
+	  status
+    }
+  }
+}

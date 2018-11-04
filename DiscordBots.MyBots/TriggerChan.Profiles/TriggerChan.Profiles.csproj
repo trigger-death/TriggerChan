@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net471;net462;netstandard2.0</TargetFrameworks>
+    <RootNamespace>TriggersTools.DiscordBots.TriggerChan.Profiles</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Readers\AniList\AniListProfileByIdQuery.graphql" />
+    <None Remove="Readers\AniList\AniListProfileByNameQuery.graphql" />
+    <None Remove="Readers\AniList\AniListUsernameQuery.graphql" />
+    <None Remove="Readers\AniList\GraphQL\UserByNameQuery.graphql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Readers\AniList\GraphQL\ProfileByIdQuery.graphql">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Readers\AniList\GraphQL\ProfileByNameQuery.graphql">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Readers\AniList\GraphQL\UserByNameQuery.graphql" />
+    <EmbeddedResource Include="Readers\AniList\GraphQL\UserByIdQuery.graphql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.8.9" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Core\TriggersTools.DiscordBots.Core.csproj" />
+    <ProjectReference Include="..\..\Libraries\JikanDotNet\JikanDotNet.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Readers\MyAnimeList\" />
+    <Folder Include="Readers\MyFigureCollection\" />
+  </ItemGroup>
+
+</Project>

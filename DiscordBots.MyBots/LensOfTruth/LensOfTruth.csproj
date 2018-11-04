@@ -1,0 +1,185 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net471;net462;netcoreapp2.1</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>TriggersTools.DiscordBots.SpoilerBot</RootNamespace>
+    <ApplicationIcon>LensOfTruth.ico</ApplicationIcon>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Model\DM.cs" />
+    <Compile Remove="Services\ColorService.cs" />
+    <Compile Remove="Services\SpoilerSpellCheckService.cs" />
+    <Compile Remove="Unused\BitRotating.cs" />
+    <Compile Remove="Unused\CodeBlock.cs" />
+    <Compile Remove="Unused\ColorService.cs" />
+    <Compile Remove="Unused\DM.cs" />
+    <Compile Remove="Unused\GuildEmote.cs" />
+    <Compile Remove="Unused\ProfileModule.cs" />
+    <Compile Remove="Unused\ReactionsService.cs" />
+    <Compile Remove="Unused\Role.cs" />
+    <Compile Remove="Unused\SpoilerService.ParsedSpoiler.cs" />
+    <Compile Remove="Unused\SpoilerService.SpoilerAttachmentWaitContext.cs" />
+    <Compile Remove="Unused\SpoilerService.WaitingSpoilerCollection.cs" />
+    <Compile Remove="Unused\SpoilerService.WaitingSpoilerCollectionDM.cs" />
+    <Compile Remove="Unused\SpoilerSpellCheckService.cs" />
+    <Compile Remove="Unused\StringExtensions.cs" />
+    <Compile Remove="Unused\StringUrl.cs" />
+    <Compile Remove="Unused\StringUrlExtensions.cs" />
+    <Compile Remove="Unused\UserProfile.cs" />
+    <Compile Remove="Utils\CodeBlock.cs" />
+    <Compile Remove="Utils\StringExtensions.cs" />
+    <Compile Remove="Utils\StringUrl.cs" />
+    <Compile Remove="Utils\StringUrlExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Config.Private.json" />
+    <EmbeddedResource Include="Config.Private.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Unused\BitRotating.cs" />
+    <None Include="Unused\SpoilerSpellCheckService.cs" />
+    <None Include="Unused\DM.cs" />
+    <None Include="Unused\ColorService.cs" />
+    <None Include="Unused\GuildEmote.cs" />
+    <None Include="Unused\ProfileModule.cs" />
+    <None Include="Unused\ReactionsService.cs" />
+    <None Include="Unused\Role.cs" />
+    <None Include="Unused\SpoilerService.ParsedSpoiler.cs" />
+    <None Include="Unused\SpoilerService.SpoilerAttachmentWaitContext.cs" />
+    <None Include="Unused\SpoilerService.WaitingSpoilerCollection.cs" />
+    <None Include="Unused\SpoilerService.WaitingSpoilerCollectionDM.cs" />
+    <None Include="Unused\UserProfile.cs" />
+    <None Include="Unused\CodeBlock.cs" />
+    <None Include="Unused\StringExtensions.cs" />
+    <None Include="Unused\StringUrl.cs" />
+    <None Include="Unused\StringUrlExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="TriggersTools.Build.BuildTime" Version="1.0.0" />
+    <PackageReference Include="WeCantSpell.Hunspell" Version="3.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Commands\TriggersTools.DiscordBots.Commands.csproj" />
+    <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Core\TriggersTools.DiscordBots.Core.csproj" />
+    <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Database\TriggersTools.DiscordBots.Database.csproj" />
+    <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Implementation\TriggersTools.DiscordBots.Implementation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Config.Public.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\A.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\B.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\Down.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\Left.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\LT.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\Right.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\RT.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\Sandstone.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\SandstoneBackground.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\SandstoneFlipped.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\Staff.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\StaffBar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\StaffExpansion.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\StaffTransparent.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\Start.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\TitleBar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\Up.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Epona%27s Song.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Eulegy of Emptyness.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Goron Lullaby.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Inverted Song of Time.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\New Wave Bossa Nova.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Oath to Order.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Saria%27s Song.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Sonata of Awakening.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Song of Double Time.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Song of Healing.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Song of Soaring.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Song of Storms.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Song of Time.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Sun%27s Song.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Zelda%27s Lullaby.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

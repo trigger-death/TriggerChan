@@ -17,6 +17,8 @@
 
 # Config file with sensitive information
 [Cc]onfig.json
+[Cc]onfig.[Pp]rotected.json
+[Cc]onfig.[Pp]rivate.json
 
 # No need to bring over migration data
 Migrations/

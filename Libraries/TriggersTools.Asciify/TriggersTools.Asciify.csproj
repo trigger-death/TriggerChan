@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net471;net462;netstandard2.0</TargetFrameworks>
+    <Version>0.0.1</Version>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\BitmapFonts\Terminal10x18.png" />
+    <None Remove="Resources\BitmapFonts\Terminal12x16.png" />
+    <None Remove="Resources\BitmapFonts\Terminal16x12.png" />
+    <None Remove="Resources\BitmapFonts\Terminal16x8.png" />
+    <None Remove="Resources\BitmapFonts\Terminal4x6.png" />
+    <None Remove="Resources\BitmapFonts\Terminal5x12.png" />
+    <None Remove="Resources\BitmapFonts\Terminal6x8.png" />
+    <None Remove="Resources\BitmapFonts\Terminal7x12.png" />
+    <None Remove="Resources\BitmapFonts\Terminal8x12.png" />
+    <None Remove="Resources\BitmapFonts\Terminal8x8.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\BitmapFonts\Terminal10x18.png" />
+    <EmbeddedResource Include="Resources\BitmapFonts\Terminal12x16.png" />
+    <EmbeddedResource Include="Resources\BitmapFonts\Terminal16x12.png" />
+    <EmbeddedResource Include="Resources\BitmapFonts\Terminal16x8.png" />
+    <EmbeddedResource Include="Resources\BitmapFonts\Terminal4x6.png" />
+    <EmbeddedResource Include="Resources\BitmapFonts\Terminal5x12.png" />
+    <EmbeddedResource Include="Resources\BitmapFonts\Terminal6x8.png" />
+    <EmbeddedResource Include="Resources\BitmapFonts\Terminal7x12.png" />
+    <EmbeddedResource Include="Resources\BitmapFonts\Terminal8x12.png" />
+    <EmbeddedResource Include="Resources\BitmapFonts\Terminal8x8.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
+  </ItemGroup>
+
+</Project>

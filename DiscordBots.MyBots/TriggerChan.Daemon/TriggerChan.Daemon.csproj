@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net471;net462;netcoreapp2.1</TargetFrameworks>
+    <ApplicationIcon>Resources\TriggerChan.Right.ico</ApplicationIcon>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Configurations>Debug;Release;Publish</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <OutputPath>..\TriggerChan\bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <OutputPath>..\TriggerChan\bin\Release\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Publish'">
+    <OutputPath>..\TriggerChan\bin\Publish\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Daemon\TriggersTools.DiscordBots.Daemon.csproj" />
+    <ProjectReference Include="..\TriggerChan\TriggerChan.csproj" />
+  </ItemGroup>
+
+</Project>

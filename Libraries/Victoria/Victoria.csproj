@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <NoWarn>1591, 1571</NoWarn>
+        <LangVersion>latest</LangVersion>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Version>2.3.2</Version>
+        <Title>Victoria</Title>
+        <Authors>Yucked</Authors>
+        <Description>Lavalink wrapper written for Discord.NET.</Description>
+        <Copyright>2018 Yucked. All rights reserved.</Copyright>
+        <PackageReleaseNotes>Thanks to TheNoodleMummy for PR#2 which fixed playing local files. Fixed modifiiers, changed buffer size to 2048.</PackageReleaseNotes>
+        <PackageTags>Lavalink, Wrapper, Discord Music, Yucked</PackageTags>
+        <PackageProjectUrl>https://github.com/Yucked/Victoria</PackageProjectUrl>
+        <PackageIconUrl>https://i.imgur.com/F34NrfQ.png</PackageIconUrl>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+        <DocumentationFile>bin\Debug\netstandard2.0\Victoria.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+        <DocumentationFile>bin\Release\netstandard2.0\Victoria.xml</DocumentationFile>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <DefineConstants>DEBUG;TRACE</DefineConstants>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="HyperEx" Version="1.0.5" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Core\TriggersTools.DiscordBots.Core.csproj" />
+    </ItemGroup>
+
+</Project>

@@ -1,0 +1,48 @@
+﻿{
+  "database": {
+    // Base64 encryption key
+    "encryption": "AAAAAAAAAAAAAAAAAAAAAA==",
+    // Define connection methods for the database context of this type
+    "TriggerDbContext": {
+      // Use the "sqlite" configuration listed below
+      "configuration": "sqlite", // I'm using "npgsql" in release
+
+      // SQLite
+      "sqlite": {
+        "type": "SqliteConfiguration",
+        "file": "TriggerChan.sqlite",
+        "password": null // Password encryption is too slow
+      },
+      // PostgreSQL
+      "npgsql": {
+        "type": "NpgsqlConfiguration",
+        "connection_string": {
+          "Server": "localhost",
+          "Database": "database",
+          "Username": "postgres",
+          "Password": "password"
+        }
+      }
+    }
+  },
+  "ids": {
+    "discord": {
+      // An optional channel Id to send report logs to
+      "report_channel": 123456789012345678,
+      // User Ids (besides the bot owner) who are authorized to send superuser commands
+      "superuseres": [
+        123456789012345678
+      ]
+    }
+  },
+  "tokens": {
+    // Put your secret bot token here
+    "discord": "ThiS_IsAsECretToKen4BoT2.BuTnOt.aRealToKeN-GeT1FrOmDisCo8rd"
+  },
+  "api_keys": {
+    // Fancy secret keys go here
+  },
+  "accounts": {
+    // Required account logins go here
+  }
+}

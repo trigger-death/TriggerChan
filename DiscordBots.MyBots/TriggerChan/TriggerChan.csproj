@@ -1,0 +1,343 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net471;net462;netcoreapp2.1</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>TriggersTools.DiscordBots.TriggerChan</RootNamespace>
+    <ApplicationIcon>Resources\TriggerChan.Right.ico</ApplicationIcon>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Copyright>© Robert Jordan {YEAR}</Copyright>
+    <Company>Trigger's Tools &amp; Games</Company>
+    <Authors>Robert Jordan</Authors>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+    <PackageReleaseNotes>New Discord Bot Framework</PackageReleaseNotes>
+    <PackageTags>discord, bot, spoiler, anime</PackageTags>
+    <RepositoryUrl>https://github.com/trigger-death/TriggerChan</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/trigger-death/TriggerChan</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/trigger-death/TriggerChan/blob/master/License.md</PackageLicenseUrl>
+    <Description>I was made by trigger_death for use in a small selection of Discord servers. My selling features are spoilers, inserting claps between words, drawing Divergence Meters, and other fun or helpful commands.</Description>
+    <Version>2.0.5</Version>
+    <Configurations>Debug;Release;Publish</Configurations>
+  </PropertyGroup>
+
+  <!-- MSBump Configuration -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug' Or '$(Configuration)' == 'Release'">
+    <BumpLabel>beta</BumpLabel>
+    <BumpLabelDigits>4</BumpLabelDigits>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Publish'">
+    <BumpResetLabel>beta</BumpResetLabel>
+    <BumpPatch>True</BumpPatch>
+  </PropertyGroup>
+
+  <!-- NuGet Packages -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.4" />
+    <PackageReference Include="MSBump" Version="2.3.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="TimeZoneNames" Version="3.3.4" />
+    <PackageReference Include="TriggersTools.Build.BuildTime" Version="1.0.0" />
+    <PackageReference Include="TriggersTools.Build.CopyrightYear" Version="1.0.0" />
+    <PackageReference Include="TriggersTools.SteinsGate.Divergence" Version="1.0.1" />
+    <PackageReference Include="WeCantSpell.Hunspell" Version="3.0.1" />
+  </ItemGroup>
+
+  <!-- Project References -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Commands\TriggersTools.DiscordBots.Commands.csproj" />
+    <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Core\TriggersTools.DiscordBots.Core.csproj" />
+    <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Database\TriggersTools.DiscordBots.Database.csproj" />
+    <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Implementation\TriggersTools.DiscordBots.Implementation.csproj" />
+    <ProjectReference Include="..\..\Libraries\TriggersTools.Asciify\TriggersTools.Asciify.csproj" />
+    <ProjectReference Include="..\..\Libraries\Victoria\Victoria.csproj" />
+    <ProjectReference Include="..\SpoilerBot\SpoilerBot.csproj" />
+    <ProjectReference Include="..\TriggerChan.Profiles\TriggerChan.Profiles.csproj" />
+  </ItemGroup>
+
+  <!-- Config.json Files -->
+  <ItemGroup>
+    <None Remove="Config.Private.Example.json" />
+    <EmbeddedResource Include="Config.Private.Example.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <None Update="Application.yml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config.Private.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config.Public.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Audio\AudioCurrentItem.cs" />
+    <Compile Remove="Audio\AudioQueue.cs" />
+    <Compile Remove="Audio\AudioQueue.Service.cs" />
+    <Compile Remove="Audio\AudioQueueItem.cs" />
+    <Compile Remove="Model\ContextBase.cs" />
+    <Compile Remove="Model\Spoiler.cs" />
+    <Compile Remove="Modules\Outdated\AudioModule.cs" />
+    <Compile Remove="Modules\Outdated\InformationModule.cs" />
+    <Compile Remove="Modules\SpoilerModule.cs" />
+    <Compile Remove="Modules\SpoilerModule2.cs" />
+    <Compile Remove="Outdated\Maya\Decipherer.cs" />
+    <Compile Remove="Outdated\Maya\DownloadInfo.cs" />
+    <Compile Remove="Outdated\Maya\HttpHelper.cs" />
+    <Compile Remove="Outdated\Maya\MusicDownloader.cs" />
+    <Compile Remove="Outdated\Maya\SongInfo.cs" />
+    <Compile Remove="Outdated\Maya\Types.cs" />
+    <Compile Remove="Outdated\Maya\YouTubeInfo.cs" />
+    <Compile Remove="Outdated\Maya\YouTubeUrlResolver.cs" />
+    <Compile Remove="Outdated\MFC\MFCProfile.cs" />
+    <Compile Remove="Services\AudioQueueService.cs" />
+    <Compile Remove="Services\SpoilerService.cs" />
+    <Compile Remove="Services\SpoilerService.SpoilerTasks.cs" />
+    <Compile Remove="Services\TriggerSpoilerService.cs" />
+    <Compile Remove="Unused\AudioCurrentItem.cs" />
+    <Compile Remove="Unused\AudioQueue.cs" />
+    <Compile Remove="Unused\AudioQueue.Service.cs" />
+    <Compile Remove="Unused\AudioQueueItem.cs" />
+    <Compile Remove="Unused\AudioQueueService.cs" />
+    <Compile Remove="Unused\AudioService.cs" />
+    <Compile Remove="Unused\AudioState.cs" />
+    <Compile Remove="Unused\InformationModule.cs" />
+    <Compile Remove="Unused\Ref.cs" />
+    <Compile Remove="Unused\Spoiler.cs" />
+    <Compile Remove="Unused\SpoilerModule.cs" />
+    <Compile Remove="Unused\SpoilerModule2.cs" />
+    <Compile Remove="Unused\SpoilerService.cs" />
+    <Compile Remove="Unused\SpoilerService.SpoilerTasks.cs" />
+    <Compile Remove="Unused\TriggerSpoilerService.cs" />
+    <Compile Remove="Utils\Ref.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Model\ContextBase.cs" />
+    <None Include="Outdated\Maya\Decipherer.cs" />
+    <None Include="Outdated\Maya\DownloadInfo.cs" />
+    <None Include="Outdated\Maya\HttpHelper.cs" />
+    <None Include="Outdated\Maya\MusicDownloader.cs" />
+    <None Include="Outdated\Maya\SongInfo.cs" />
+    <None Include="Outdated\Maya\Types.cs" />
+    <None Include="Outdated\Maya\YouTubeInfo.cs" />
+    <None Include="Outdated\Maya\YouTubeUrlResolver.cs" />
+    <None Include="Unused\AudioCurrentItem.cs" />
+    <None Include="Unused\AudioQueue.cs" />
+    <None Include="Unused\AudioQueue.Service.cs" />
+    <None Include="Unused\AudioQueueItem.cs" />
+    <None Include="Modules\Outdated\AudioModule.cs" />
+    <None Include="Unused\AudioQueueService.cs" />
+    <None Include="Unused\AudioService.cs" />
+    <None Include="Unused\AudioState.cs" />
+    <None Include="Unused\Spoiler.cs" />
+    <None Include="Unused\InformationModule.cs" />
+    <None Include="Unused\SpoilerModule.cs" />
+    <None Include="Unused\SpoilerModule2.cs" />
+    <None Include="Outdated\MFC\MFCProfile.cs" />
+    <None Include="Unused\SpoilerService.cs" />
+    <None Include="Unused\SpoilerService.SpoilerTasks.cs" />
+    <None Include="Unused\TriggerSpoilerService.cs" />
+    <None Include="Unused\Ref.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Commands\Attributes\Preconditions\" />
+    <Folder Include="Commands\Readers\" />
+    <Folder Include="Profiles\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="*.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="*.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\*.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\*\*.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\*.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\*\*.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\*.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\*\*.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Lavalink.jar">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\Amane_Wink.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\Disgusting.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\Dont_Touch_Me_Pervert.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\Inferno_Cop.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\JavaScript.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\Juicy_Yuuji.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\Long_Runner.jpg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\Makina_Roger.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\Makina_Thehell.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\Man_of_Culture.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\Merge_Conflict.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\Michiru_Brag.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\Michiru_Smug.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\Sachi_Glare.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\Sachi_Scales.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\Yumiko_Cutter.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Images\*.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\*.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\A.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\B.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\Down.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\Left.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\LT.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\Right.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\RT.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\Sandstone.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\SandstoneBackground.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\SandstoneFlipped.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\Staff.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\StaffBar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\StaffExpansion.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\StaffTransparent.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\Start.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\TitleBar.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Graphics\Up.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Epona%27s Song.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Eulegy of Emptyness.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Goron Lullaby.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Inverted Song of Time.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\New Wave Bossa Nova.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Oath to Order.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Saria%27s Song.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Sonata of Awakening.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Song of Double Time.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Song of Healing.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Song of Soaring.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Song of Storms.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Song of Time.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Sun%27s Song.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Ocarina\Songs\Zelda%27s Lullaby.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet">
+      <Version>2.0.3</Version>
+    </PackageReference>
+  </ItemGroup>
+</Project>

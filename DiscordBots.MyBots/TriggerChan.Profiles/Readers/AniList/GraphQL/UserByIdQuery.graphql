@@ -1,0 +1,6 @@
+query(userid: String) {
+  user: User(id: userid) {
+    id
+    name
+  }
+}

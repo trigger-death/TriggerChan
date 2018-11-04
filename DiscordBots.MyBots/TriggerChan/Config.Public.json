@@ -1,0 +1,162 @@
+﻿{
+  // Customization
+  "prefix": "tb/",
+  "embed_color": "#F65C56",
+  "embed_prefix": "<:trigger_chan:506519254884024340>  ",
+  "nickname": "Trigger-chan", // β
+  "verion_postfix": null,
+
+  "about_title": "$NICKNAME$ on Space Patrol",
+  "help_title": "$NICKNAME$: Commands",
+  "reactions_title": "$NICKNAME$: Reactions",
+  "locked_title": "$NICKNAME$: Locked Commands",
+  "lockable_title": "$NICKNAME$: Lockable Commands",
+  "about_desc": "I was made by trigger_death for use in a small selection of Discord servers. My selling features are spoilers, inserting claps between words, drawing Divergence Meters, and other fun or helpful commands.\n\nPlease be nice to me. (ﾉ´ヮ`)ﾉ*: ･ﾟ",
+  "help_desc": "Type `help <commandName>` and I'll show you how a command is used. Make sure to not include the `[]` and `<>` braces. These are just here to show what is and isn't optional.",
+  "reactions_desc": "I react with, and respond to the following reactions.",
+  "locked_desc": "These are the commands that I have locked, and thus cannot be used. Commands prefixed with `🔒` are locked directly",
+  "lockable_desc": "These are the commands that I will allow you to lock. Commands prefixed with `🔓` can be locked directly,",
+
+  "about_links": [
+    {
+      "name": "GitHub Repo",
+      "url": "https://github.com/trigger-death/TriggerChan"
+    },
+    {
+      "name": "Avatar by zwimmy",
+      "url": "https://www.deviantart.com/zwimmy/art/Trigger-chan-711192608"
+    }
+  ],
+
+  // DefaultLoggingService: Configuration
+  "log": {
+    "debug": true,
+    "trace": true,
+    "print": true,
+    "notice": true
+  },
+  // Configuration types
+  "config": {
+    // These configurations must use the class name of the
+    // Config type and the property names for the settings
+    "DiscordSocketConfig": {
+      "DefaultRetryMode": "AlwaysRetry",
+      "LogLevel": "Info",
+      "MessageCacheSize": 1000,
+      "AlwaysDownloadUsers": false,
+      "LargeThreshold": null
+    },
+    "CommandServiceConfig": {
+      "DefaultRunMode": "Async",
+      "SeparatorChar": " ",
+      "CaseSensitiveCommands": false,
+      "LogLevel": "Verbose",
+      "ThrowOnError": null,
+      "IgnoreExtraArgs": false
+    },
+    "ReliabilityConfig": {
+      "Enabled": true,
+      "Timeout": "0:00:30",
+      "AttemptReset": true,
+      "DebugSeverity": "Debug",
+      "InfoSeverity": "Info",
+      "CriticalSeverity": "Critical"
+    }
+  },
+  // StatusRotationService: List all status rotations
+  "status": {
+    // The time span range a status will stay active for before rotating
+    "interval_min": "1:30",
+    "interval_max": "5:00",
+
+    // Activities: Playing, Watching, Listening, Streaming
+    // Activity Tokens: $PLAYING$, $WATCHING$, $LISTENING$, $STREAMING$
+
+    // Statuses used in release mode, (or when no debug statuses are present)
+    "release": [
+      // Playing
+      "$PLAYING$",
+      "Saya no Uta",
+      "Grisaia no Kajitsu",
+      "Grisaia no Meikyuu",
+      "Grisaia no Rakuen",
+      "Katawa Shoujo",
+      "Hyper Dimension Neptunia",
+      "Steins;Gate 0",
+      "Idol Mahou Shoujo Chiruchiru ☆ Michiru",
+      "Interactive Buddy",
+      "Pajama Sam 2: Thunder And Lightning Aren't So Frightening",
+      "Distance",
+      "OpenRCT2",
+      "Viscera Cleanup Detail",
+      "Skyrim on Commodore 64",
+      "Metroid Prime: Trilogy",
+
+      // Playing Jokes
+      "with Scissor Blades",
+      "Hide the Spoiler",
+
+      // Watching Anime
+      "$WATCHING$",
+      "Hacka Doll the Animation",
+      "Space Patrol Luluco",
+      "Inferno Cop",
+      "Kill la Kill",
+      "Shelter",
+      "Bobobo-bo Bo-bobo",
+      "Ghost Stories dub",
+      "Space☆Dandy",
+      "Haiyore! Nyaruko-san",
+
+      // Watching Non-anime
+      "The IT Crowd",
+
+      // Watching AMVs
+      "Just Funkin' Dandy",
+
+      // Watching Jokes
+      "out for Enemy Stands",
+      "Netflix anime adaptions",
+      "The Bee Movie, but every bee is replaced with a cute anime girl",
+
+      // Listening Songs
+      "$LISTENING$",
+      "DADADADADADADADADADA",
+      "Before my Body is Dry",
+      "Running in the 90's",
+      "Monika No. 5",
+      "Platinum Level Circulation",
+      "Re:Re:",
+      "Touch Fluffy Tail",
+      "Kouchou Kouchou",
+      "God Knows",
+      "Wonderball 101",
+      "Slamamari Jamacy",
+      "Pixelove",
+      "Into Starlight",
+      "Moe Jazz Dreamer (BOSSA NOVA ver.)",
+      "A Cruel Angel's Thesis",
+      "Walk Like An Egyptian",
+      "You Say Run",
+
+      // Listening Vague
+      "Nep, Nep, Nep, Nep, Nep, Nep! (10 Hours)",
+      "Space Jam remixes",
+      "IOSYS",
+      "Distance OST",
+      "Touhou remixes",
+
+      // Listening Jokes
+      "Leskinin's beautiful voice",
+
+      // Streaming
+      "$STREAMING$"
+
+    ] /*,
+    // Optional debug statuses
+    "debug": [
+      "$PLAYING$",
+      "find the Segfault"
+    ]*/
+  }
+}

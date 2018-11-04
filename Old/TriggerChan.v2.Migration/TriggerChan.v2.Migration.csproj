@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DiscordBots.MyBots\TriggerChan\TriggerChan.csproj" />
+    <ProjectReference Include="..\TriggersTools.DiscordBots.TriggerChan.Old\TriggersTools.DiscordBots.TriggerChan.Old.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="trigger_chan.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
