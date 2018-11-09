@@ -14,7 +14,8 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		
 		[Group("tz"), Alias("timezone")]
 		[Usage("[<user>|assign <iana|abbreviation>|unassign]")]
-		[Summary("Lookup a user's current time or register timezones")]
+		[Summary("Lookup a user's current time or register your timezone")]
+		[Remarks("Use [Time Zone Converter](http://www.timezoneconverter.com/cgi-bin/findzone) to help find your timezone IANA Id")]
 		public class TimeZoneGroup : TimeZoneModule {
 
 			private readonly TimeZoneService timeZones;

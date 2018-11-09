@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Discord;
 using Discord.WebSocket;
 
@@ -182,11 +183,11 @@ namespace TriggersTools.DiscordBots.Services {
 
 				if (task == timeout) {
 					await CriticalAsync("Client reset timed out (task deadlocked?), killing process").ConfigureAwait(false);
-					await RestartAsync().ConfigureAwait(false);
+					ForceRestart();
 				}
 				else if (connect.IsFaulted) {
 					await CriticalAsync("Client reset faulted, killing process", connect.Exception).ConfigureAwait(false);
-					await RestartAsync().ConfigureAwait(false);
+					ForceRestart();
 				}
 				else if (connect.IsCompleted && connect.Status == TaskStatus.RanToCompletion)
 					await InfoAsync("Client reset succesfully!").ConfigureAwait(false);
@@ -194,12 +195,12 @@ namespace TriggersTools.DiscordBots.Services {
 			}
 
 			await CriticalAsync("Client did not reconnect in time, killing process").ConfigureAwait(false);
-			await RestartAsync().ConfigureAwait(false);
+			ForceRestart();
 		}
 		/// <summary>
-		/// Restarts the program.
+		/// Forcefully restarts the program.
 		/// </summary>
-		private Task RestartAsync() => discordBot.RestartAsync();
+		private void ForceRestart() => Environment.Exit(0);
 
 		#endregion
 

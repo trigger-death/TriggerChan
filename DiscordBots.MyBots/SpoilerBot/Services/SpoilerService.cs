@@ -321,12 +321,12 @@ namespace TriggersTools.DiscordBots.SpoilerBot.Services {
 
 				if (dmCommand) {
 					var dm = await Client.GetUser(spoiler.AuthorId).GetOrCreateDMChannelAsync().ConfigureAwait(false);
-					await dm.SendMessageAsync($"**Spoiler: {Format.Sanitize(spoiler.Title)} Deleted!**" +
+					await dm.SendMessageAsync($"**Spoiler: {Format.Sanitize(spoiler.Title)} Deleted!** " +
 						$"Here is the command text if you are correcting a mistake.").ConfigureAwait(false);
 					await dm.SendMessageAsync(spoiler.Command).ConfigureAwait(false);
 				}
 
-				await RemoveSpoilerAsync(db, spoiler).ConfigureAwait(false);
+				//await RemoveSpoilerAsync(db, spoiler).ConfigureAwait(false);
 				return true;
 			}
 		}

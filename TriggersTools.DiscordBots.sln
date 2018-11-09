@@ -67,7 +67,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Annie", "Libraries\Annie\An
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Victoria", "Libraries\Victoria\Victoria.csproj", "{B0160BAE-FDC6-40CA-8E1C-1E9365553B85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TriggerChan.v2.Migration", "Old\TriggerChan.v2.Migration\TriggerChan.v2.Migration.csproj", "{5FFF0F3A-E492-4E5B-AE43-D3ED7A2176C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TriggerChan.v2.Migration", "Old\TriggerChan.v2.Migration\TriggerChan.v2.Migration.csproj", "{5FFF0F3A-E492-4E5B-AE43-D3ED7A2176C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -33,6 +33,7 @@ namespace TriggersTools.DiscordBots.SpoilerBot.Modules {
 		[Usage("[raw] [up|upload|remove <last|messageId>|rename <last|messageId> <title...>] [<{title}>] [<content...>]")]
 		[Summary("Hide a spoiler behind a message that can be viewed by reacting with 🔍")]
 		[Remarks("`content...` must be included when the first argument is not present\nIt's common courtesy to include a `{title}` with all spoilers")]
+		[RequiresContext(ContextType.Guild)]
 		public class SpoilerGroup : DiscordBotModule {
 
 			#region Fields

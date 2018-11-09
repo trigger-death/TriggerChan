@@ -9,7 +9,7 @@ using Discord;
 using Discord.Commands;
 using ImageFormat = System.Drawing.Imaging.ImageFormat;
 
-namespace TriggersTools.DiscordBots.TriggerChan.Extensions {
+namespace TriggersTools.DiscordBots.Extensions {
 	public static class BitmapExtensions {
 
 		/*public static Task<IUserMessage> ReplyBitmapAsync<T>(this ModuleBase<T> module, Bitmap bitmap, string filename, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null)

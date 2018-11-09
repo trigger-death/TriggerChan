@@ -16,227 +16,8 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 		public ColorI Center;
 		public ColorI All;
 	}*/
-	internal struct SectionedLab {
-		public ColorLab Left;
-		public ColorLab Right;
-		public ColorLab Top;
-		public ColorLab Bottom;
-		public ColorLab Center;
-		public ColorLab All;
-
-		public SectionedLab(ColorLab uniform) {
-			Left = uniform;
-			Right = uniform;
-			Top = uniform;
-			Bottom = uniform;
-			Center = uniform;
-			All = uniform;
-		}
-
-		public SectionedLab(ColorLab l, ColorLab r, ColorLab t, ColorLab b, ColorLab c, ColorLab a) {
-			Left = l;
-			Right = r;
-			Top = t;
-			Bottom = b;
-			Center = c;
-			All = a;
-		}
-
-		public static SectionedLab operator +(SectionedLab a, SectionedLab b) =>
-			new SectionedLab(
-				a.Left + b.Left, a.Right + b.Right,
-				a.Top + b.Top, a.Bottom + b.Bottom,
-				a.Center + b.Center, a.All + b.All);
-		public static SectionedLab operator +(SectionedLab a, SectionedDouble b) =>
-			new SectionedLab(
-				a.Left + b.Left, a.Right + b.Right,
-				a.Top + b.Top, a.Bottom + b.Bottom,
-				a.Center + b.Center, a.All + b.All);
-		public static SectionedLab operator +(SectionedLab a, ColorLab b) =>
-			new SectionedLab(
-				a.Left + b, a.Right + b,
-				a.Top + b, a.Bottom + b,
-				a.Center + b, a.All + b);
-		public static SectionedLab operator +(SectionedLab a, double b) =>
-			new SectionedLab(
-				a.Left + b, a.Right + b,
-				a.Top + b, a.Bottom + b,
-				a.Center + b, a.All + b);
-		public static SectionedLab operator +(SectionedDouble a, SectionedLab b) =>
-			new SectionedLab(
-				a.Left + b.Left, a.Right + b.Right,
-				a.Top + b.Top, a.Bottom + b.Bottom,
-				a.Center + b.Center, a.All + b.All);
-		public static SectionedLab operator +(ColorLab a, SectionedLab b) =>
-			new SectionedLab(
-				a + b.Left, a + b.Right,
-				a + b.Top, a + b.Bottom,
-				a + b.Center, a + b.All);
-		public static SectionedLab operator +(double a, SectionedLab b) =>
-			new SectionedLab(
-				a + b.Left, a + b.Right,
-				a + b.Top, a + b.Bottom,
-				a + b.Center, a + b.All);
-
-		public static SectionedLab operator -(SectionedLab a, SectionedLab b) =>
-			new SectionedLab(
-				a.Left - b.Left, a.Right - b.Right,
-				a.Top - b.Top, a.Bottom - b.Bottom,
-				a.Center - b.Center, a.All - b.All);
-		public static SectionedLab operator -(SectionedLab a, SectionedDouble b) =>
-			new SectionedLab(
-				a.Left - b.Left, a.Right - b.Right,
-				a.Top - b.Top, a.Bottom - b.Bottom,
-				a.Center - b.Center, a.All - b.All);
-		public static SectionedLab operator -(SectionedLab a, ColorLab b) =>
-			new SectionedLab(
-				a.Left - b, a.Right - b,
-				a.Top - b, a.Bottom - b,
-				a.Center - b, a.All - b);
-		public static SectionedLab operator -(SectionedLab a, double b) =>
-			new SectionedLab(
-				a.Left - b, a.Right - b,
-				a.Top - b, a.Bottom - b,
-				a.Center - b, a.All - b);
-		public static SectionedLab operator -(SectionedDouble a, SectionedLab b) =>
-			new SectionedLab(
-				a.Left - b.Left, a.Right - b.Right,
-				a.Top - b.Top, a.Bottom - b.Bottom,
-				a.Center - b.Center, a.All - b.All);
-		public static SectionedLab operator -(ColorLab a, SectionedLab b) =>
-			new SectionedLab(
-				a - b.Left, a - b.Right,
-				a - b.Top, a - b.Bottom,
-				a - b.Center, a - b.All);
-		public static SectionedLab operator -(double a, SectionedLab b) =>
-			new SectionedLab(
-				a - b.Left, a - b.Right,
-				a - b.Top, a - b.Bottom,
-				a - b.Center, a - b.All);
-
-		public static SectionedLab operator *(SectionedLab a, SectionedLab b) =>
-			new SectionedLab(
-				a.Left * b.Left, a.Right * b.Right,
-				a.Top * b.Top, a.Bottom * b.Bottom,
-				a.Center * b.Center, a.All * b.All);
-		public static SectionedLab operator *(SectionedLab a, SectionedDouble b) =>
-			new SectionedLab(
-				a.Left * b.Left, a.Right * b.Right,
-				a.Top * b.Top, a.Bottom * b.Bottom,
-				a.Center * b.Center, a.All * b.All);
-		public static SectionedLab operator *(SectionedLab a, ColorLab b) =>
-			new SectionedLab(
-				a.Left * b, a.Right * b,
-				a.Top * b, a.Bottom * b,
-				a.Center * b, a.All * b);
-		public static SectionedLab operator *(SectionedLab a, double b) =>
-			new SectionedLab(
-				a.Left * b, a.Right * b,
-				a.Top * b, a.Bottom * b,
-				a.Center * b, a.All * b);
-		public static SectionedLab operator *(SectionedDouble a, SectionedLab b) =>
-			new SectionedLab(
-				a.Left * b.Left, a.Right * b.Right,
-				a.Top * b.Top, a.Bottom * b.Bottom,
-				a.Center * b.Center, a.All * b.All);
-		public static SectionedLab operator *(ColorLab a, SectionedLab b) =>
-			new SectionedLab(
-				a * b.Left, a * b.Right,
-				a * b.Top, a * b.Bottom,
-				a * b.Center, a * b.All);
-		public static SectionedLab operator *(double a, SectionedLab b) =>
-			new SectionedLab(
-				a * b.Left, a * b.Right,
-				a * b.Top, a * b.Bottom,
-				a * b.Center, a * b.All);
-
-		public static SectionedLab operator /(SectionedLab a, SectionedLab b) =>
-			new SectionedLab(
-				a.Left / b.Left, a.Right / b.Right,
-				a.Top / b.Top, a.Bottom / b.Bottom,
-				a.Center / b.Center, a.All / b.All);
-		public static SectionedLab operator /(SectionedLab a, SectionedDouble b) =>
-			new SectionedLab(
-				a.Left / b.Left, a.Right / b.Right,
-				a.Top / b.Top, a.Bottom / b.Bottom,
-				a.Center / b.Center, a.All / b.All);
-		public static SectionedLab operator /(SectionedLab a, ColorLab b) =>
-			new SectionedLab(
-				a.Left / b, a.Right / b,
-				a.Top / b, a.Bottom / b,
-				a.Center / b, a.All / b);
-		public static SectionedLab operator /(SectionedLab a, double b) =>
-			new SectionedLab(
-				a.Left / b, a.Right / b,
-				a.Top / b, a.Bottom / b,
-				a.Center / b, a.All / b);
-		public static SectionedLab operator /(SectionedDouble a, SectionedLab b) =>
-			new SectionedLab(
-				a.Left / b.Left, a.Right / b.Right,
-				a.Top / b.Top, a.Bottom / b.Bottom,
-				a.Center / b.Center, a.All / b.All);
-		public static SectionedLab operator /(ColorLab a, SectionedLab b) =>
-			new SectionedLab(
-				a / b.Left, a / b.Right,
-				a / b.Top, a / b.Bottom,
-				a / b.Center, a / b.All);
-		public static SectionedLab operator /(double a, SectionedLab b) =>
-			new SectionedLab(
-				a / b.Left, a / b.Right,
-				a / b.Top, a / b.Bottom,
-				a / b.Center, a / b.All);
-
-
-		public static SectionedLab Max(SectionedLab a, SectionedLab b) =>
-			new SectionedLab(
-				ColorLab.Max(a.Left, b.Left),
-				ColorLab.Max(a.Right, b.Right),
-				ColorLab.Max(a.Top, b.Top),
-				ColorLab.Max(a.Bottom, b.Bottom),
-				ColorLab.Max(a.Center, b.Center),
-				ColorLab.Max(a.All, b.All));
-
-		public static SectionedLab Min(SectionedLab a, SectionedLab b) =>
-			new SectionedLab(
-				ColorLab.Min(a.Left, b.Left),
-				ColorLab.Min(a.Right, b.Right),
-				ColorLab.Min(a.Top, b.Top),
-				ColorLab.Min(a.Bottom, b.Bottom),
-				ColorLab.Min(a.Center, b.Center),
-				ColorLab.Min(a.All, b.All));
-
-		public SectionedLab ZeroNaNs =>
-			new SectionedLab(
-				Left.ZeroNaNs,
-				Right.ZeroNaNs,
-				Top.ZeroNaNs,
-				Bottom.ZeroNaNs,
-				Center.ZeroNaNs,
-				All.ZeroNaNs);
-	}
-	internal struct SectionedLabCounts {
-
-		/*public ColorLab Left;
-		public ColorLab Right;
-		public ColorLab Top;
-		public ColorLab Bottom;
-		public ColorLab Center;
-		public ColorLab All;
-		public int LeftCount;
-		public int RightCount;
-		public int TopCount;
-		public int BottomCount;
-		public int CenterCount;
-		public int AllCount;*/
-
-		public SectionedLab Lab;
-		public SectionedDouble Counts;
-
-		public SectionedLabCounts(SectionedLab area, SectionedDouble counts) {
-			Lab = (area / counts).ZeroNaNs;
-			Counts = counts;
-		}
-	}
+	
+	
 	internal class SectionedColorAsciifier : SectionedBaseAsciifier<SectionedLab, SectionedLabCounts>, ISectionedColorAsciifier {
 
 		protected override SectionedLab CalcFontData(Color color) {
@@ -245,11 +26,13 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 
 		protected override SectionedLab CalcFontData(IEnumerable<PixelPoint> pixels) {
 			SectionedDouble counts = new SectionedDouble();
-			SectionedLab area = new SectionedLab();
-			double inc = 1;
+			//SectionedLab area = new SectionedLab();
+			SectionedRgb area = new SectionedRgb();
+			double inc;
 			foreach (PixelPoint p in pixels) {
 				inc = p.Color.A / 255d;
-				ColorLab color = LabConverter.ToLab(p.Color) * inc;
+				//ColorLab color = LabConverter.ToLab(p.Color) * inc;
+				ColorRgb color = ((ColorRgb) p.Color) * inc;
 				if (p.X < left) {
 					area.Left += color;
 					counts.Left += inc;
@@ -280,7 +63,15 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 				counts.All += inc;
 				//allCount++;
 			}
-			return (area / counts).ZeroNaNs;
+			return (new SectionedLab {
+				Top = LabConverter.ToLab(area.Top),
+				Left = LabConverter.ToLab(area.Left),
+				Right = LabConverter.ToLab(area.Right),
+				Bottom = LabConverter.ToLab(area.Bottom),
+				Center = LabConverter.ToLab(area.Center),
+				All = LabConverter.ToLab(area.All),
+			} / counts).ZeroNaNs;
+			//return (area / counts).ZeroNaNs;
 		}
 
 		protected override SectionedLabCounts CalcImageData(IEnumerable<PixelPoint> pixels, Point start) {
@@ -291,9 +82,11 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 			int centerCount = 0;
 			int allCount = 0;*/
 			SectionedDouble counts = new SectionedDouble();
-			SectionedLab area = new SectionedLab();
+			//SectionedLab area = new SectionedLab();
+			SectionedRgb area = new SectionedRgb();
 			foreach (PixelPoint p in pixels) {
-				ColorLab color = LabConverter.ToLab(p.Color);
+				//ColorLab color = LabConverter.ToLab(p.Color);
+				ColorRgb color = (ColorRgb) p.Color;
 				if (p.X < left) {
 					area.Left += color;
 					counts.Left++;
@@ -324,7 +117,15 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 				counts.All++;
 				//allCount++;
 			}
-			return new SectionedLabCounts(area, counts);
+			return new SectionedLabCounts(new SectionedLab {
+				Top = LabConverter.ToLab(area.Top),
+				Left = LabConverter.ToLab(area.Left),
+				Right = LabConverter.ToLab(area.Right),
+				Bottom = LabConverter.ToLab(area.Bottom),
+				Center = LabConverter.ToLab(area.Center),
+				All = LabConverter.ToLab(area.All),
+			}, counts);
+			//return new SectionedLabCounts(area, counts);
 		}
 
 		protected override double CalcScore(SectionedLabCounts a, SectionedLab b) {

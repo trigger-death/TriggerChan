@@ -12,6 +12,7 @@ using TriggersTools.DiscordBots.Extensions;
 using TriggersTools.DiscordBots.Services;
 using TriggersTools.DiscordBots.TriggerChan.Commands;
 using TriggersTools.DiscordBots.TriggerChan.Database;
+using TriggersTools.DiscordBots.TriggerChan.Extensions;
 using TriggersTools.DiscordBots.TriggerChan.Model;
 using TriggersTools.DiscordBots.TriggerChan.Profiles;
 using TriggersTools.DiscordBots.TriggerChan.Profiles.Readers;
@@ -39,7 +40,8 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 				userProfile = await db.FindUserProfileAsync(user.Id).ConfigureAwait(false);
 			if (userProfile.TimeZone == null) {
 				await ReplyAsync($"You have not registered your timezone.\n" +
-					$"Use the command `tz assign <iana/abbreviation>` to register your timezone.").ConfigureAwait(false);
+					$"Use the command `tz assign <iana/abbreviation>` to register your timezone.\nUse <http://www.timezoneconverter.com/cgi-bin/findzone> " +
+					"to help find your timezone IANA Id.").ConfigureAwait(false);
 			}
 			else {
 				await ReplyTimeZoneAsync(user, userProfile.TimeZone).ConfigureAwait(false);
@@ -65,7 +67,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			TimeZoneInfo timeZone = timeZones.ParseTimeZone(input, out TimeZoneAbbreviationMatches ambiguities);
 			if (timeZone == null && ambiguities == null) {
 				await ReplyAsync("No matching timezones found!\nUse <http://www.timezoneconverter.com/cgi-bin/findzone> " +
-					"to help find your timezone name.").ConfigureAwait(false);
+					"to help find your timezone IANA Id.").ConfigureAwait(false);
 				return NormalResult.FromSuccess();
 			}
 			else if (ambiguities != null) {
@@ -100,7 +102,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		protected virtual async Task ReplyTimeZoneAsync(IUser user, TimeZoneInfo timeZone, TimeZoneInfo yourTimeZone = null) {
 			DateTime time = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, timeZone);
 			string name = user.GetName(Context.Guild, true);
-			string text = $"**{name}'s time:** {time.ToString(@"MMM dd, h\:mm")}";
+			string text = $"**{name}'s time:** {time:MMM} {time:%d}{time.GetDaySuffix()}, {time.ToString(@"h\:mm tt")}";
 			if (yourTimeZone != null) {
 				TimeSpan offset = timeZone.GetUtcOffset(DateTime.UtcNow) - yourTimeZone.GetUtcOffset(DateTime.UtcNow);
 				string offsetStr = $"{(int) Math.Abs(offset.TotalDays)} days, " + offset.ToString(@"h\:mm");

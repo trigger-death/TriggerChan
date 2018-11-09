@@ -79,10 +79,20 @@ namespace TriggersTools.DiscordBots.Services {
 			return Client.GetApplicationInfoAsync().GetAwaiter().GetResult().Owner;
 		}
 		protected string GetDaySuffix(DateTime date) {
-			return (date.Day % 10 == 1 && date.Day != 11) ? "st"
-				 : (date.Day % 10 == 2 && date.Day != 12) ? "nd"
-				 : (date.Day % 10 == 3 && date.Day != 13) ? "rd"
-				 : "th";
+			switch (date.Day) {
+			case 1:
+			case 21:
+			case 31:
+				return "st";
+			case 2:
+			case 22:
+				return "nd";
+			case 3:
+			case 23:
+				return "rd";
+			default:
+				return "th";
+			}
 		}
 		protected string Combine(string path, string name) {
 			if (string.IsNullOrEmpty(path)) {
@@ -108,7 +118,7 @@ namespace TriggersTools.DiscordBots.Services {
 		#region Protected Virtual Methods
 
 		protected virtual string FormatBuildDate(DateTime date) {
-			return $"{date:MMM} {date:d}{GetDaySuffix(date)}, {date:yyyy}";
+			return $"{date:MMM} {date:%d}{GetDaySuffix(date)}, {date:yyyy}";
 		}
 		protected virtual string OnResolve(string text) {
 			return text;

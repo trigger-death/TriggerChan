@@ -8,16 +8,6 @@ using System.Text;
 using System.Numerics;
 
 namespace TriggersTools.Asciify.Asciifying.Asciifiers {
-	internal struct SectionedDoubleCounts {
-		
-		public SectionedDouble Double;
-		public SectionedDouble Counts;
-		
-		public SectionedDoubleCounts(SectionedDouble area, SectionedDouble counts) {
-			Double = (area / (counts * 100)).ZeroNaNs;
-			Counts = counts;
-		}
-	}
 	internal class SectionedIntensityAsciifier : SectionedBaseAsciifier<SectionedDouble, SectionedDoubleCounts>, ISectionedIntensityAsciifier {
 		
 		protected override SectionedDouble CalcFontData(Color color) {

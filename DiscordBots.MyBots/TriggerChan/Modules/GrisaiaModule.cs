@@ -18,7 +18,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		[Command("grisaia")]
 		[Summary("An random Grisaia image")]
 		public Task GrisaiaRandom() {
-			return ReplyFileAsync(Random.Choose(BotResources.Grisaia));
+			return ReplyFileAsync(Random.Choose(TriggerResources.Grisaia));
 		}
 
 		[Group("yuuji"), Alias("juicy yuuji")]
@@ -32,14 +32,14 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			[Command("")]
 			[Example("Post a random image of Yuuji")]
 			public Task YuujiRandom() {
-				return ReplyFileAsync(Random.Choose(BotResources.Yuuji));
+				return ReplyFileAsync(Random.Choose(TriggerResources.Yuuji));
 			}
 
 			[Name("yuuji thumbsup")]
 			[Command("thumbsup")]
 			[Example("Post an image of the best character doing the best pose in all of Grisaia")]
 			public Task YumikoCutter() {
-				return ReplyFileAsync(BotResources.Juicy_Yuuji);
+				return ReplyFileAsync(TriggerResources.JuicyYuuji);
 			}
 		}
 		
@@ -54,19 +54,19 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			[Command("")]
 			[Example("Post a random image of Amane")]
 			public Task AmaneRandom() {
-				return ReplyFileAsync(Random.Choose(BotResources.Amane));
+				return ReplyFileAsync(Random.Choose(TriggerResources.Amane));
 			}
 			[Name("amane seduced")]
 			[Command("seduced")]
 			[Example("Post an image of Amane while seduced")]
 			public Task AmaneSeduced() {
-				return ReplyFileAsync(BotResources.Amane_Seduced);
+				return ReplyFileAsync(TriggerResources.AmaneSeduced);
 			}
 			[Name("amane wink")]
 			[Command("wink")]
 			[Example("Post an image of Amane doing the seducing")]
 			public Task AmaneWink() {
-				return ReplyFileAsync(BotResources.Amane_Wink);
+				return ReplyFileAsync(TriggerResources.AmaneWink);
 			}
 		}
 
@@ -81,21 +81,21 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			[Command("")]
 			[Example("Post a random image of Makina")]
 			public Task MakinaRandom() {
-				return ReplyFileAsync(Random.Choose(BotResources.Makina));
+				return ReplyFileAsync(Random.Choose(TriggerResources.Makina));
 			}
 
 			[Name("makina roger")]
 			[Command("roger")]
 			[Example("Post an image of Makina while screaming ROGER")]
 			public Task MakinaRoger() {
-				return ReplyFileAsync(BotResources.Makina_Roger);
+				return ReplyFileAsync(TriggerResources.MakinaRoger);
 			}
 
 			[Name("makina thehell")]
 			[Command("thehell")]
 			[Example("Post an image of Makina flipping out")]
 			public Task MakinaThehell() {
-				return ReplyFileAsync(BotResources.Makina_Thehell);
+				return ReplyFileAsync(TriggerResources.MakinaThehell);
 			}
 		}
 		
@@ -110,21 +110,21 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			[Command("")]
 			[Example("Post a random image of Makina")]
 			public Task MichiruRandom() {
-				return ReplyFileAsync(Random.Choose(BotResources.Michiru));
+				return ReplyFileAsync(Random.Choose(TriggerResources.Michiru));
 			}
 
 			[Name("michiru brag")]
 			[Command("brag")]
 			[Example("Post an image of Michiru being a knowitall while knowing absolutely nothing")]
 			public Task MichiruBrag() {
-				return ReplyFileAsync(BotResources.Michiru_Brag);
+				return ReplyFileAsync(TriggerResources.MichiruBrag);
 			}
 
 			[Name("michiru smug")]
 			[Command("smug")]
 			[Example("Post an image of Michiru thinking she's pretty clever")]
 			public Task MichiruSmug() {
-				return ReplyFileAsync(BotResources.Michiru_Smug);
+				return ReplyFileAsync(TriggerResources.MichiruSmug);
 			}
 		}
 
@@ -139,21 +139,21 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			[Command("")]
 			[Example("Post a random image of Sachi")]
 			public Task SachiRandom() {
-				return ReplyFileAsync(Random.Choose(BotResources.Sachi));
+				return ReplyFileAsync(Random.Choose(TriggerResources.Sachi));
 			}
 			
 			[Name("sachi glare")]
 			[Command("glare")]
 			[Example("Post an image of Sachi glaring at you")]
 			public Task SachiGlare() {
-				return ReplyFileAsync(BotResources.Sachi_Glare);
+				return ReplyFileAsync(TriggerResources.SachiGlare);
 			}
 
 			[Name("sachi scales")]
 			[Command("scales"), Alias("eyes")]
 			[Example("Post an image where \"The scales have fallen from [Sachi's] eyes\"")]
 			public Task SachiScales() {
-				return ReplyFileAsync(BotResources.Sachi_Scales);
+				return ReplyFileAsync(TriggerResources.SachiScales);
 			}
 		}
 
@@ -168,14 +168,14 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			[Command("")]
 			[Example("Post a random image of Yumiko")]
 			public Task YumikoRandom() {
-				return ReplyFileAsync(Random.Choose(BotResources.Yumiko));
+				return ReplyFileAsync(Random.Choose(TriggerResources.Yumiko));
 			}
 
 			[Name("yumiko boxcutter")]
 			[Command("boxcutter"), Alias("cutter")]
 			[Example("Post an image of Yumiko threatening you with a box cutter")]
 			public Task YumikoCutter() {
-				return ReplyFileAsync(BotResources.Yumiko_Cutter);
+				return ReplyFileAsync(TriggerResources.YumikoCutter);
 			}
 		}
 	}

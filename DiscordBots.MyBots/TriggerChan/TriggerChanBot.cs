@@ -69,11 +69,16 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 		}
 		
 		public override IConfigurationRoot LoadConfig() {
-			var builder = new ConfigurationBuilder()			// Create a new instance of the config builder
-				.SetBasePath(AppContext.BaseDirectory)			// Specify the default location for the config file
+			var builder = new ConfigurationBuilder()            // Create a new instance of the config builder
+				.SetBasePath(AppContext.BaseDirectory)          // Specify the default location for the config file
 				.AddJsonFile("Config.Public.json")              // Add this (json encoded) file to the configuration
-				.AddJsonFile("Config.Private.json");			// Add this (json encoded) file to the configuration
+				.AddJsonFile("Config.Private.json")             // Add this (json encoded) file to the configuration
 				//.AddJsonFile(GetType(), "Config.Private.json");	// Add this embedded private (json encoded) file to the configuration
+#if !PUBLISH
+				.AddJsonFile("Config.Public.Debug.json")
+				.AddJsonFile("Config.Private.Debug.json")
+#endif
+				;
 			return Config = builder.Build();					// Build the configuration
 		}
 
@@ -90,7 +95,7 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 
 		public override async Task LoadCommandModulesAsync() {
 			await base.LoadCommandModulesAsync().ConfigureAwait(false);
-			await Commands.AddModuleAsync<SpoilerModule>(Services).ConfigureAwait(false);
+			//await Commands.AddModuleAsync<SpoilerModule>(Services).ConfigureAwait(false);
 		}
 
 		public override DiscordBotServiceContainer CreateServiceContainer(IServiceCollection services) {

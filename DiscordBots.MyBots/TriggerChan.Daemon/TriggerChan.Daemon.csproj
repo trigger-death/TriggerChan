@@ -17,6 +17,9 @@
   <PropertyGroup Condition="'$(Configuration)'=='Publish'">
     <OutputPath>..\TriggerChan\bin\Publish\</OutputPath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Publish|net471|AnyCPU'">
+    <Optimize>true</Optimize>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Daemon\TriggersTools.DiscordBots.Daemon.csproj" />
     <ProjectReference Include="..\TriggerChan\TriggerChan.csproj" />

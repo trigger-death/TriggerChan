@@ -16,11 +16,11 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 
 		public TriggerModule(TriggerServiceContainer services) : base(services) { }
 
-		public Task<IUserMessage> ReplyBitmapAsync(Bitmap bitmap, string filename, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null) {
+		/*public Task<IUserMessage> ReplyBitmapAsync(Bitmap bitmap, string filename, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null) {
 			return Context.Channel.SendBitmapAsync(bitmap, filename, text, isTTS, embed, options);
 		}
 		public Task<IUserMessage> ReplyBitmapAsync(Bitmap bitmap, ImageFormat format, string filename, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null) {
 			return Context.Channel.SendBitmapAsync(bitmap, format, filename, text, isTTS, embed, options);
-		}
+		}*/
 	}
 }

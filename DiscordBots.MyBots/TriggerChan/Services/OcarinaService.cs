@@ -183,14 +183,14 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			//public OcarinaService() {
 			// Notes: ▲ ▶ ◀ ▼ A ❤️ ♥️
 			// ▶️◀️🔼🔽
-			staffImage = LoadBitmap("StaffTransparent");
-			staffBarImage = LoadBitmap("StaffBar");
-			staffExpansionImage = LoadBitmap("StaffExpansion");
-			sandstoneImages[0] = LoadBitmap("Sandstone");
-			sandstoneImages[1] = LoadBitmap("SandstoneFlipped");
-			titleBarImage = LoadBitmap("TitleBar");
+			staffImage = LoadBitmap("staff");
+			staffBarImage = LoadBitmap("staff_bar");
+			staffExpansionImage = LoadBitmap("staff_expansion");
+			sandstoneImages[0] = LoadBitmap("sandstone");
+			sandstoneImages[1] = LoadBitmap("sandstone_flipped");
+			titleBarImage = LoadBitmap("title_bar");
 			foreach (Note note in Notes) {
-				noteImages.Add(note, LoadBitmap(note.ToString()));
+				noteImages.Add(note, LoadBitmap($"button_{note.ToString().ToLower()}"));
 				noteAliases.Add(note, new List<NoteAlias>());
 			}
 			noteAliases.Add(Note.Rest, new List<NoteAlias>());

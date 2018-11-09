@@ -68,6 +68,30 @@ namespace TriggersTools.Asciify {
 			R.GetHashCode() ^ G.GetHashCode() ^ B.GetHashCode();
 
 		public override string ToString() => $"R={R} G={G} B={B}";
+
+		public static ColorRgb Max(ColorRgb a, ColorRgb b) =>
+			new ColorRgb(
+				Math.Max(a.R, b.R),
+				Math.Max(a.G, b.G),
+				Math.Max(a.B, b.B));
+
+		public static ColorRgb Min(ColorRgb a, ColorRgb b) =>
+			new ColorRgb(
+				Math.Min(a.R, b.R),
+				Math.Min(a.G, b.G),
+				Math.Min(a.B, b.B));
+
+		public static ColorRgb Clamp(ColorRgb a) =>
+			new ColorRgb(
+				Math.Max(0, Math.Min(255, a.R)),
+				Math.Max(0, Math.Min(255, a.G)),
+				Math.Max(0, Math.Min(255, a.B)));
+
+		public ColorRgb ZeroNaNs =>
+			new ColorRgb(
+				double.IsNaN(R) ? 0 : R,
+				double.IsNaN(G) ? 0 : G,
+				double.IsNaN(B) ? 0 : B);
 	}
 
 	public struct ColorLab {

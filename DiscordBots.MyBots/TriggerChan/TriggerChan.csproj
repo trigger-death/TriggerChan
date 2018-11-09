@@ -20,7 +20,7 @@
     <PackageProjectUrl>https://github.com/trigger-death/TriggerChan</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/trigger-death/TriggerChan/blob/master/License.md</PackageLicenseUrl>
     <Description>I was made by trigger_death for use in a small selection of Discord servers. My selling features are spoilers, inserting claps between words, drawing Divergence Meters, and other fun or helpful commands.</Description>
-    <Version>2.0.5</Version>
+    <Version>2.0.11</Version>
     <Configurations>Debug;Release;Publish</Configurations>
   </PropertyGroup>
 
@@ -32,6 +32,10 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Publish'">
     <BumpResetLabel>beta</BumpResetLabel>
     <BumpPatch>True</BumpPatch>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Publish|net471|AnyCPU'">
+    <DefineConstants>TRACE;PUBLISH</DefineConstants>
+    <Optimize>true</Optimize>
   </PropertyGroup>
 
   <!-- NuGet Packages -->
@@ -70,7 +74,16 @@
     <None Update="Application.yml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Config.Public.Debug.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Config.Private.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config.Private.Release.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Config.Private.Debug.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Config.Public.json">
@@ -109,6 +122,7 @@
     <Compile Remove="Unused\AudioQueueService.cs" />
     <Compile Remove="Unused\AudioService.cs" />
     <Compile Remove="Unused\AudioState.cs" />
+    <Compile Remove="Unused\ContextBase.cs" />
     <Compile Remove="Unused\InformationModule.cs" />
     <Compile Remove="Unused\Ref.cs" />
     <Compile Remove="Unused\Spoiler.cs" />
@@ -121,7 +135,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Model\ContextBase.cs" />
+    <None Include="Unused\ContextBase.cs" />
     <None Include="Outdated\Maya\Decipherer.cs" />
     <None Include="Outdated\Maya\DownloadInfo.cs" />
     <None Include="Outdated\Maya\HttpHelper.cs" />
@@ -192,16 +206,13 @@
     <None Update="Resources\Images\Dont_Touch_Me_Pervert.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Images\Inferno_Cop.gif">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\Images\JavaScript.png">
+    <None Update="Resources\Images\javascript.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Images\Juicy_Yuuji.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Images\Long_Runner.jpg">
+    <None Update="Resources\Images\long_runner.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Images\Makina_Roger.png">
@@ -210,10 +221,10 @@
     <None Update="Resources\Images\Makina_Thehell.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Images\Man_of_Culture.png">
+    <None Update="Resources\Images\man_of_culture.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Images\Merge_Conflict.png">
+    <None Update="Resources\Images\merge_conflict.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Images\Michiru_Brag.png">

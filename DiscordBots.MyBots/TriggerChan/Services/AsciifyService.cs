@@ -16,8 +16,12 @@ using TriggersTools.Asciify.Asciifying;
 using TriggersTools.Asciify.Asciifying.Asciifiers;
 using TriggersTools.Asciify.Asciifying.Fonts;
 using TriggersTools.Asciify.Asciifying.Palettes;
+using TriggersTools.DiscordBots.Extensions;
 using TriggersTools.DiscordBots.Services;
 using TriggersTools.DiscordBots.TriggerChan.Extensions;
+using TriggersTools.DiscordBots.Utils;
+using Image = System.Drawing.Image;
+using Color = System.Drawing.Color;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Services {
 	public class AsciifyTask {
@@ -28,9 +32,9 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 		public bool Delete { get; set; }
 		public IAttachment Attachment { get; set; }
 
-		public bool Smooth { get; set; }
+		public bool Sectioned { get; set; }
 		public int Smoothness { get; set; }
-		public float Scale { get; set; }
+		public double Scale { get; set; }
 
 		public DateTime TimeStamp { get; set; }
 		public Task Task { get; set; }
@@ -39,8 +43,8 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 
 		#region Constants
 
-		public const int MaxWidth = 1024;
-		public const int MaxHeight = 1024;
+		public const int MaxWidth = 2048;
+		public const int MaxHeight = 2048;
 
 		#endregion
 
@@ -66,17 +70,17 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 
 		#endregion
 
-		public async Task Asciify(SocketCommandContext context, AsciifyTask asciify, bool triggersTools) {
+		public async Task Asciify(SocketCommandContext context, AsciifyTask asciify) {
 
 			AsciifyTask currentAsciify = asciifyTasks.GetOrAdd(context.Guild.Id, asciify);
 			if (currentAsciify == asciify) {
 				string ext = Path.GetExtension(asciify.Attachment.Filename).ToLower();
 				if (ext != ".png" && ext != ".bmp" && ext != ".jpg") {
-					await asciify.Channel.SendMessageAsync("Image must be a png, jpg, or bmp").ConfigureAwait(false);
+					await asciify.Channel.SendMessageAsync("Image must be a `png`, `jpg`, or `bmp`").ConfigureAwait(false);
 					return;
 				}
 				lock (asciify) {
-					asciify.Task = Task.Run(() => AsciifyTask(context, asciify, triggersTools))
+					asciify.Task = Task.Run(() => AsciifyTask(context, asciify))
 						.ContinueWith((t) => {
 							asciifyTasks.TryRemove(context.Guild.Id, out _);
 						});
@@ -88,9 +92,114 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				await context.Channel.SendMessageAsync($"{name} is currently asciifying an image. Please wait").ConfigureAwait(false);
 			}
 		}
-		private async Task AsciifyTask(SocketCommandContext context, AsciifyTask asciify, bool triggersTools) {
+		private async Task AsciifyTask(SocketCommandContext context, AsciifyTask asciify) {
+			Stopwatch watch = Stopwatch.StartNew();
+			double scale = asciify.Scale;
+			bool smooth = asciify.Sectioned;
+			string filename = asciify.Attachment.Filename;
+			IAttachment attach = context.Message.Attachments.First();
+			string url = attach.Url;
+			string ext = Path.GetExtension(filename);
+			//string asciifyStr = $"**Asciifying:** `{filename}` with Smooth {(smooth ? "yes" : "no")}, Scale {scale:P}";
+			//string asciifyStr = $"**Asciifying:** `{filename}` with Smoothness {smoothness}, Scale {scale:P}";
+			var embed = new EmbedBuilder {
+				Title = $"{configParser.EmbedPrefix}Asciifying... <a:processing:507585439536906241>",
+				Color = configParser.EmbedColor,
+				Description = $"Algorithm: **{(smooth ? "Sectioned" : "Dot")}**\n" +
+							  $"Scale: **{scale:P1}**",
+			};
+			IAsciifier asciifier = null;
+
+			async Task updateProgress(MessageUpdater updater) {
+				embed.Fields.Clear();
+				embed.AddField("Progress", $"{(asciifier?.Progress ?? 0d):P0} - {watch.Elapsed.ToDHMSString()}");
+				await updater.UpdateAsync(embed: embed.Build()).ConfigureAwait(false);
+			}
+
+			//var asciifyMsg = await context.Channel.SendMessageAsync(asciifyStr).ConfigureAwait(false);
+			var asciifyMsg = await context.Channel.SendMessageAsync(embed: embed.Build()).ConfigureAwait(false);
+			MessageUpdater mu = null;
+			try {
+				using (var typing = context.Channel.EnterTypingState())
+				using (mu = MessageUpdater.Create(asciifyMsg, updateProgress))
+				using (HttpClient client = new HttpClient())
+				using (var stream = await client.GetStreamAsync(url).ConfigureAwait(false))
+				using (var bitmap = (Bitmap) Image.FromStream(stream)) {
+					Size size = bitmap.Size;
+					Size oldSize = size;
+					size = new Size((int) (size.Width * scale), (int) (size.Height * scale));
+					embed.Description = $"Algorithm: **{(smooth ? "Sectioned" : "Dot")}**\n" +
+										$"Scale: **{scale:P1}**\n" +
+										$"Image Dimensions: **{oldSize.Width}**x**{oldSize.Height}**";
+					if (scale != 1)
+						embed.Description += $"\nScaled Dimensions: **{size.Width}**x**{size.Height}**";
+					if (size.Width > MaxWidth || size.Height > MaxHeight) {
+						scale = Math.Min((float) MaxWidth / oldSize.Width, (float) MaxHeight / oldSize.Height);
+						size = new Size((int) (oldSize.Width * scale), (int) (oldSize.Height * scale));
+						asciify.Scale = scale;
+						embed.Description = $"Algorithm: **{(smooth ? "Sectioned" : "Dot")}**\n" +
+											$"Reduced Scale: **{scale:P1}**\n" +
+											$"Image Dimensions: **{oldSize.Width}**x**{oldSize.Height}**";
+						if (scale != 1)
+							embed.Description += $"\nReduced Dimensions: **{size.Width}**x**{size.Height}**";
+					}
+					await updateProgress(mu).ConfigureAwait(false);
+					if (asciify.Sectioned)
+						asciifier = Asciifier.SectionedColor;
+					else
+						asciifier = Asciifier.DotColor;
+					asciifier.MaxDegreeOfParallelism = 1;
+
+					// Text
+					ICharacterSet charset = CharacterSets.Bitmap;
+					IAsciifyFont font = new BitmapAsciifyFont("Terminal", new Size(8, 12), charset);
+
+					// Color
+					Color background = Color.Black;
+					AsciifyPalette palette = AsciifyPalette.WindowsConsole;
+					TimeSpan lastReport = TimeSpan.Zero;
+
+					// Asciify
+					mu.Start();
+					asciifier.Initialize(font, charset, palette);
+					using (Bitmap prepared = asciifier.PrepareImage(bitmap, asciify.Scale, background))
+					using (Bitmap output = asciifier.AsciifyImage(prepared)) {
+						mu.Stop();
+						if (asciify.Delete) {
+							try {
+								try {
+									await asciify.Message.DeleteAsync().ConfigureAwait(false);
+								} catch { }
+								asciify.Message = null;
+							} catch { }
+						}
+						try {
+							await mu.Message.DeleteAsync().ConfigureAwait(false);
+						} catch { }
+						embed.Fields.Clear();
+						embed.Title = $"{configParser.EmbedPrefix}Asciify took: {watch.Elapsed.ToDHMSString()} <:ascii:508384924936699914>";
+						await context.Channel.SendBitmapAsync(output, filename, embed: embed.Build()).ConfigureAwait(false);
+					}
+				}
+			} catch (Exception) {
+				if (asciify.Delete) {
+					try {
+						//if (asciify.AttachmentMessage != null)
+						//	await asciify.AttachmentMessage.DeleteAsync().ConfigureAwait(false);
+						//else
+						await asciify.Message.DeleteAsync().ConfigureAwait(false);
+					} catch { }
+				}
+				if (mu?.Message != null) {
+					try {
+						await mu.Message.DeleteAsync().ConfigureAwait(false);
+					} catch { }
+				}
+				await context.Channel.SendMessageAsync($"An error occurred while asciifying the image").ConfigureAwait(false);
+			}
+		}
+		/*private async Task AsciifyTask(SocketCommandContext context, AsciifyTask asciify, bool triggersTools) {
 			float scale = asciify.Scale;
-			float scaleP = asciify.Scale * 100;
 			bool smooth = asciify.Smooth;
 			int smoothness = asciify.Smoothness;
 			string filename = asciify.Attachment.Filename;
@@ -112,8 +221,8 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 					IAttachment attach = context.Message.Attachments.First();
 					string url = attach.Url;
 					string ext = Path.GetExtension(filename);
-					string inputFile = BotResources.GetAsciifyIn(context.Guild.Id, ext);
-					string outputFile = BotResources.GetAsciifyOut(context.Guild.Id);
+					string inputFile = TriggerResources.GetAsciifyIn(context.Guild.Id, ext);
+					string outputFile = TriggerResources.GetAsciifyOut(context.Guild.Id);
 
 
 					using (HttpClient client = new HttpClient())
@@ -137,24 +246,11 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 							embed.Description = $"\n__Scaled Dimensions:__ {size.Width}x{size.Height}";
 						if (size.Width > MaxWidth || size.Height > MaxHeight) {
 							//await asciifyMsg.DeleteAsync().ConfigureAwait(false);
-							/*if (asciify.Delete) {
-								try {
-									//if (asciify.AttachmentMessage != null)
-									//	await asciify.AttachmentMessage.DeleteAsync().ConfigureAwait(false);
-									//else
-										await asciify.Message.DeleteAsync().ConfigureAwait(false);
-								} catch { }
-							}*/
 							scale = Math.Min((float) MaxWidth / oldSize.Width, (float) MaxHeight / oldSize.Height);
-							scaleP = scale * 100;
 							//await context.Channel.SendMessageAsync($"Scaled dimensions cannot be larger than {MaxWidth}x{MaxHeight}.\n" +
 							//	$"The scaled image size is {size.Width}x{size.Height}\n" +
 							//	$"Maximum scale is {maxScale:P0}").ConfigureAwait(false);
 							size = new Size((int) (oldSize.Width * scale), (int) (oldSize.Height * scale));
-							/*embed.Description +=
-								$"\nScaled dimensions cannot be larger than {MaxWidth}x{MaxHeight}\n" +
-								$"__Reduced Scale:__ {scale:P}\n" +
-								$"__Reduced Dimensions:__ {size.Width}x{size.Height}";*/
 							asciify.Scale = scale;
 							embed.Description = (triggersTools ?
 												$"__Smooth:__ {(smooth ? "yes" : "no")}\n" :
@@ -163,17 +259,9 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 												$"__Image Dimensions:__ {oldSize.Width}x{oldSize.Height}";
 							if (scale != 1)
 								embed.Description += $"\n__Reduced Dimensions:__ {size.Width}x{size.Height}";
-							/*embed.Fields.Clear();
-							embed.AddField("Progress", "");
-							await asciifyMsg.ModifyAsync(p => p.Embed = embed.Build()).ConfigureAwait(false);*/
 							//return;
 						}
 						//IMessage scaledMsg = null;
-						/*if (scale != 1) {
-							//embed.Description += $"__Image Dimensions:__ {oldSize.Width}x{oldSize.Height}\n" +
-							//					 $"__Scaled Dimensions:__ {size.Width}x{size.Height}";
-							await asciifyMsg.ModifyAsync(p => p.Embed = embed.Build()).ConfigureAwait(false);
-						}*/
 						//	scaledMsg = await context.Channel.SendMessageAsync($"**Scaled image dimensions:** {size.Width}x{size.Height}");
 						//}
 						await UpdateProgress(context, watch, 0, asciifyMsg, embed).ConfigureAwait(false);
@@ -204,17 +292,17 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				await context.Channel.SendMessageAsync($"An error occurred while asciifying the image").ConfigureAwait(false);
 			}
 		}
-
-		private async Task UpdateProgress(SocketCommandContext context, Stopwatch watch, double progress, IUserMessage asciifyMsg, EmbedBuilder embed) {
+		*/
+		/*private async Task UpdateProgress(SocketCommandContext context, Stopwatch watch, double progress, IUserMessage asciifyMsg, EmbedBuilder embed) {
 			embed.Fields.Clear();
-			embed.AddField("Progress", $"{progress:P0} - {(int) (watch.ElapsedMilliseconds / 1000)} seconds");
+			embed.AddField("Progress", $"{progress:P0} - {watch.Elapsed.ToDHMSString()}");
 			await asciifyMsg.ModifyAsync(p => p.Embed = embed.Build()).ConfigureAwait(false);
-		}
+		}*/
 
-		private async Task AsciifyAsciiArtist(SocketCommandContext context, Stopwatch watch, IUserMessage asciifyMsg, EmbedBuilder embed, AsciifyTask asciify) {
+		/*private async Task AsciifyAsciiArtist(SocketCommandContext context, Stopwatch watch, IUserMessage asciifyMsg, EmbedBuilder embed, AsciifyTask asciify) {
 			string ext = Path.GetExtension(asciify.Attachment.Filename);
-			string inputFile = BotResources.GetAsciifyIn(context.Guild.Id, ext);
-			string outputFile = BotResources.GetAsciifyOut(context.Guild.Id);
+			string inputFile = TriggerResources.GetAsciifyIn(context.Guild.Id, ext);
+			string outputFile = TriggerResources.GetAsciifyOut(context.Guild.Id);
 			ProcessStartInfo start = new ProcessStartInfo() {
 				FileName = "AsciiArtist.exe",
 				//Arguments = $"-asciify {(smooth ? 2 : 1)} {scale} lab \"{inputFile}\" \"{outputFile}\"",
@@ -252,12 +340,12 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			await asciifyMsg.DeleteAsync().ConfigureAwait(false);
 			await context.Channel.SendFileAsync(outputFile, $"{configParser.EmbedPrefix}Asciify took: {watch.Elapsed.ToDHMSString()}").ConfigureAwait(false);
 		}
-
-		private async Task AsciifyTriggersTools(SocketCommandContext context, Stopwatch watch, Bitmap bitmap, IUserMessage asciifyMsg, EmbedBuilder embed, AsciifyTask asciify) {
+		*/
+		/*private async Task AsciifyTriggersTools(SocketCommandContext context, Stopwatch watch, Bitmap bitmap, IUserMessage asciifyMsg, EmbedBuilder embed, AsciifyTask asciify) {
 			string filename = asciify.Attachment.Filename;
 			string ext = Path.GetExtension(filename);
-			string inputFile = BotResources.GetAsciifyIn(context.Guild.Id, ext);
-			string outputFile = BotResources.GetAsciifyOut(context.Guild.Id);
+			string inputFile = TriggerResources.GetAsciifyIn(context.Guild.Id, ext);
+			string outputFile = TriggerResources.GetAsciifyOut(context.Guild.Id);
 			IAsciifier asciifier;
 			if (asciify.Smooth)
 				asciifier = Asciifier.SectionedColor;
@@ -273,9 +361,9 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			IAsciifyFont font = new BitmapAsciifyFont("Terminal", new Size(8, 12), charset);
 
 			// Color
-			System.Drawing.Color background = System.Drawing.Color.Black;
+			Color background = Color.Black;
 			AsciifyPalette palette = AsciifyPalette.WindowsConsole;
-			TimeSpan lastReport = TimeSpan.Zero;
+			//TimeSpan lastReport = TimeSpan.Zero;
 			void callback(double progress) {
 				TimeSpan ellapsed = watch.Elapsed;
 				if (ellapsed - lastReport >= TimeSpan.FromSeconds(10)) {
@@ -287,7 +375,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			// Asciify
 			asciifier.Initialize(font, charset, palette);
 			using (Bitmap prepared = asciifier.PrepareImage(bitmap, asciify.Scale, background))
-			using (Bitmap output = asciifier.AsciifyImage(prepared, callback)) {
+			using (Bitmap output = asciifier.AsciifyImage(prepared)) {
 				if (asciify.Delete) {
 					try {
 						//if (asciify.AttachmentMessage != null)
@@ -303,6 +391,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				embed.Title = $"{configParser.EmbedPrefix}Asciify took: {watch.Elapsed.ToDHMSString()} <:ascii:508384924936699914>";
 				await context.Channel.SendBitmapAsync(output, filename, embed: embed.Build()).ConfigureAwait(false);
 			}
-		}
+		}*/
 	}
 }

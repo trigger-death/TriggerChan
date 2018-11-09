@@ -4,6 +4,9 @@
     <TargetFrameworks>net471;net462;netstandard2.0</TargetFrameworks>
     <Version>0.0.1</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ApplicationIcon />
+    <OutputType>Library</OutputType>
+    <StartupObject />
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -12,6 +15,11 @@
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Asciifying\Asciifiers\Internal\AsciifierBase2.cs" />
+    <Compile Remove="Asciifying\Asciifiers\Internal\AsciifierBase3.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="Resources\BitmapFonts\Terminal10x18.png" />
@@ -37,6 +45,11 @@
     <EmbeddedResource Include="Resources\BitmapFonts\Terminal7x12.png" />
     <EmbeddedResource Include="Resources\BitmapFonts\Terminal8x12.png" />
     <EmbeddedResource Include="Resources\BitmapFonts\Terminal8x8.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Asciifying\Asciifiers\Internal\AsciifierBase2.cs" />
+    <None Include="Asciifying\Asciifiers\Internal\AsciifierBase3.cs" />
   </ItemGroup>
 
   <ItemGroup>

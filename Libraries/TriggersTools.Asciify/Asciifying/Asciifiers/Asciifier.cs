@@ -6,16 +6,15 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 	public static class Asciifier {
 
 
-		public static IDotColorAsciifier DotColor =>
-			new DotColorAsciifier();
-		public static IDotIntensityAsciifier DotIntensity =>
-			new DotIntensityAsciifier();
+		public static IDotColorAsciifier DotColor => new DotColorAsciifier();
+		//public static IAsciifier DotColor => new AsciifierBase2();
 
-		public static ISectionedColorAsciifier SectionedColor =>
-			new SectionedColorAsciifier();
+		public static IDotIntensityAsciifier DotIntensity => new DotIntensityAsciifier();
 
-		public static ISectionedIntensityAsciifier SectionedIntensity =>
-			new SectionedIntensityAsciifier();
+		public static ISectionedColorAsciifier SectionedColor => new SectionedColorAsciifier();
+		//public static IAsciifier SectionedColor => new AsciifierBase3();
+
+		public static ISectionedIntensityAsciifier SectionedIntensity => new SectionedIntensityAsciifier();
 
 	}
 }

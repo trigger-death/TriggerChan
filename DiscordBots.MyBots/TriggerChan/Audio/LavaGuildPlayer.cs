@@ -3,12 +3,14 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.Net;
 using Discord.WebSocket;
 using TriggersTools.DiscordBots.Commands;
 using TriggersTools.DiscordBots.Services;
@@ -169,29 +171,32 @@ namespace TriggersTools.DiscordBots.TriggerChan.Audio {
 
 		public async Task JoinAsync(IVoiceChannel channel, bool rejoin = false) {
 			player = await node.JoinAsync(channel).ConfigureAwait(false);
+			CurrentTrack = null;
 			//Queue = player.Queue.GetOrAdd(Guild.Id, Queue);
 		}
 
 		public async Task LeaveAsync() {
 			player?.Stop();
 			await node.LeaveAsync(Guild.Id).ConfigureAwait(false);
-			player = null;
-			queue.Clear();
-			//trackOwners.Clear();
+			lock (queueLock) {
+				player = null;
+				queue.Clear();
+				CurrentTrack = null;
+			}
 			await DeleteStatusAsync().ConfigureAwait(false);
 		}
 		public async Task DisconnectAsync() {
 			await LeaveAsync().ConfigureAwait(false);
-			queue.Clear();
-			//trackOwners.Clear();
 		}
 
 		public async Task<RuntimeResult> StopAsync(ICommandContext context) {
 			if (!IsInSameVoiceChannel(context))
 				return EmoteResults.FromNotInVoice();
-			player.Stop();
-			queue.Clear();
-			//trackOwners.Clear();
+			lock (queueLock) {
+				player.Stop();
+				queue.Clear();
+				CurrentTrack = null;
+			}
 			await UpdateStatusAsync().ConfigureAwait(false);
 			return NormalResult.FromSuccess();
 		}
@@ -377,9 +382,17 @@ namespace TriggersTools.DiscordBots.TriggerChan.Audio {
 		private async Task UpdateStatusAsync() {
 			if (StatusMessage != null) {
 				//LastStatusWatch.Restart();
+				var embed = BuildStatusEmbed();
 				try {
-					await StatusMessage.ModifyAsync(p => p.Embed = BuildStatusEmbed()).ConfigureAwait(false);
-				} catch { StatusMessage = null; }
+					await StatusMessage.ModifyAsync(p => p.Embed = embed).ConfigureAwait(false);
+				} catch (HttpException ex) {
+					if (ex.HttpCode == HttpStatusCode.NotFound) {
+						// Deleted, post a new message
+						try {
+							StatusMessage = await StatusMessage.Channel.SendMessageAsync(embed: embed).ConfigureAwait(false);
+						} catch { }
+					}
+				}
 				//LastStatusWatch.Restart();
 			}
 		}

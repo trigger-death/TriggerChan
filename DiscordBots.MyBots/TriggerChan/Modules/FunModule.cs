@@ -15,9 +15,12 @@ using TriggersTools.DiscordBots.TriggerChan.Commands;
 using TriggersTools.DiscordBots.TriggerChan.Database;
 using TriggersTools.DiscordBots.TriggerChan.Reactions;
 using TriggersTools.DiscordBots.TriggerChan.Model;
+using TriggersTools.DiscordBots.SpoilerBot.Modules;
+using TriggersTools.DiscordBots.SpoilerBot.Services;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 	[Name("Fun")]
+	[Summary("Fun and useful commands")]
 	[IsLockable(true)]
 	public class FunModule : TriggerModule {
 
@@ -40,6 +43,121 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			this.talkBack = talkBack;
 		}
 
+		[Group("spoiler")]//, Alias("spoilers", "spoil", "spoiled")]
+		[Usage("[raw] [up|upload|remove <last|messageId>|rename <last|messageId> <title...>] [<{title}>] [<content...>]")]
+		[Summary("Hide a spoiler behind a message that can be viewed by reacting with 🔍")]
+		[Remarks("`content...` must be included when the first argument is not present\nIt's common courtesy to include a `{title}` with all spoilers")]
+		[RequiresContext(ContextType.Guild)]
+		public class SpoilerGroup : TriggerModule {
+
+			#region Fields
+
+			private readonly ISpoilerService spoilers;
+			private readonly HelpService help;
+
+			#endregion
+
+			#region Constructors
+
+			public SpoilerGroup(TriggerServiceContainer services,
+								ISpoilerService spoilers,
+								HelpService help)
+				: base(services)
+			{
+				this.spoilers = spoilers;
+				this.help = help;
+			}
+
+			#endregion
+			
+			[Name("spoiler <content>")]
+			[Command("")]
+			[Priority(0)]
+			[Example("{Steins;Gate} 1.048596", "Hide *1.048596* behind a spoiler")]
+			public Task<RuntimeResult> Spoiler([Remainder] string content) {
+				return spoilers.RunSpoilerAsync(Context, ResolveContent(content), false, false);
+			}
+
+			[Name("spoiler raw <content>")]
+			[Command("raw")]
+			[Priority(1)]
+			[Example("{What!?} Navy Seals Copypasta", "Post a raw spoiler that has room for the entire Navy Seals copypasta")]
+			public Task<RuntimeResult> RawSpoiler([Remainder] string content) {
+				return spoilers.RunSpoilerAsync(Context, ResolveContent(content), false, true);
+			}
+
+			[Name("spoiler upload [content]")]
+			[Command("upload"), Alias("up")]
+			[Priority(2)]
+			[Example("{Incoming Attachment}", "Send an attachment to your DM to complete the spoiler")]
+			[AllowBots(false)]
+			public Task<RuntimeResult> AttachmentSpoiler([Remainder] string content = "") {
+				return spoilers.RunSpoilerAsync(Context, ResolveContent(content), true, false);
+			}
+
+			[Name("spoiler raw upload [content]")]
+			[Command("raw upload"), Alias("raw up", "upload raw", "up raw")]
+			[Priority(3)]
+			[AllowBots(false)]
+			public Task<RuntimeResult> RawAttachmentSpoiler([Remainder] string content = "") {
+				return spoilers.RunSpoilerAsync(Context, ResolveContent(content), true, true);
+			}
+
+			[Name("spoiler rename last")]
+			[Command("rename last")]
+			[Priority(2)]
+			[Example("New Title Bois!", "Rename the title of your last posted spoiler in this channel to *New Title Bois!*")]
+			public Task<RuntimeResult> RenameLastSpoiler([Remainder] string title) {
+				return spoilers.RenameLastSpoilerAsync(Context, title);
+			}
+
+			[Name("spoiler rename <messageId>")]
+			[Command("rename")]
+			[Priority(1)]
+			[Example("499990259434782720 New Title Bois!", "Rename the title of your spoiler with this Id to *New Title Bois!*")]
+			public Task<RuntimeResult> RenameSpoiler(ulong id, [Remainder] string title) {
+				return spoilers.RenameSpoilerAsync(Context, id, title);
+			}
+
+			[Name("spoiler remove last")]
+			[Command("remove last")]
+			[Priority(2)]
+			[Example("Remove your last posted spoiler in this channel")]
+			public Task RemoveLastSpoiler() {
+				return spoilers.RemoveLastSpoilerAsync(Context);
+			}
+
+			[Name("spoiler remove <messageId>")]
+			[Command("remove")]
+			[Priority(1)]
+			[Example("499990259434782720", "Remove your spoiler with this Id")]
+			public Task RemoveSpoiler(ulong id) {
+				return spoilers.RemoveSpoilerAsync(Context, id);
+			}
+
+			/// <summary>
+			/// For those poor fools who typed `s;command help` instead of `s;help command`.
+			/// </summary>
+			[Name("spoiler help")]
+			[Command("help")]
+			[Priority(3)]
+			public async Task SpoilerHelp() {
+				CommandDetails command = Commands.CommandSet.FindCommand("spoiler", Context);
+				if (command == null)
+					await ReplyAsync($"No command with the name `spoiler` exists").ConfigureAwait(false);
+				else if (!command.IsUsable(Context))
+					await ReplyAsync($"The command `{command.Alias}` cannot be used").ConfigureAwait(false);
+				else
+					await ReplyAsync(embed: await help.BuildCommandHelpAsync(Context, command).ConfigureAwait(false)).ConfigureAwait(false);
+			}
+
+			private string ResolveContent(string content) {
+				if (string.IsNullOrWhiteSpace(content))
+					return string.Empty;
+				int index = Context.Message.Content.LastIndexOf(content);
+				return Context.Message.Resolve(index, everyoneHandling: TagHandling.Name, emojiHandling: TagHandling.Ignore);
+			}
+		}
 
 		[Name("clap <text>")]
 		[Command("clap")]
@@ -66,21 +184,21 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		[Command("javascript"), Alias("js")]
 		[Summary("An image macro from Dagashi Kashi about Javascript")]
 		public Task JavaScript() {
-			return Context.Channel.SendFileAsync(BotResources.JavaScript);
+			return Context.Channel.SendFileAsync(TriggerResources.JavaScript);
 		}
 
 		[Name("merge")]
 		[Command("merge", RunMode = RunMode.Async), Alias("mergeconflict")]
 		[Summary("An image macro from New Game about Merge Conflicts")]
 		public Task MergeConflict() {
-			return Context.Channel.SendFileAsync(BotResources.Merge_Conflict);
+			return Context.Channel.SendFileAsync(TriggerResources.MergeConflict);
 		}
 
 		[Name("culture")]
 		[Command("culture", RunMode = RunMode.Async), Alias("manofculture")]
 		[Summary("Ah, I see you're a man of culture as well")]
 		public Task ManOfCulture() {
-			return Context.Channel.SendFileAsync(BotResources.Man_of_Culture);
+			return Context.Channel.SendFileAsync(TriggerResources.ManOfCulture);
 		}
 
 		[Name("divergence <text>")]
@@ -134,9 +252,17 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 
 			#endregion
 
-			[Name("ocarina play <notes>")]
-			[Command("play"), Alias("")]
+			[Name("ocarina <notes>")]
+			[Command("")]
 			[Priority(0)]
+			[Example("v a v a > v > v", "Bolero of Fire")]
+			public Task PlayShort([Remainder] string notes) {
+				return Play(notes);
+			}
+
+			[Name("ocarina play <notes>")]
+			[Command("play")]
+			[Priority(1)]
 			[Example("r d a d r u", "Plays Oath to Order")]
 			public async Task Play([Remainder] string notes) {
 				try {
@@ -223,7 +349,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			}
 		}
 
-		[Name("asciifyaa")]
+		/*[Name("asciifyaa")]
 		[Command("asciifyaa")]
 		[Usage("[smoothness<1-3> [<scale%> [nodelete]]]")]
 		[Summary("Asciify an uploaded image. Image must be a png, jpg, or bmp.\nScaled image dimensions must not be larger than 1000x1000")]
@@ -232,7 +358,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		[Example("3 200", "Will create a smoth asciification at 2x the image resolution")]
 		[Example("1 50 nodelete", "Will create a closer color representation of the image with rougher features at 0.5x scale. The posted image will not be deleted.")]
 		[RequiresContext(ContextType.Guild)]
-		public async Task<RuntimeResult> AsciifyImageAsciiArtist(/*bool sharp = true,*/ int smoothness = 1, float scale = 100.0f, string nodelete = null) {
+		public async Task<RuntimeResult> AsciifyImageAsciiArtist(int smoothness = 1, float scale = 100.0f, string nodelete = null) {
 			if (nodelete != null && string.Compare(nodelete, "nodelete") != 0) {
 				return EmoteResults.FromInvalidArgument("Invalid nodelete");
 			}
@@ -261,24 +387,111 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 				await asciify.Asciify(Context, asciifyTask, false).ConfigureAwait(false);
 			}
 			return NormalResult.FromSuccess();
+		}*/
+
+		[Name("asciify")]
+		[Command("asciify")]
+		[Usage("[dot|section] [<scale%>] [nodelete]")]
+		[Summary("Asciify an uploaded image. Image must be a `png`, `jpg`, or `bmp`.\nScaled image dimensions must not be larger than 2048x2048")]
+		[Remarks("The nodelete parameter will keep the message with your attachment if specified.\n" +
+				"Dot asciification scores the average of the entire character while Sectioned scores portions of the character.")]
+		[Example("section 200", "Will create a smooth asciification at 2x the image resolution")]
+		[Example("dot 50 nodelete", "Will create a closer color representation of the image with rougher features at 0.5x scale. The posted image will not be deleted.")]
+		[RequiresContext(ContextType.Guild)]
+		public async Task<RuntimeResult> AsciifyImageMode([Remainder] string input = "") {//Mode mode = Mode.Dot, double scale = 100d, NoDelete? nodelete = null) {
+			string[] args = input.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+			bool? sectioned = null;
+			double? scale = null;
+			bool? noDelete = null;
+
+			foreach (string arg in args.Select(a => a.ToLower())) {
+				if (arg == "dot" || arg == "section" || arg == "sectioned") {
+					if (sectioned.HasValue)
+						return EmoteResults.FromInvalidArgument();
+					sectioned = (arg != "dot");
+				}
+				else if (arg == "nodelete") {
+					if (noDelete.HasValue)
+						return EmoteResults.FromInvalidArgument();
+					noDelete = true;
+				}
+				else if (double.TryParse(arg, out double parsedScale) && parsedScale > 0) {
+					if (scale.HasValue)
+						return EmoteResults.FromInvalidArgument();
+					scale = parsedScale;
+				}
+				else {
+					return EmoteResults.FromInvalidArgument();
+				}
+			}
+			IAttachment attach = Context.Message.Attachments.FirstOrDefault();
+			if (attach == null) {
+				await ReplyAsync($"You must upload an image attachment to asciify").ConfigureAwait(false);
+			}
+			else {
+				AsciifyTask asciifyTask = new AsciifyTask() {
+					Channel = Context.Message.Channel as ITextChannel,
+					User = Context.Message.Author,
+					Message = Context.Message,
+					Attachment = attach,
+					TimeStamp = DateTime.UtcNow,
+					Sectioned = sectioned ?? false,
+					//Smoothness = smoothness,
+					Scale = (scale ?? 100d) / 100d,
+					Delete = !(noDelete ?? false),
+				};
+				await asciify.Asciify(Context, asciifyTask).ConfigureAwait(false);
+			}
+			return NormalResult.FromSuccess();
+		}
+
+		/*[Group("asciify")]
+		[Usage("[dot|section] [<scale%>] [nodelete]")]
+		[Summary("Asciify an uploaded image. Image must be a `png`, `jpg`, or `bmp`.\nScaled image dimensions must not be larger than 2048x2048")]
+		[Remarks("The nodelete parameter will keep the message with your attachment if specified.\n" +
+				 "Smoothness can be between 1 and 4. Smoothness sacrifices saturation for shape accuracy.")]
+		[Example("section 200", "Will create a smooth asciification at 2x the image resolution")]
+		[Example("dot 50 nodelete", "Will create a closer color representation of the image with rougher features at 0.5x scale. The posted image will not be deleted.")]
+		[RequiresContext(ContextType.Guild)]
+		public class AsciifyGroup : TriggerModule {
+
+			private readonly AsciifyService asciify;
+
+			public AsciifyGroup(TriggerServiceContainer services,
+								AsciifyService asciify)
+				: base(services)
+			{
+				this.asciify = asciify;
+			}
+
+			private enum NoDelete {
+				NoDelete,
+			}
+			private enum Mode {
+				Dot,
+				Sectioned,
+			}
+
+
+			
 		}
 
 		[Name("asciify")]
 		[Command("asciify")]
-		[Usage("[smooth<yes|no> [<scale%> [nodelete]]]")]
-		[Summary("Asciify an uploaded image. Image must be a png, jpg, or bmp.\nScaled image dimensions must not be larger than 1000x1000")]
+		[Usage("[[dot|section] [<scale%> [nodelete]]]")]
+		[Summary("Asciify an uploaded image. Image must be a `png`, `jpg`, or `bmp`.\nScaled image dimensions must not be larger than 2048x2048")]
 		[Remarks("The nodelete parameter will keep the message with your attachment if specified.\n" +
 				 "Smoothness can be between 1 and 4. Smoothness sacrifices saturation for shape accuracy.")]
-		[Example("yes 200", "Will create a smooth asciification at 2x the image resolution")]
-		[Example("no 50 nodelete", "Will create a closer color representation of the image with rougher features at 0.5x scale. The posted image will not be deleted.")]
+		[Example("section 200", "Will create a smooth asciification at 2x the image resolution")]
+		[Example("dot 50 nodelete", "Will create a closer color representation of the image with rougher features at 0.5x scale. The posted image will not be deleted.")]
 		[RequiresContext(ContextType.Guild)]
-		public async Task<RuntimeResult> AsciifyImageAsciiArtist(string smoothYesNo = "no", float scale = 100.0f, string nodelete = null) {
-			smoothYesNo = smoothYesNo.ToLower();
-			if (nodelete != null && string.Compare(nodelete, "nodelete") != 0) {
+		public async Task<RuntimeResult> AsciifyImageAsciiArtist(string mode = "dot", float scale = 100.0f, string nodelete = null) {
+			mode = mode.ToLower();
+			if (nodelete != null && string.Compare(nodelete, "nodelete", true) != 0) {
 				return EmoteResults.FromInvalidArgument("Invalid nodelete");
 			}
-			else if (smoothYesNo != "yes" && smoothYesNo != "no") {
-				return EmoteResults.FromInvalidArgument("Invalid smoothness");
+			else if (mode != "section" && mode != "no") {
+				return EmoteResults.FromInvalidArgument("Invalid mode");
 			}
 			else if (scale <= 0) {
 				return EmoteResults.FromInvalidArgument("Invalid scale");
@@ -290,7 +503,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 				Message = Context.Message,
 				Attachment = attach,
 				TimeStamp = DateTime.UtcNow,
-				Smooth = smoothYesNo == "yes",
+				Sectioned = mode != "dot",
 				//Smoothness = smoothness,
 				Scale = scale / 100.0f,
 				Delete = nodelete == null,
@@ -299,10 +512,10 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 				await ReplyAsync($"You must upload an image attachment to asciify").ConfigureAwait(false);
 			}
 			else {
-				await asciify.Asciify(Context, asciifyTask, true).ConfigureAwait(false);
+				await asciify.Asciify(Context, asciifyTask).ConfigureAwait(false);
 			}
 			return NormalResult.FromSuccess();
-		}
+		}*/
 
 		[Name("talkback")]
 		[Command("talkback")]

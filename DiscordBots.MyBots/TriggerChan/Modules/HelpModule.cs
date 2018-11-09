@@ -16,6 +16,8 @@ using TriggersTools.DiscordBots.Extensions;
 using TriggersTools.DiscordBots.SpoilerBot.Services;
 using TriggersTools.DiscordBots.TriggerChan.Commands;
 using System.IO;
+using TriggersTools.DiscordBots.TriggerChan.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 	[Name("Help")]
@@ -113,6 +115,79 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			return ReplyAsync(embed: help.BuildReactionList());
 		}
 
+		private struct Stats {
+
+			public int Guilds { get; set; }
+			public long Members { get; set; }
+
+			public long Spoilers { get; set; }
+			public long SpoiledUsers { get; set; }
+			public long MALUsers { get; set; }
+			public long AniListUsers { get; set; }
+			public long KitsuUsers { get; set; }
+			public long VNDbUsers { get; set; }
+			public long MFCUsers { get; set; }
+			public long TimeZones { get; set; }
+
+			public override string ToString() {
+				return	$"{ServerStats()}\n" +
+						$"{SpoilerStats()}\n" +
+						$"{ProfileStats()}";
+			}
+
+			public string ServerStats() {
+				return	$"I am active on **{Guilds}** server{Plural(Guilds)} " +
+						$"with **{Members}** member{Plural(Members)}";
+			}
+
+			public string SpoilerStats() {
+				return	$"**{Spoilers}** spoiler{Plural(Spoilers)} ha{Plural(Spoilers, "ve", "s")} been revealed " +
+						$"**{SpoiledUsers}** time{Plural(SpoiledUsers)}";
+			}
+
+			public string ProfileStats() {
+				/*return	$"I have registered **{MALUsers}** [MyAnimeList](https://myanimelist.net/) user{Plural(MALUsers)}, " +
+						$"**{AniListUsers}** [AniList](https://anilist.co/) user{Plural(AniListUsers)}, " +
+						//$"**{KitsuUsers}** [Kitsu](https://kitsu.io/) user{Plural(KitsuUsers)}, " +
+						//$"**{VNDbUsers}** [VNDb](https://vndb.org/) user{Plural(VNDbUsers)}, " +
+						$"**{MFCUsers}** [MyFigureCollection](https://myfigurecollection.net/) user{Plural(MFCUsers)}, " +
+						$"and **{TimeZones}** timezone{Plural(TimeZones)}";*/
+				return	$"I have registered:\n" +
+						$"**{MALUsers}** [MyAnimeList](https://myanimelist.net/) user{Plural(MALUsers)}\n" +
+						$"**{AniListUsers}** [AniList](https://anilist.co/) user{Plural(AniListUsers)}\n" +
+						//$"**{KitsuUsers}** [Kitsu](https://kitsu.io/) user{Plural(KitsuUsers)}\n" +
+						//$"**{VNDbUsers}** [VNDb](https://vndb.org/) user{Plural(VNDbUsers)}\n" +
+						$"**{MFCUsers}** [MyFigureCollection](https://myfigurecollection.net/) user{Plural(MFCUsers)}\n" +
+						$"**{TimeZones}** timezone{Plural(TimeZones)}\n";
+			}
+
+			private string Plural(long count, string plural = "s", string single = "") {
+				return (count != 1 ? plural : single);
+			}
+		}
+
+		private async Task<Stats> GetStatsAsync() {
+			foreach (var guild in Client.Guilds)
+				await guild.DownloadUsersAsync().ConfigureAwait(false);
+			Stats stats = new Stats {
+				Guilds = Client.Guilds.Count,
+				Members = Client.Guilds.Sum(g => g.Users.Count),
+			};
+			using (var db = GetDb<TriggerDbContext>()) {
+				foreach (var profile in db.UserProfiles) {
+					if (!string.IsNullOrEmpty(profile.MALUsername)) stats.MALUsers++;
+					if (!string.IsNullOrEmpty(profile.AniListUsername)) stats.AniListUsers++;
+					//if (!string.IsNullOrEmpty(profile.KitsuUsername)) stats.KitsuUsers++;
+					//if (!string.IsNullOrEmpty(profile.VNdbUsername)) stats.VNDbUsers++;
+					if (!string.IsNullOrEmpty(profile.MFCUsername)) stats.MFCUsers++;
+					if (profile.TimeZone != null) stats.TimeZones++;
+				}
+				stats.Spoilers = await db.Spoilers.LongCountAsync().ConfigureAwait(false);
+				stats.SpoiledUsers = await db.SpoiledUsers.LongCountAsync().ConfigureAwait(false);
+			}
+			return stats;
+		}
+
 		private async Task AddAboutFields(EmbedBuilder embed) {
 			TimeSpan uptime = DiscordBot.Uptime;
 			int d = (int) uptime.TotalDays;
@@ -124,31 +199,75 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			int h2 = uptime.Hours;
 			int m2 = uptime.Minutes;
 			int s2 = uptime.Seconds;
-			int guilds = Client.Guilds.Count;
-			long spoilers = await this.spoilers.GetSpoilerCountAsync().ConfigureAwait(false);
+			/*long spoilers = await this.spoilers.GetSpoilerCountAsync().ConfigureAwait(false);
 			long spoiledUsers = await this.spoilers.GetSpoiledUserCountAsync().ConfigureAwait(false);
+			int guilds = Client.Guilds.Count;
+			foreach (var guild in Client.Guilds)
+				await guild.DownloadUsersAsync().ConfigureAwait(false);
 			long members = Client.Guilds.Sum(g => g.Users.Count);
 
 			//embed.AddField("Version", $"v{configParser.Version}, built on {configParser.BuildDate}");
 
-			embed.AddField("Stats", $"**{spoilers}** spoiler{Plural(spoilers)} have been revealed " +
-									$"**{spoiledUsers}** time{Plural(spoiledUsers)}");
-			embed.AddField("Uptime", $"`Current:` " +
+			long malCount = 0;
+			long aniCount = 0;
+			long kitsuCount = 0;
+			long vndbCount = 0;
+			long mfcCount = 0;
+			long tzCount = 0;
+			using (var db = GetDb<TriggerDbContext>()) {
+				foreach (var profile in db.UserProfiles) {
+					if (!string.IsNullOrEmpty(profile.MALUsername)) malCount++;
+					if (!string.IsNullOrEmpty(profile.AniListUsername)) aniCount++;
+					//if (!string.IsNullOrEmpty(profile.KitsuUsername)) kitsuCount++;
+					//if (!string.IsNullOrEmpty(profile.VNdbUsername)) vndbCount++;
+					if (!string.IsNullOrEmpty(profile.MFCUsername)) mfcCount++;
+					if (profile.TimeZone != null) tzCount++;
+				}
+			}*/
+
+			var stats = await GetStatsAsync().ConfigureAwait(false);
+
+			/*embed.AddField("Stats", $"**{spoilers}** spoiler{Plural(spoilers)} have been revealed " +
+									$"**{spoiledUsers}** time{Plural(spoiledUsers)}");*/
+			embed.AddField("Stats", stats.ToString());
+			embed.AddField("Uptime", $"Current: " +
 									 $"**{d}** day{Plural(d)}, " +
 									 $"**{h}** hour{Plural(h)}, " +
 									 $"**{m}** minute{Plural(m)}, and " +
 									 $"**{s}** second{Plural(s)}\n" +
-									 $"`Total:` " +
-									 $"**{d2}** day{Plural(d)}, " +
-									 $"**{h2}** hour{Plural(h)}, " +
-									 $"**{m2}** minute{Plural(m)}, and " +
-									 $"**{s2}** second{Plural(s)}");
-			embed.AddField("Servers", $"Active on **{guilds}** server{Plural(guilds)} with " +
-									  $"**{members}** member{Plural(members)}");
+									 $"Total: " +
+									 $"**{d2}** day{Plural(d2)}, " +
+									 $"**{h2}** hour{Plural(h2)}, " +
+									 $"**{m2}** minute{Plural(m2)}, and " +
+									 $"**{s2}** second{Plural(s2)}");
+			/*embed.AddField("Servers", $"I am active on **{guilds}** server{Plural(guilds)} with " +
+									  $"**{members}** member{Plural(members)}");*/
 
 			embed.WithFooter($"{configParser.Nickname} {configParser.Version}, built on {configParser.BuildDate}");
 
-			embed.WithImageUrl(@"https://cdn.discordapp.com/attachments/436949335947870240/506494327250223104/VJMgPcQ.png");
+			//embed.WithImageUrl(@"https://cdn.discordapp.com/attachments/436949335947870240/506494327250223104/VJMgPcQ.png");
+			embed.WithImageUrl(@"https://raw.githubusercontent.com/trigger-death/TriggerChan/master/DiscordBots.MyBots/TriggerChan/Resources/UrlImages/TriggerChanWide.png");
+		}
+
+		[Name("stats")]
+		[Command("stats"), Alias("statistics")]
+		[Summary("Get some of my statistics such as spoilers, profiles, and servers")]
+		[Example("Display the statistics message")]
+		public async Task GetStats() {
+			var stats = await GetStatsAsync().ConfigureAwait(false);
+			var embed = new EmbedBuilder {
+				Color = configParser.EmbedColor,
+				Title = $"{configParser.EmbedPrefix}Statistics",
+				//Description = stats.ToString(),
+			};
+			embed.AddField("Servers", stats.ServerStats());
+			embed.AddField("Spoilers", stats.SpoilerStats());
+			embed.AddField("Profiles", stats.ProfileStats());
+
+			await ReplyAsync(embed: embed.Build()).ConfigureAwait(false);
+			/*embed.AddField("Stats", $"**{spoilers}** spoiler{Plural(spoilers)} have been revealed " +
+									$"**{spoiledUsers}** time{Plural(spoiledUsers)}");*/
+			//embed.AddField("Stats", stats.ToString());
 		}
 
 		[Name("about")]
@@ -231,7 +350,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		[Name("uptime")]
 		[Command("uptime")]
 		[Summary("Displays the time the bot has been running for")]
-		public Task Uptime() {
+		public async Task Uptime() {
 			TimeSpan uptime = DiscordBot.Uptime;
 			int d = (int) uptime.TotalDays;
 			int h = uptime.Hours;
@@ -243,7 +362,30 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			int m2 = uptime.Minutes;
 			int s2 = uptime.Seconds;
 			
-			return ReplyAsync($"`Current:` " +
+			var embed = new EmbedBuilder {
+				Color = configParser.EmbedColor,
+				Title = $"{configParser.EmbedPrefix}Uptime",
+				Description = $"Current: " +
+							  $"**{d}** day{Plural(d)}, " +
+							  $"**{h}** hour{Plural(h)}, " +
+							  $"**{m}** minute{Plural(m)}, and " +
+							  $"**{s}** second{Plural(s)}\n" +
+							  $"Total: " +
+							  $"**{d2}** day{Plural(d2)}, " +
+							  $"**{h2}** hour{Plural(h2)}, " +
+							  $"**{m2}** minute{Plural(m2)}, and " +
+							  $"**{s2}** second{Plural(s2)}",
+			};
+			/*embed.AddField("Current", $"**{d}** day{Plural(d)}, " +
+									  $"**{h}** hour{Plural(h)}, " +
+									  $"**{m}** minute{Plural(m)}, and " +
+									  $"**{s}** second{Plural(s)}");
+			embed.AddField("Total", $"**{d2}** day{Plural(d2)}, " +
+									$"**{h2}** hour{Plural(h2)}, " +
+									$"**{m2}** minute{Plural(m2)}, and " +
+									$"**{s2}** second{Plural(s2)}");*/
+			await ReplyAsync(embed: embed.Build()).ConfigureAwait(false);
+			/*return ReplyAsync($"`Current:` " +
 							  $"**{d}** day{Plural(d)}, " +
 							  $"**{h}** hour{Plural(h)}, " +
 							  $"**{m}** minute{Plural(m)}, and " +
@@ -252,7 +394,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 							  $"**{d2}** day{Plural(d)}, " +
 							  $"**{h2}** hour{Plural(h)}, " +
 							  $"**{m2}** minute{Plural(m)}, and " +
-							  $"**{s2}** second{Plural(s)}");
+							  $"**{s2}** second{Plural(s)}");*/
 		}
 
 		[Name("ping")]
@@ -306,10 +448,10 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 				Color = configParser.EmbedColor,
 				//Description = $"Users in {Context.Guild.Name}",
 				Title = $"Users in {Context.Guild.Name}",
-				Description =  $"Online: {online}\n" +
-							   $"Offline: {offline}\n" +
-							   $"Bots: {bots}\n" +
-							   $"Total: {total}\n",
+				Description =  $"Online: **{online}**\n" +
+							   $"Offline: **{offline}**\n" +
+							   $"Bots: **{bots}**\n" +
+							   $"Total: **{total}**\n",
 			};
 			await ReplyAsync(embed: embed.Build()).ConfigureAwait(false);
 		}

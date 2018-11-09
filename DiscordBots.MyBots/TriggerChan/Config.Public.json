@@ -1,9 +1,9 @@
 ﻿{
   // Customization
-  "prefix": "tb/",
+  "prefix": "t/", // Release
+  "nickname": "Trigger-chan", // Release
   "embed_color": "#F65C56",
   "embed_prefix": "<:trigger_chan:506519254884024340>  ",
-  "nickname": "Trigger-chan", // β
   "verion_postfix": null,
 
   "about_title": "$NICKNAME$ on Space Patrol",
@@ -25,6 +25,10 @@
     {
       "name": "Avatar by zwimmy",
       "url": "https://www.deviantart.com/zwimmy/art/Trigger-chan-711192608"
+    },
+    {
+      "name": "Who am I?",
+      "url": "https://www.youtube.com/watch?v=qQp-KYnKzGA"
     }
   ],
 
@@ -57,7 +61,7 @@
     "ReliabilityConfig": {
       "Enabled": true,
       "Timeout": "0:00:30",
-      "AttemptReset": true,
+      "AttemptReset": false,
       "DebugSeverity": "Debug",
       "InfoSeverity": "Info",
       "CriticalSeverity": "Critical"

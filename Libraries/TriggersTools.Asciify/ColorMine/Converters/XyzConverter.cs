@@ -11,15 +11,15 @@ namespace TriggersTools.Asciify.ColorMine.Converters {
 		public const double Kappa = 903.3; // Intent is 24389/27
 
 		public static ColorXyz ToXyz(ColorRgb rgb) {
-			double r = PivotRgb(rgb.R / 255.0);
-			double g = PivotRgb(rgb.G / 255.0);
-			double b = PivotRgb(rgb.B / 255.0);
+			double r = PivotRgb(rgb.R / 255d);
+			double g = PivotRgb(rgb.G / 255d);
+			double b = PivotRgb(rgb.B / 255d);
 
 			// Observer. = 2°, Illuminant = D65
 			return new ColorXyz(
-				r * 0.4124 + g * 0.3576 + b * 0.1805,
-				r * 0.2126 + g * 0.7152 + b * 0.0722,
-				r * 0.0193 + g * 0.1192 + b * 0.9505);
+				r * 0.412424  + g * 0.357579 + b * 0.180464,
+				r * 0.212656  + g * 0.715158 + b * 0.0721856,
+				r * 0.0193324 + g * 0.119193 + b * 0.950444);
 		}
 
 		public static ColorRgb ToColor(ColorXyz xyz) {
@@ -40,7 +40,7 @@ namespace TriggersTools.Asciify.ColorMine.Converters {
 		}
 
 		private static double ToRgb(double n) {
-			var result = 255.0 * n;
+			double result = 255.0 * n;
 			if (result < 0)
 				return 0;
 			if (result > 255)

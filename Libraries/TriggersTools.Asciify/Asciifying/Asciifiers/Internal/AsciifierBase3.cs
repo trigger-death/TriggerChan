@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using System.Linq;
 
 namespace TriggersTools.Asciify.Asciifying.Asciifiers {
-	internal abstract class AsciifierBase<TFntData, TImgData> : IAsciifier {
+	internal class AsciifierBase3 : IAsciifier, IDotColorAsciifier {
 
 		private static readonly Color Transparent = Color.FromArgb(0);
 		private static readonly SolidBrush TransparentBrush = new SolidBrush(Transparent);
@@ -23,19 +23,6 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 		protected ParallelOptions parallelOptions = new ParallelOptions {
 			MaxDegreeOfParallelism = 1,
 		};
-		private readonly object progressLock = new object();
-		private int cmag;
-		private int cmagIndex;
-		public double Progress {
-			get {
-				lock (progressLock) {
-					if (cmag == 0)
-						return 0d;
-					else
-						return (double) cmagIndex / cmag;
-				}
-			}
-		}
 
 		public IAsciifyFont Font { get; private set; }
 		public AsciifyPalette Palette { get; private set; }
@@ -47,7 +34,7 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 
 		public bool ForegroundOnly { get; set; }
 
-		protected TFntData[] AllCharData { get; set; }
+		protected ColorLab[] AllCharData { get; set; }
 		protected MappedPixel[] AllMappedPixels { get; set; }
 		protected Dictionary<char, int> AllCharIndexes { get; set; }
 		
@@ -80,7 +67,7 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 			}
 		}
 
-		public AsciifierBase() {
+		public AsciifierBase3() {
 		}
 
 		public void Initialize(IAsciifyFont font, ICharacterSet charset, AsciifyPalette palette) {
@@ -95,7 +82,7 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 			int count = charCount * colorCount;
 			int index = 0;
 			Stopwatch watch = Stopwatch.StartNew();
-			AllCharData = new TFntData[count];
+			AllCharData = new ColorLab[count];
 			AllMappedPixels = new MappedPixel[count];
 			Report("Array Creation", watch);
 			AllCharIndexes = new Dictionary<char, int>(charCount);
@@ -126,13 +113,70 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 
 		protected virtual void PostInitialize() { }
 
-		protected abstract double CalcScore(TImgData a, TFntData b);
+		protected ColorLab CalcFontData(Color color) {
+			return LabConverter.ToLab(color);
+		}
 
-		protected abstract TFntData CalcFontData(Color color);
+		protected ColorLab CalcFontData(IEnumerable<PixelPoint> pixels) {
+			double count = 0;
+			//ColorLab charValue = new ColorLab();
+			ColorRgb charValue = new ColorRgb();
+			double inc = 1;
+			foreach (PixelPoint p in pixels) {
+				inc = p.Color.A / 255d;
+				//charValue += LabConverter.ToLab(p.Color) * inc;
+				charValue += ((ColorRgb) p.Color) * inc;
+				count += inc;
+			}
+			//return (charValue / count).ZeroNaNs;
+			return LabConverter.ToLab((charValue / count).ZeroNaNs);
+		}
 
-		protected abstract TFntData CalcFontData(IEnumerable<PixelPoint> pixels);
+		protected ColorLab CalcImageData(IEnumerable<PixelPoint> pixels, Point start) {
+			/*int count = 0;
+			//ColorLab charValue = new ColorLab();
+			ColorRgb charValue = new ColorRgb();
+			foreach (PixelPoint p in pixels) {
+				//charValue += LabConverter.ToLab(p.Color);
+				charValue += ((ColorRgb) p.Color);
+				count++;
+			}
+			//return charValue / count;
+			return LabConverter.ToLab((charValue / count));*/
+			int count = 0;
+			/*ColorLab charValue = new ColorLab();
+			//ColorRgb charValue = new ColorRgb();
+			foreach (PixelPoint p in pixels) {
+				charValue += LabConverter.ToLab(p.Color);
+				//charValue += ((ColorRgb) p.Color);
+				count++;
+			}
+			return charValue / count;*/
+			//return LabConverter.ToLab((charValue / count));
+			/*ColorRgb charValue = new ColorRgb();
+			foreach (PixelPoint p in pixels) {
+				ColorRgb color = ((ColorRgb) p.Color);
+				charValue += color * color;
+				count++;
+			}
+			return LabConverter.ToLab(new ColorRgb(
+				Math.Sqrt(charValue.R / count),
+				Math.Sqrt(charValue.G / count),
+				Math.Sqrt(charValue.B / count)
+				));*/
+			ColorRgb charValue = new ColorRgb();
+			foreach (PixelPoint p in pixels) {
+				ColorRgb color = ((ColorRgb) p.Color);
+				charValue += color;
+				count++;
+			}
+			return LabConverter.ToLab(charValue / count);
+		}
 
-		protected abstract TImgData CalcImageData(IEnumerable<PixelPoint> pixels, Point start);
+		protected double CalcScore(ColorLab a, ColorLab b) {
+			//return Comparer.Compare(a, b, true);
+			return Cie76Comparison.CompareS(a, b, true);
+		}
 
 
 		protected IEnumerable<PixelPoint> ForEachCharPixel(BitmapData data, Point start) {
@@ -204,7 +248,7 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 			}
 		}
 
-		private TFntData CalcCharData(Bitmap bitmap, PaletteBrushes brushes, char c, int index, PaletteColor color) {
+		private ColorLab CalcCharData(Bitmap bitmap, PaletteBrushes brushes, char c, int index, PaletteColor color) {
 			if (ForegroundOnly) {
 				if (c == ' ')
 					return CalcFontData(color.ColorB);
@@ -228,11 +272,11 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 			return g;
 		}
 
-		protected virtual MappedPixel FindBestPixel(BitmapData data, Point start,
+		protected virtual ColorRgb FindBestPixel(BitmapData data, Point start,
 			ICharacterEnumerator enumerator)
 		{
-			TImgData charData = CalcImageData(ForEachCharPixel(data, start), start);
-			double bestScore = float.MaxValue;
+			return LabConverter.ToColor(CalcImageData(ForEachCharPixel(data, start), start));
+			/*double bestScore = float.MaxValue;
 			int bestPixelIndex = 0;
 			//int count = AllMappedPixels.Length;
 			foreach (int i in ForEachMappedPixel(enumerator)) {
@@ -245,7 +289,7 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 						break;
 				}
 			}
-			return AllMappedPixels[bestPixelIndex];
+			return AllMappedPixels[bestPixelIndex];*/
 		}
 
 		protected IEnumerable<int> ForEachMappedPixel() {
@@ -269,7 +313,7 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 			}
 		}
 		
-		public Bitmap AsciifyImage(Bitmap input) {
+		public Bitmap AsciifyImage(Bitmap input, Action<double> progressCallback = null) {
 			Stopwatch totalWatch = Stopwatch.StartNew();
 			using (DisposableBitmapData bmpData = input.LockRead())
 			using (PaletteBrushes brushes = Palette.CreateBrushes()) {
@@ -281,7 +325,7 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 					Bitmap output = new Bitmap(csize.Width * Font.Width, csize.Height * Font.Height, PixelFormat.Format24bppRgb);
 					try {
 						using (Graphics g = CreateGraphics(output))
-							AsciifyGraphics(g, bmpData, output, csize, brushes);
+							AsciifyGraphics(g, bmpData, output, csize, brushes, progressCallback);
 						//Report("Time", totalWatch);
 						return output;
 					}
@@ -299,20 +343,23 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 		private void FindAndDrawChar(Graphics g, BitmapData data, Point point,
 			PaletteBrushes brushes, ICharacterEnumerator enumerator)
 		{
-			MappedPixel pixel = FindBestPixel(data, point, enumerator);
-			SolidBrush fore = brushes[pixel.IndexF, true];
+			Color pixel = (Color) FindBestPixel(data, point, enumerator);
+			using (SolidBrush b = new SolidBrush(pixel)) {
+				lock (g) {
+					Font.DrawChar(g, ' ', b, b, point);
+				}
+			}
+			/*SolidBrush fore = brushes[pixel.IndexF, true];
 			SolidBrush back = brushes[pixel.IndexB, false];
 			lock (g) {
 				Font.DrawChar(g, pixel.Char, fore, back, point);
-			}
-			enumerator?.Increment(pixel.Char);
+			}*/
+			enumerator?.Increment(' ');
 		}
 
-		private void AsciifyGraphics(Graphics g, BitmapData data, Bitmap output, Size csize, PaletteBrushes brushes) {
-			lock (progressLock) {
-				cmag = csize.Width * csize.Height;
-				cmagIndex = 0;
-			}
+		private void AsciifyGraphics(Graphics g, BitmapData data, Bitmap output, Size csize, PaletteBrushes brushes, Action<double> progressCallback = null) {
+			int cmag = csize.Width * csize.Height;
+			int index = 0;
 			ParallelAbility ability = CharacterSet.ParallelAbility;
 			if (MaxDegreeOfParallelism == 1)
 				ability = ParallelAbility.None;
@@ -321,13 +368,12 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 				Parallel.ForEach(ForEachChar(csize, CharacterSet.Vertical),
 					parallelOptions, p =>
 				{
-					//double progress = (double) cmagIndex / cmag;
-					//progressCallback?.Invoke(progress);
+					double progress = (double) index / cmag;
+					progressCallback?.Invoke(progress);
 					//if (p.X == 0)
 					//	Console.WriteLine($"{index}/{cmag}");
 					FindAndDrawChar(g, data, p, brushes, null);
-					lock (progressLock)
-						cmagIndex++;
+					index++;
 				});
 				break;
 			case ParallelAbility.Line:
@@ -335,13 +381,12 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 					parallelOptions, cstart =>
 				{
 					ICharacterEnumerator enumerator = CharacterSet.GetCharEnumerator(cstart, csize);
-					//double progress = (double) cmagIndex / cmag;
-					//progressCallback?.Invoke(progress);
+					double progress = (double) index / cmag;
+					progressCallback?.Invoke(progress);
 					//Console.WriteLine($"{index}/{cmag}");
 					foreach (Point p in ForEachInLine(cstart, csize, CharacterSet.Vertical)) {
 						FindAndDrawChar(g, data, p, brushes, enumerator);
-						lock (progressLock)
-							cmagIndex++;
+						index++;
 					}
 				});
 				break;
@@ -349,38 +394,36 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 				Parallel.ForEach(ForEachChar(csize, CharacterSet.Vertical),
 					parallelOptions, p =>
 				{
-					//double progress = (double) cmagIndex / cmag;
-					//progressCallback?.Invoke(progress);
+					double progress = (double) index / cmag;
+					progressCallback?.Invoke(progress);
 					//if (p.X == 0)
 					//	Console.WriteLine($"{index}/{cmag}");
 					Point cstart = new Point(p.X / Font.Width, p.Y / Font.Height);
 					ICharacterEnumerator enumerator = CharacterSet.GetCharEnumerator(cstart, csize);
 					FindAndDrawChar(g, data, p, brushes, enumerator);
-					lock (progressLock)
-						cmagIndex++;
+					index++;
 				});
 				break;
 			case ParallelAbility.None:
 				ICharacterEnumerator enumerator2 = CharacterSet.GetCharEnumerator(Point.Empty, csize);
 				foreach (Point p in ForEachChar(csize, CharacterSet.Vertical)) {
 					FindAndDrawChar(g, data, p, brushes, enumerator2);
-					lock (progressLock)
-						cmagIndex++;
+					index++;
 					if ((!CharacterSet.Vertical && p.X == output.Width - 1) ||
 						(CharacterSet.Vertical && p.Y == output.Height - 1)) {
 						enumerator2?.NewLine();
-						//double progress = (double) cmagIndex / cmag;
-						//progressCallback?.Invoke(progress);
+						double progress = (double) index / cmag;
+						progressCallback?.Invoke(progress);
 						//Console.WriteLine($"{index}/{cmag}");
 					}
 				}
 				break;
 			}
-			//Console.WriteLine($"{cmagIndex}/{cmag}");
+			Console.WriteLine($"{index}/{cmag}");
 		}
 
 		private void Report(string name, Stopwatch watch) {
-			//Trace.WriteLine($"{name}: {watch.ElapsedMilliseconds}ms");
+			Trace.WriteLine($"{name}: {watch.ElapsedMilliseconds}ms");
 		}
 
 		public Bitmap PrepareImage(Image image, double scale, Color transparent) {

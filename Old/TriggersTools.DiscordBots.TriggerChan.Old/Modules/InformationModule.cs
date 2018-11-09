@@ -752,8 +752,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		[RequireContext(ContextType.Guild)]
 		[Remarks("Use " + @"<http://www.timezoneconverter.com/cgi-bin/findzone>" + " to help find your timezone name")]
 		public async Task AssignTimeZone([Remainder]string input) {
-			TimeZoneAmbiguities ambiguities;
-			TimeZoneInfo timeZone = TimeZoneService.ParseTimeZone(input, out ambiguities);
+			TimeZoneInfo timeZone = TimeZoneService.ParseTimeZone(input, out TimeZoneAmbiguities ambiguities);
 			if (timeZone == null && ambiguities == null) {
 				await ReplyAsync("No matching timezones found!\nUse " + @"<http://www.timezoneconverter.com/cgi-bin/findzone>" + " to help find your timezone name");
 			}

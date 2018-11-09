@@ -23,13 +23,15 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 
 		void Initialize(IAsciifyFont font, ICharacterSet charset, AsciifyPalette palette);
 
-		Bitmap AsciifyImage(Bitmap preparedImage, Action<double> progressCallback = null);
+		Bitmap AsciifyImage(Bitmap preparedImage);
 
 		Bitmap PrepareImage(Image image, double scale, Color transparent);
 
 		int MaxDegreeOfParallelism { get; set; }
 
 		bool ForegroundOnly { get; set; }
+
+		double Progress { get; }
 	}
 	public interface IColorAsciifier : IAsciifier {
 		IColorSpaceComparison Comparer { get; set; }
