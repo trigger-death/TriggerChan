@@ -310,7 +310,11 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			int index = 0;
 			foreach (Regex regex in ILoveRegex) {
 				if (regex.IsMatch(text)) {
-					await msg.Channel.SendFileAsync(random.Choose(TriggerResources.TalkbackWellIDontLoveYou)).ConfigureAwait(false);
+					// Rare talkbacks
+					if (Random.Next(20) == 0)
+						await msg.Channel.SendFileAsync(random.Choose(TriggerResources.TalkbackWellIDontLoveYouRare)).ConfigureAwait(false);
+					else
+						await msg.Channel.SendFileAsync(random.Choose(TriggerResources.TalkbackWellIDontLoveYou)).ConfigureAwait(false);
 					channel.TalkBackTimer.Restart();
 					return true;
 				}

@@ -26,7 +26,11 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 		/// Constructs the <see cref="TriggerServiceContainer"/> with the specified services.
 		/// </summary>
 		/// <param name="services">The service collection to construct the provider from.</param>
-		public TriggerServiceContainer(IServiceCollection services) : base(services) { }
+		public TriggerServiceContainer(IServiceCollection services,
+			Func<IServiceCollection, IServiceCollection> configureHiddenServices)
+			: base(services)
+		{
+		}
 
 		#endregion
 

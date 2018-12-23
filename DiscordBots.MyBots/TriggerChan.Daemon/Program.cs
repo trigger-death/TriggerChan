@@ -13,7 +13,7 @@ namespace TriggerChan.Daemon {
 		static void Run() {
 			Console.Title = "Discord Bot Deploy";
 			const string Path = "TriggerChan";
-#if NETSTANDARD2_0
+#if NETCOREAPP2_1
 			DiscordDaemon.RunDotNet($"{Path}.dll");
 #else
 			DiscordDaemon.RunExecutable($"{Path}.exe");

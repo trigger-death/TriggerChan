@@ -298,14 +298,22 @@ namespace TriggersTools.DiscordBots {
 		public virtual IServiceCollection ConfigureDatabase(IServiceCollection services) {
 			return services;
 		}
-		
+		/// <summary>
+		/// Configures all required services that should not be enumerable in the service collection.
+		/// </summary>
+		/// <param name="services">The services to configure.</param>
+		/// <returns>Returns <paramref name="services"/>.</returns>
+		public virtual IServiceCollection ConfigureHiddenServices(IServiceCollection services) {
+			return services;
+		}
+
 		/// <summary>
 		/// Creates the <see cref="DiscordBotServiceContainer"/> or an extended class.
 		/// </summary>
 		/// <param name="services">The service collection to initialize the service container with.</param>
 		/// <returns>The newly created service container.</returns>
 		public virtual DiscordBotServiceContainer CreateServiceContainer(IServiceCollection services) {
-			return new DiscordBotServiceContainer(services);
+			return new DiscordBotServiceContainer(services, ConfigureHiddenServices);
 		}
 		
 		/// <summary>

@@ -36,6 +36,10 @@ namespace TriggersTools.DiscordBots {
 		/// </summary>
 		public IServiceCollection Collection { get; }
 		/// <summary>
+		/// Gets the list of service descriptors that are allowed to be enumerated.
+		/// </summary>
+		public IReadOnlyList<ServiceDescriptor> EnumerableServices { get; }
+		/// <summary>
 		/// Gets the Discord bot running this program.
 		/// </summary>
 		public IDiscordBot DiscordBot { get; }
@@ -76,8 +80,14 @@ namespace TriggersTools.DiscordBots {
 		/// Constructs the <see cref="DiscordBotServiceContainer"/> with the specified services.
 		/// </summary>
 		/// <param name="services">The service collection to construct the provider from.</param>
-		public DiscordBotServiceContainer(IServiceCollection services) {
-			Collection = services;
+		/// <param name="configureHiddenServices">
+		/// An optional method to add services that should not be enumerable in the collection.
+		/// </param>
+		public DiscordBotServiceContainer(IServiceCollection services,
+			Func<IServiceCollection, IServiceCollection> configureHiddenServices = null)
+		{
+			EnumerableServices = new List<ServiceDescriptor>(services);
+			Collection = configureHiddenServices?.Invoke(services) ?? services;
 			// Add all extended service types to the container
 			Type serviceType = GetType();
 			while (serviceType != null) {
@@ -159,14 +169,14 @@ namespace TriggersTools.DiscordBots {
 		/// Gets all services types in the collection.
 		/// </summary>
 		/// <returns>The collection of service types.</returns>
-		public IEnumerable<Type> GetServiceTypes() => Collection.Select(sd => sd.ServiceType);*/
+		public IEnumerable<Type> GetServiceTypes() => EnumerableServices.Select(sd => sd.ServiceType);*/
 		/// <summary>
 		/// Gets all services in the collection.
 		/// </summary>
 		/// <param name="lifetime">The required lifetime of the service. Null for any type.</param>
 		/// <returns>The collection of services.</returns>
 		public IEnumerable<object> GetServices(ServiceLifetime lifetime) {
-			return Collection.GetServices(Provider, lifetime);
+			return EnumerableServices.GetServices(Provider, lifetime);
 		}
 		/// <summary>
 		/// Gets all services of base type <typeparamref name="T"/> in the collection.
@@ -175,7 +185,7 @@ namespace TriggersTools.DiscordBots {
 		/// <param name="lifetime">The required lifetime of the service. Null for any type.</param>
 		/// <returns>The collection of <typeparamref name="T"/> services.</returns>
 		public IEnumerable<T> GetServices<T>(ServiceLifetime lifetime) {
-			return Collection.GetServices<T>(Provider, lifetime);
+			return EnumerableServices.GetServices<T>(Provider, lifetime);
 		}
 
 		/// <summary>
@@ -194,7 +204,7 @@ namespace TriggersTools.DiscordBots {
 		/// </summary>
 		/// <returns>The collection of <see cref="DbContextEx"/>s.</returns>
 		public IEnumerable<DbContextEx> GetDbContexts() {
-			return Collection.GetServices<DbContextEx>(Provider, ServiceLifetime.Transient);
+			return EnumerableServices.GetServices<DbContextEx>(Provider, ServiceLifetime.Transient);
 		}
 
 		#endregion

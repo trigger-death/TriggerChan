@@ -33,60 +33,125 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 			Directory.CreateDirectory(TempImagesDir);
 		}
 
-		public static readonly string JavaScript = GetImage("JavaScript.png");
-		public static readonly string MergeConflict = GetImage("Merge_Conflict.png");
-		public static readonly string ManOfCulture = GetImage("Man_of_Culture.png");
-		
-		public static readonly string Disgusting = GetTalkback("Disgusting.png");
-		public static readonly string DontTouchMePervert = GetTalkback("Dont_Touch_Me_Pervert.png");
+		public static readonly string JavaScript = GetImage("javaScript.png");
+		public static readonly string MergeConflict = GetImage("merge_conflict.png");
+		public static readonly string ManOfCulture = GetImage("man_of_culture.png");
+		public static readonly string ModAbuse = GetImage("mod_abuse.jpg");
+		public static readonly string NoNoNo = GetImage("nonono.gif");
+		public static readonly string Shock = GetImage("shock.gif");
+
+		public static readonly string Disgusting = GetTalkback("disgusting.png");
+		public static readonly string DontTouchMePervert = GetTalkback("dont_touch_me_pervert.png");
+		public static readonly string DontTouchMePervertRare = GetTalkback("dont_touch_me_pervert_rare.png");
 		public static readonly string[] TalkbackWellIDontLoveYou = new string[] {
 			Disgusting,
 			DontTouchMePervert,
 		};
-
-		public static readonly string JuicyYuuji = GetGrisaia("Juicy_Yuuji.png");
-		public static readonly string[] Yuuji = {
-			JuicyYuuji,
+		public static readonly string[] TalkbackWellIDontLoveYouRare = new string[] {
+			DontTouchMePervertRare,
 		};
-		public static readonly string AmaneSeduced = GetGrisaia("Amane_Seduced.png");
-		public static readonly string AmaneWink = GetGrisaia("Amane_Wink.png");
+
+		public static readonly string YuujiThumbsUp = GetGrisaia("yuuji_thumbsup.png");
+		public static readonly string YuujiDeleteThis = GetGrisaia("yuuji_deletethis.png");
+		public static readonly string YuujiBullyAmane = GetGrisaia("yuuji_bully_amane.png");
+		public static readonly string YuujiBullyMichiru = GetGrisaia("yuuji_bully_michiru.png");
+		public static readonly string YuujiBullyChizuru = GetGrisaia("yuuji_bully_chizuru.png");
+		public static readonly string YuujiScarred = GetGrisaia("yuuji_scarred.png");
+		public static readonly string YuujiWobble = GetGrisaia("yuuji_wobble.gif");
+		public static readonly string YuujiDefense = GetGrisaia("yuuji_national_defense.png");
+		public static readonly string[] Yuuji = {
+			YuujiThumbsUp,
+			YuujiDeleteThis,
+			YuujiBullyAmane,
+			YuujiBullyMichiru,
+			YuujiBullyChizuru,
+			YuujiScarred,
+			YuujiWobble,
+			YuujiDefense,
+		};
+		public static readonly string[] YuujiBully = {
+			YuujiBullyAmane,
+			YuujiBullyMichiru,
+			YuujiBullyChizuru,
+		};
+		public static readonly string KazukiOhWell = GetGrisaia("kazuki_ohwell.png");
+		public static readonly string KazukiAngry = GetGrisaia("kazuki_angry.png");
+		public static readonly string KazukiDeleteThis = GetGrisaia("kazuki_deletethis.png");
+		public static readonly string[] Kazuki = {
+			KazukiOhWell,
+			KazukiAngry,
+			KazukiDeleteThis,
+		};
+		public static readonly string[] DeleteThis = {
+			YuujiDeleteThis,
+			KazukiDeleteThis,
+		};
+		public static readonly string AmaneSeduced = GetGrisaia("amane_seduced.png");
+		public static readonly string AmaneWink = GetGrisaia("amane_wink.png");
 		public static readonly string[] Amane = {
 			AmaneSeduced,
 			AmaneWink,
 		};
-		public static readonly string MakinaRoger = GetGrisaia("Makina_Roger.png");
-		public static readonly string MakinaThehell = GetGrisaia("Makina_Thehell.png");
+		public static readonly string MakinaRoger = GetGrisaia("makina_roger.png");
+		public static readonly string MakinaThehell = GetGrisaia("makina_thehell.png");
+		public static readonly string MakinaVictory = GetGrisaia("makina_victory.png");
 		public static readonly string[] Makina = {
 			MakinaRoger,
 			MakinaThehell,
+			MakinaVictory,
 		};
-		public static readonly string MichiruBrag = GetGrisaia("Michiru_Brag.png");
-		public static readonly string MichiruSmug = GetGrisaia("Michiru_Smug.png");
+		public static readonly string MichiruBrag = GetGrisaia("michiru_brag.png");
+		public static readonly string MichiruSmug = GetGrisaia("michiru_smug.png");
+		public static readonly string MichiruHappy = GetGrisaia("michiru_happy.png");
+		public static readonly string MichiruFainted = GetGrisaia("michiru_fainted.png");
 		public static readonly string[] Michiru = {
 			MichiruBrag,
 			MichiruSmug,
+			MichiruHappy,
+			MichiruFainted,
 		};
-		public static readonly string SachiGlare = GetGrisaia("Sachi_Glare.png");
-		public static readonly string SachiScales = GetGrisaia("Sachi_Scales.png");
+		public static readonly string SachiGlare = GetGrisaia("sachi_glare.png");
+		public static readonly string SachiScales = GetGrisaia("sachi_scales.png");
+		public static readonly string SachiPat = GetGrisaia("sachi_pat.png");
+		public static readonly string SachiMurder = GetGrisaia("sachi_murder.png");
 		public static readonly string[] Sachi = {
 			SachiGlare,
 			SachiScales,
+			SachiPat,
+			SachiMurder,
 		};
-		public static readonly string YumikoCutter = GetGrisaia("Yumiko_Cutter.png");
+		public static readonly string YumikoBoxcutter = GetGrisaia("yumiko_boxcutter.png");
 		public static readonly string[] Yumiko = {
-			YumikoCutter,
+			YumikoBoxcutter,
 		};
+		public static readonly string GrisaiaPeek = GetGrisaia("grisaia_peek.png");
 		public static readonly string[] Grisaia = {
-			JuicyYuuji,
+			GrisaiaPeek,
+			KazukiOhWell,
+			KazukiAngry,
+			KazukiDeleteThis,
+			YuujiThumbsUp,
+			YuujiDeleteThis,
+			YuujiBullyAmane,
+			YuujiBullyMichiru,
+			YuujiBullyChizuru,
+			YuujiScarred,
+			YuujiWobble,
+			YuujiDefense,
 			AmaneSeduced,
 			AmaneWink,
 			MakinaRoger,
 			MakinaThehell,
+			MakinaVictory,
 			MichiruBrag,
 			MichiruSmug,
+			MichiruHappy,
+			MichiruFainted,
 			SachiGlare,
 			SachiScales,
-			YumikoCutter,
+			SachiPat,
+			SachiMurder,
+			YumikoBoxcutter,
 		};
 
 

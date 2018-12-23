@@ -62,12 +62,21 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 
 		public override IServiceCollection ConfigureDatabase(IServiceCollection services) {
 			return services
-				//.AddEntityFrameworkNpgsql()
 				.AddSingleton<IDbProvider, TriggerDbProvider>()
 				.AddDbContext<TriggerDbContext>(ServiceLifetime.Transient)
 				;
 		}
-		
+		/// <summary>
+		/// Configures all required services that should not be enumerable in the service collection.
+		/// </summary>
+		/// <param name="services">The services to configure.</param>
+		/// <returns>Returns <paramref name="services"/>.</returns>
+		public override IServiceCollection ConfigureHiddenServices(IServiceCollection services) {
+			return services
+				.AddEntityFrameworkNpgsql()
+				;
+		}
+
 		public override IConfigurationRoot LoadConfig() {
 			var builder = new ConfigurationBuilder()            // Create a new instance of the config builder
 				.SetBasePath(AppContext.BaseDirectory)          // Specify the default location for the config file
@@ -99,7 +108,7 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 		}
 
 		public override DiscordBotServiceContainer CreateServiceContainer(IServiceCollection services) {
-			return new TriggerServiceContainer(services);
+			return new TriggerServiceContainer(services, ConfigureHiddenServices);
 		}
 	}
 }

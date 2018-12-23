@@ -60,7 +60,7 @@ namespace TriggersTools.DiscordBots.Extensions {
 		/// <param name="services">The service collection to search through.</param>
 		/// <param name="provider">The service provider attached to the service collection.</param>
 		/// <returns>The collection of matching services.</returns>
-		public static IEnumerable<object> GetServices(this IServiceCollection services,
+		public static IEnumerable<object> GetServices(this IEnumerable<ServiceDescriptor> services,
 			IServiceProvider provider)
 		{
 			return services
@@ -74,7 +74,7 @@ namespace TriggersTools.DiscordBots.Extensions {
 		/// <param name="provider">The service provider attached to the service collection.</param>
 		/// <param name="lifetime">The required lifetime of the service. Null for any type.</param>
 		/// <returns>The collection of matching services.</returns>
-		public static IEnumerable<object> GetServices(this IServiceCollection services,
+		public static IEnumerable<object> GetServices(this IEnumerable<ServiceDescriptor> services,
 			IServiceProvider provider, ServiceLifetime lifetime)
 		{
 			return services
@@ -90,7 +90,7 @@ namespace TriggersTools.DiscordBots.Extensions {
 		/// <param name="services">The service collection to search through.</param>
 		/// <param name="provider">The service provider attached to the service collection.</param>
 		/// <returns>The collection of matching services.</returns>
-		public static IEnumerable<T> GetServices<T>(this IServiceCollection services,
+		public static IEnumerable<T> GetServices<T>(this IEnumerable<ServiceDescriptor> services,
 			IServiceProvider provider) {
 			return services
 				.Where(sd => !sd.ServiceType.IsGenericTypeDefinition)
@@ -106,7 +106,7 @@ namespace TriggersTools.DiscordBots.Extensions {
 		/// <param name="provider">The service provider attached to the service collection.</param>
 		/// <param name="lifetime">The required lifetime of the service. Null for any type.</param>
 		/// <returns>The collection of matching services.</returns>
-		public static IEnumerable<T> GetServices<T>(this IServiceCollection services,
+		public static IEnumerable<T> GetServices<T>(this IEnumerable<ServiceDescriptor> services,
 			IServiceProvider provider, ServiceLifetime lifetime)
 		{
 			return services

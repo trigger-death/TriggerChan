@@ -188,10 +188,31 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		}
 
 		[Name("merge")]
-		[Command("merge", RunMode = RunMode.Async), Alias("mergeconflict")]
+		[Command("merge"), Alias("mergeconflict")]
 		[Summary("An image macro from New Game about Merge Conflicts")]
 		public Task MergeConflict() {
 			return Context.Channel.SendFileAsync(TriggerResources.MergeConflict);
+		}
+
+		[Name("shock")]
+		[Command("shock"), Alias("shocked")]
+		[Summary("An image macro for being shocked")]
+		public Task Shock() {
+			return Context.Channel.SendFileAsync(TriggerResources.Shock);
+		}
+
+		[Name("modabuse")]
+		[Command("modabuse"), Alias("mod abuse")]
+		[Summary("An image macro for when mods are abusing their authority")]
+		public Task ModAbuse() {
+			return Context.Channel.SendFileAsync(TriggerResources.ModAbuse);
+		}
+
+		[Name("nonono")]
+		[Command("nonono"), Alias("no no no")]
+		[Summary("No, no, no... BAD!")]
+		public Task NoNoNo() {
+			return Context.Channel.SendFileAsync(TriggerResources.NoNoNo);
 		}
 
 		[Name("culture")]
