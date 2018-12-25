@@ -40,6 +40,7 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 		public static readonly string ModAbuse = GetImage("mod_abuse.jpg");
 		public static readonly string NoNoNo = GetImage("nonono.gif");
 		public static readonly string Shock = GetImage("shock.gif");
+		public static readonly string Swat = GetImage("swat.gif");
 
 		public static readonly string Disgusting = GetTalkback("disgusting.png");
 		public static readonly string DontTouchMePervert = GetTalkback("dont_touch_me_pervert.png");

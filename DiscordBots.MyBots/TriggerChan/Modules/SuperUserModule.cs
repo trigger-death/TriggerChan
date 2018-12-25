@@ -69,7 +69,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		[Summary("Restarts the bot to help fix any errors that have accumulated")]
 		public async Task Restart() {
 			await ReplyAsync("`Restarting...`").ConfigureAwait(false);
-			await DiscordBot.RestartAsync(Context, "`Yahallo~`").ConfigureAwait(false);
+			await DiscordBot.RestartAsync(Context, "`Yahallo World!`").ConfigureAwait(false);
 		}
 
 		[Name("error")]

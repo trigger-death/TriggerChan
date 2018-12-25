@@ -208,6 +208,13 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			return Context.Channel.SendFileAsync(TriggerResources.Shock);
 		}
 
+		[Name("swat")]
+		[Command("swat"), Alias("police")]
+		[Summary("Open the door and put your hands up!")]
+		public Task Swat() {
+			return Context.Channel.SendFileAsync(TriggerResources.Swat);
+		}
+
 		[Name("modabuse")]
 		[Command("modabuse"), Alias("mod abuse")]
 		[Summary("An image macro for when mods are abusing their authority")]
