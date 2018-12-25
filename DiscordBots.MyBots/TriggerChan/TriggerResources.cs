@@ -33,6 +33,7 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 			Directory.CreateDirectory(TempImagesDir);
 		}
 
+		public static readonly string Tasts = GetImage("tasts.png");
 		public static readonly string JavaScript = GetImage("javaScript.png");
 		public static readonly string MergeConflict = GetImage("merge_conflict.png");
 		public static readonly string ManOfCulture = GetImage("man_of_culture.png");

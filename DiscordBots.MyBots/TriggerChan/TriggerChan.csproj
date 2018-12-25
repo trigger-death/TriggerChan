@@ -20,7 +20,7 @@
     <PackageProjectUrl>https://github.com/trigger-death/TriggerChan</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/trigger-death/TriggerChan/blob/master/License.md</PackageLicenseUrl>
     <Description>I was made by trigger_death for use in a small selection of Discord servers. My selling features are spoilers, inserting claps between words, drawing Divergence Meters, and other fun or helpful commands.</Description>
-    <Version>2.0.13-beta0006</Version>
+    <Version>2.0.17-beta0006</Version>
     <Configurations>Debug;Release;Publish</Configurations>
   </PropertyGroup>
 
@@ -40,12 +40,12 @@
 
   <!-- NuGet Packages -->
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.0" />
     <PackageReference Include="MSBump" Version="2.3.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="TimeZoneNames" Version="3.3.4" />
     <PackageReference Include="TriggersTools.Build.BuildTime" Version="1.0.0" />
     <PackageReference Include="TriggersTools.Build.CopyrightYear" Version="1.0.0" />
@@ -164,7 +164,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Commands\Attributes\Preconditions\" />
     <Folder Include="Commands\Readers\" />
     <Folder Include="Profiles\" />
   </ItemGroup>
@@ -192,6 +191,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Images\*\*.gif">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="DevStatus.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Lavalink.jar">
@@ -342,6 +344,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Ocarina\Songs\Zelda%27s Lullaby.mp3">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Welcome.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

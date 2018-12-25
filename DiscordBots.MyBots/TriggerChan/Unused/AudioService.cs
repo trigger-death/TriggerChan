@@ -499,13 +499,13 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 						$"{song.Title}\n";
 				if (info.CurrentSong is SongDownloadInfo download &&
 					download.DownloadStatus == DownloadStatus.InProgress) {
-					title = "Downloading <a:downloading:507585439536906241> ";
+					title = "Downloading <a:processing:526524731487158283> ";
 					if (download.Proxy != null) {
 						title += " though proxy";
 					}
 				}
 				else {
-					title = $"Playing <a:equalizer:507584731060240384> ";
+					title = $"Playing <a:equalizer:526524761065652224> ";
 					TimeSpan position = DateTime.UtcNow - info.StartTime;
 					description += $"{position.ToPlayString()} / {song.Duration.ToPlayString()}";
 				}

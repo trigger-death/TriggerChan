@@ -3,13 +3,13 @@
 
   "embed_color": "#00C27E",
 
-  "about_title": "<:LensOfTruthEye:501441037684834318> Lens of Truth the Spoiler Bot",
-  "help_title": "<:LensOfTruthEye:501441037684834318> Lens of Truth: Commands",
-  "reactions_title": "<:LensOfTruthEye:501441037684834318> Lens of Truth: Reactions",
+  "about_title": "<:lensOfTruthEye:526524303924002817> Lens of Truth the Spoiler Bot",
+  "help_title": "<:lensOfTruthEye:526524303924002817> Lens of Truth: Commands",
+  "reactions_title": "<:lensOfTruthEye:526524303924002817> Lens of Truth: Reactions",
   "about_description": "The Lens of Truth will conceal spoilers from other users. Reacting to a spoiler with 🔍 will send the contents of the spoiler to your DM. Unreacting will remove the spoiler from your DM.",
   "help_description": "The Lens of Truth will conceal spoilers from other users. Reacting to a spoiler with 🔍 will send the contents of the spoiler to your DM. Unreacting will remove the spoiler from your DM.",
   "reactions_description": "The following reactions are used to interact with the Lens of Truth",
-
+  
   "about_links": [
     {
       "name": "GitHub Repo",

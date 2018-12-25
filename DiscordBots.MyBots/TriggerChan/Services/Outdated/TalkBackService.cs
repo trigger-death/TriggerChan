@@ -39,7 +39,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 
 		private readonly Random random;
 		private readonly ConfigParserService configParser;
-		private readonly Emote TriggyEmote = Emote.Parse("<:trigger_chan:506519254884024340>");
+		private readonly Emote TriggyEmote = Emote.Parse("<:trigger_chan:526524270520696834>");
 
 		public TalkBackService(TriggerServiceContainer services,
 							   ConfigParserService configParser,
@@ -94,6 +94,10 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 
 		private async Task OnReactionAdded(Cacheable<IUserMessage, ulong> msg, ISocketMessageChannel channel, SocketReaction reaction) {
 			if (!(channel is IGuildChannel guildChannel)) return;
+
+			// Do we have the base level of required permissions?
+			if (!await channel.CanRespondAsync(Client).ConfigureAwait(false)) return;
+
 			if (reaction.Emote.Equals(TriggerReactions.PinMessage)) {
 				IUserMessage message = null;
 				if (reaction.Message.IsSpecified && reaction.Message.Value != null)
@@ -240,6 +244,9 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			if (!(s is SocketUserMessage msg)) return; // Ensure the message is from a user/bot
 			if (!(s.Channel is IGuildChannel)) return; // Only talkback in guilds
 			if (msg.Author.IsBot) return;
+
+			// Do we have the base level of required permissions?
+			if (!await s.Channel.CanRespondAsync(Client).ConfigureAwait(false)) return;
 
 			var context = new DiscordBotCommandContext(Services, Client, msg);
 			

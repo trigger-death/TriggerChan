@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
 using Discord;
+using Discord.WebSocket;
 
 namespace TriggersTools.DiscordBots.Extensions {
 	/// <summary>
@@ -30,6 +31,21 @@ namespace TriggersTools.DiscordBots.Extensions {
 		public static async Task<IUserMessage> SendFileAsync(this IMessageChannel channel, byte[] data, string filename, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null) {
 			using (MemoryStream stream = new MemoryStream(data))
 				return await channel.SendFileAsync(stream, filename, text, isTTS, embed, options).ConfigureAwait(false);
+		}
+
+		/// <summary>
+		/// Checks if the bot has the base level of permissions needed to respond in the channel.
+		/// </summary>
+		/// <param name="channel">The channel to check the permissions of.</param>
+		/// <param name="client">The guild client used to get the current user.</param>
+		/// <returns>True if the bot can respond.</returns>
+		public static async Task<bool> CanRespondAsync(this IMessageChannel channel, DiscordSocketClient client) {
+			if (channel is IGuildChannel guildChannel) {
+				IGuildUser guildUser = await guildChannel.Guild.GetCurrentUserAsync().ConfigureAwait(false);
+				ChannelPermissions permissions = guildUser.GetPermissions(guildChannel);
+				return permissions.SendMessages && permissions.AddReactions && permissions.UseExternalEmojis;
+			}
+			return true;
 		}
 	}
 }

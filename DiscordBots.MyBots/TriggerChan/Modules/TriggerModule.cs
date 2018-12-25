@@ -7,20 +7,30 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Microsoft.Extensions.Configuration;
 using TriggersTools.DiscordBots.Modules;
 using TriggersTools.DiscordBots.TriggerChan.Extensions;
 using ImageFormat = System.Drawing.Imaging.ImageFormat;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 	public class TriggerModule : DiscordBotModule {
+		#region Fields
+
+		/// <summary>
+		/// Gets the bot service provider.
+		/// </summary>
+		public new TriggerServiceContainer Services => (TriggerServiceContainer) base.Services;
+		/// <summary>
+		/// Gets the home guild Ids section.
+		/// </summary>
+		public IConfigurationSection Home => Services.Home;
+
+		#endregion
+
+		#region Constructors
 
 		public TriggerModule(TriggerServiceContainer services) : base(services) { }
 
-		/*public Task<IUserMessage> ReplyBitmapAsync(Bitmap bitmap, string filename, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null) {
-			return Context.Channel.SendBitmapAsync(bitmap, filename, text, isTTS, embed, options);
-		}
-		public Task<IUserMessage> ReplyBitmapAsync(Bitmap bitmap, ImageFormat format, string filename, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null) {
-			return Context.Channel.SendBitmapAsync(bitmap, format, filename, text, isTTS, embed, options);
-		}*/
+		#endregion
 	}
 }

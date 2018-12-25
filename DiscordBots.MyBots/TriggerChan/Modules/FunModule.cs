@@ -180,6 +180,13 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			return ReplyAsync(text);
 		}
 
+		[Name("tasts")]
+		[Command("tasts")]
+		[Summary("Show the true meaning of everyone's \"tasts\"")]
+		public Task Tasts() {
+			return Context.Channel.SendFileAsync(TriggerResources.Tasts);
+		}
+
 		[Name("javascript")]
 		[Command("javascript"), Alias("js")]
 		[Summary("An image macro from Dagashi Kashi about Javascript")]
@@ -304,11 +311,11 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			public async Task Notes() {
 				const string Separator = " **:** ";
 				EmbedBuilder embed = new EmbedBuilder {
-					Title = $"{configParser.EmbedPrefix}**Ocarina Notes**",
+					Title = $"{configParser.EmbedPrefix}**Ocarina Notes** <:ocarina:526524354591195138>",
 					Description = "The following words and emoji can be used to play a note",
 					Color = configParser.EmbedColor,
 				};
-				string Ocarina = $"<:Ocarina:504062810121306122>";
+				string Ocarina = $"<:ocarina:526524354591195138>";
 				NoteAliases[] noteAliases = ocarina.NoteAliases;
 				StringBuilder str = new StringBuilder();
 				//str.AppendLine($"{Ocarina} **Ocarina Notes** {Ocarina}");

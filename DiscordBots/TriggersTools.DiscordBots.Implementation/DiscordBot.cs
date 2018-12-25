@@ -204,8 +204,12 @@ namespace TriggersTools.DiscordBots {
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		private void OnAppDomainProcessExit(object sender, EventArgs e) {
-			Client.SetStatusAsync(UserStatus.Invisible).ConfigureAwait(false).GetAwaiter().GetResult();
-			Client.SetGameAsync("Shutting Down...").ConfigureAwait(false).GetAwaiter().GetResult();
+			try {
+				if (Client.ConnectionState == ConnectionState.Connected) {
+					Client.SetStatusAsync(UserStatus.Invisible).ConfigureAwait(false).GetAwaiter().GetResult();
+					Client.SetGameAsync("Shutting Down...").ConfigureAwait(false).GetAwaiter().GetResult();
+				}
+			} catch { }
 		}
 		/// <summary>
 		/// Used to check for startup errors and raise <see cref="StartupError"/>.

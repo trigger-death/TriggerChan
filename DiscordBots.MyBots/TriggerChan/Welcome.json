@@ -1,0 +1,49 @@
+﻿{
+  "message_id": 0,
+
+  "content": null,
+
+  "title": "Welcome to Trigger's Development Server!",
+  "desc": "This is a server for 50% discussion and feedback of trigger_death's Tools & Games, and 50% just good ol' socialization... Please bug me.",
+  "url": "http://trigger-death.github.io/",
+
+  "color": "#00C6D8",
+
+  "links": "[trigger-death.github.io](http://trigger-death.github.io/) **|** [GitHub](https://github.com/trigger-death)",
+
+  "rules": [
+    "Always read the channel descriptions before posting.",
+    "Keep memes in <#526256638890606592>. (With the exception of music)",
+    "Bot farming commands like `t!fish` and `t!tg` are banned.",
+    "No spamming in any form.",
+    "Be a brute, get the boot. Be a dick, get kicked.",
+    "*Let's all have fun and play together!*"
+  ],
+
+  "channels": [
+    {
+      "id": 526199107430383616,
+      "desc": "Show server info and trigger_death's development backlog."
+    },
+    {
+      "id": 526553767848575007,
+      "desc": "Discussion and Bug Reports for Trigger's Tools & Games."
+    },
+    {
+      "id": 526220955215724564,
+      "desc": "Discuss development of your own programs, etc."
+    },
+    {
+      "id": 526220403773931543,
+      "desc": "Use bot commands for <@&437027061668904971>."
+    },
+    {
+      "id": 519993471361220609,
+      "desc": "Use bot commands for <@&524720267495211028> or <@&437027061668904971>."
+    },
+    {
+      "id": 524715842194112515,
+      "desc": "Testing for <@&524724652870860801> commands. Anyone can participate."
+    }
+  ]
+}

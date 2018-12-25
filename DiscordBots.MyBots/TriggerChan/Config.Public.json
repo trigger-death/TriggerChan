@@ -3,7 +3,8 @@
   "prefix": "t/", // Release
   "nickname": "Trigger-chan", // Release
   "embed_color": "#F65C56",
-  "embed_prefix": "<:trigger_chan:506519254884024340>  ",
+  "home_embed_color": "#00C6D8",
+  "embed_prefix": "<:trigger_chan:526524270520696834>  ",
   "verion_postfix": null,
 
   "about_title": "$NICKNAME$ on Space Patrol",
@@ -144,6 +145,7 @@
       "A Cruel Angel's Thesis",
       "Walk Like An Egyptian",
       "You Say Run",
+      "PADORU PADORU",
 
       // Listening Vague
       "Nep, Nep, Nep, Nep, Nep, Nep! (10 Hours)",

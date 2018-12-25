@@ -85,7 +85,7 @@ namespace TriggersTools.DiscordBots.SpoilerBot.Modules {
 					Description = "The following words and emoji can be used to play a note",
 					Color = ColorUtils.Parse(Config["embed_color"]),
 				};
-				string Ocarina = $"<:Ocarina:504062810121306122>";
+				string Ocarina = $"<:ocarina:526524354591195138>";
 				NoteAliases[] noteAliases = ocarina.NoteAliases;
 				StringBuilder str = new StringBuilder();
 				//str.AppendLine($"{Ocarina} **Ocarina Notes** {Ocarina}");

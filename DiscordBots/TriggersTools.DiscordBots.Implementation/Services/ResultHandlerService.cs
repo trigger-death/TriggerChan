@@ -59,7 +59,7 @@ namespace TriggersTools.DiscordBots.Services {
 					e.Set("❓", int.MaxValue);
 			}
 			if (e.Result.IsSuccess) {
-
+				// We good
 			}
 			else if (e.Result is PreconditionResult preconditionResult) {
 				List<PreconditionResult> preconditionResults = new List<PreconditionResult>();
@@ -79,13 +79,12 @@ namespace TriggersTools.DiscordBots.Services {
 					case RequiresSuperuserAttribute _:
 					case RequiresOwnerAttribute _:
 					case RequiresContextAttribute _:
+					case RequiresBotPermissionAttribute _:
 						e.Set("⛔", 2); break;
 					case AllowBotsAttribute _:
 						e.Set("🤖", 2); break;
 					case ParameterConstantAttribute _:
 						e.Set("❌", 2); break;
-					case RequiresBotPermissionAttribute _:
-						e.Set("⚠", 2); break;
 					}
 				}
 			}

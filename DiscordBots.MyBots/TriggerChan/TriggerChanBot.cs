@@ -49,6 +49,7 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 				.AddSingleton<TalkBackService>()
 				.AddSingleton<TimeZoneService>()
 				.AddSingleton<AsciifyService>()
+				.AddSingleton<DevelopmentService>()
 				.AddSingleton<DatabaseProfileService>() // Database user profiles (MAL, AniList, VNDb, etc)
 
 				// Audio

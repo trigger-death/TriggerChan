@@ -161,13 +161,13 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		[Example("A detailed explanation of the error", "Write a Report of *A detailed explanation of the error* to the log file")]
 		[Remarks("It is helpful if you include a screenshot or, instead, write an issue on the GitHub Repo (which can be found with the about command)\nAbuse of this command will result in this bot blacklisting your guild")]
 		public async Task<RuntimeResult> ReportBug([Remainder] string message) {
-			string source = $"{Context.User.Username}#{Context.User.Discriminator}";
-			string origin = $"  Guild: {Context.Guild?.Id}{Environment.NewLine}" +
-							$"Channel: {Context.Channel.Id}{Environment.NewLine}" +
-							$"   User: {Context.User.Id}";
+			string source = $"{Format.Sanitize(Context.User.Username)}#{Context.User.Discriminator}";
+			string origin = $"  Guild: {Context.Guild?.Id} {Format.Sanitize(Context.Guild.Name)}{Environment.NewLine}" +
+							$"Channel: {Context.Channel.Id} {Format.Sanitize(Context.Channel.Name)}{Environment.NewLine}" +
+							$"   User: {Context.User.Id} {source}";
 			string logText = $"{Environment.NewLine}{origin}{Environment.NewLine}{message}";
 			await Logging.LogAsync(new LogMessage(LogSeverities.Report, source, logText), logFile: true, noticeFile: true).ConfigureAwait(false);
-			string channelStr = Config["ids:discord:report_channel"];
+			string channelStr = Home["channels:reports"];
 			if (channelStr != null && ulong.TryParse(channelStr, out ulong channelId)) {
 				if (Client.GetChannel(channelId) is IMessageChannel channel) {
 					EmbedBuilder embed = new EmbedBuilder {
@@ -178,7 +178,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 													$"Channel: `{Context.Channel.Id}`\n" +
 													$"User: `{Context.User.Id}`");
 					embed.AddField("Report Message", message);
-					embed.WithFooter(Context.Guild.Name, Context.Guild.IconUrl);
+					embed.WithFooter($"{Context.Guild.Name} | {Context.Channel.Name}", Context.Guild.IconUrl);
 					embed.WithTimestamp(Context.Message.CreatedAt);
 					embed.WithAuthor(Context.User);
 					await channel.SendMessageAsync(embed: embed.Build()).ConfigureAwait(false);

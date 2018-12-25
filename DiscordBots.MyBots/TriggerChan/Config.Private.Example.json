@@ -27,8 +27,32 @@
   },
   "ids": {
     "discord": {
+      "home": {
+        // The guild where RequiresHomeGuildAttribute succeeds
+        "guild": 123456789012345678,
+        "channels": {
+          // Channel to display DevStatus.json
+          "dev_status": 123456789012345678,
+          // Channel to display Welcome.json
+          "welcome": 123456789012345678,
+          // An optional channel Id to send report logs to
+          "reports": 123456789012345678
+        },
+        "roles": {
+          "trigger_npc": 123456789012345678,
+          "other_npc": 123456789012345678,
+          "brush_entity": 123456789012345678,
+          "player_entity": 123456789012345678
+        }
+      },
+      /*// The guild where RequiresHomeGuildAttribute succeeds
+      "home_guild": 123456789012345678,
+      // Channel to display DevStatus.json
+      "dev_status_channel": 123456789012345678,
+      // Channel to display Welcome.json
+      "welcome_channel": 123456789012345678,
       // An optional channel Id to send report logs to
-      "report_channel": 123456789012345678,
+      "report_channel": 123456789012345678,*/
       // User Ids (besides the bot owner) who are authorized to send superuser commands
       "superuseres": [
         123456789012345678

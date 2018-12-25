@@ -432,18 +432,83 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		[Name("usercount")]
 		[Command("usercount")]
 		[Summary("Counts the total number of users in the server, including those that are offline")]
-		public async Task UserCount() {
+		[RequiresHomeGuild]
+		public async Task UserCountHome() {
 			await Context.Guild.DownloadUsersAsync().ConfigureAwait(false);
+			int triggerNPCs = 0;
+			int otherNPCs = 0;
+			int playerEntities = 0;
+			int brushEntities = 0;
 			int total = Context.Guild.Users.Count;
 			int offline = 0;
 			int bots = 0;
-			foreach (IUser user in Context.Guild.Users) {
+			ulong triggerNPCId = ulong.Parse(Home["roles:trigger_npc"]);
+			ulong otherNPCId = ulong.Parse(Home["roles:other_npc"]);
+			ulong BrushEntityId = ulong.Parse(Home["roles:brush_entity"]);
+			ulong playerEntityId = ulong.Parse(Home["roles:player_entity"]);
+			foreach (IGuildUser user in Context.Guild.Users) {
+				foreach (ulong roleId in user.RoleIds) {
+					if (roleId == triggerNPCId) {
+						triggerNPCs++;
+						break;
+					}
+					if (roleId == otherNPCId) {
+						otherNPCs++;
+						break;
+					}
+					if (roleId == playerEntityId)
+						playerEntities++;
+					if (roleId == BrushEntityId)
+						brushEntities++;
+				}
 				if (user.IsBot)
 					bots++;
 				if (user.Status == UserStatus.Offline)
 					offline++;
 			}
-			int online = total - offline - bots;
+			int online = total - offline;
+			StringBuilder str1 = new StringBuilder();
+			str1.AppendLine($"<:trigger_npc:527156203130716162> Trigger NPCs: **{triggerNPCs}**");
+			str1.AppendLine($"<:other_npc:527156216330190848> Other NPCs: **{otherNPCs}**");
+			str1.AppendLine($"<:player:527156180427079682> Player Entities: **{playerEntities}**");
+			str1.AppendLine($"<:trigger:527156338418122767> Brush Entities: **{brushEntities}**");
+
+			StringBuilder str2 = new StringBuilder();
+			str2.AppendLine($"<:online:527164546755067904> Online: **{online}**");
+			str2.AppendLine($"<:offline:527164561879465984> Offline: **{offline}**");
+			str2.AppendLine($"<:empty:527165168942317589> Bots: **{bots}**");
+			str2.AppendLine($"<:empty:527165168942317589> Total: **{total}**");
+			var embed = new EmbedBuilder {
+				Color = ColorUtils.Parse(Config["home_embed_color"]),// configParser.EmbedColor,
+				//Description = $"Users in {Context.Guild.Name}",
+				//Title = $"Users in {Context.Guild.Name}",
+				/*Description =  $"Online: **{online}**\n" +
+							   $"Offline: **{offline}**\n" +
+							   $"Bots: **{bots}**\n" +
+							   $"Total: **{total}**\n",*/
+			};
+			embed.WithAuthor($"Users in {Context.Guild.Name}", Context.Guild.IconUrl);
+			embed.AddField("User Types", str1.ToString());
+			embed.AddField("User Statuses", str2.ToString());
+			await ReplyAsync(embed: embed.Build()).ConfigureAwait(false);
+		}
+
+		[Name("usercount")]
+		[Command("usercount")]
+		[Summary("Counts the total number of users in the server, including those that are offline")]
+		[RequiresNotHomeGuild]
+		public async Task UserCount() {
+			await Context.Guild.DownloadUsersAsync().ConfigureAwait(false);
+			int total = Context.Guild.Users.Count;
+			int offline = 0;
+			int bots = 0;
+			foreach (IGuildUser user in Context.Guild.Users) {
+				if (user.IsBot)
+					bots++;
+				if (user.Status == UserStatus.Offline)
+					offline++;
+			}
+			int online = total - offline;
 			var embed = new EmbedBuilder {
 				Color = configParser.EmbedColor,
 				//Description = $"Users in {Context.Guild.Name}",

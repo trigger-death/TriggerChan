@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,10 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 
 		#region Fields
 
+		/// <summary>
+		/// Gets the home guild Ids section.
+		/// </summary>
+		public IConfigurationSection Home => Config.GetSection("ids:discord:home");
 
 		#endregion
 

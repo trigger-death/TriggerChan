@@ -263,15 +263,15 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			AddNote("\n", Note.NewStaff);
 			AddNote("\r\n", Note.NewStaff, primary: true);
 
-			noteEmotes.Add(Note.LT, Emote.Parse("<:OcarinaLT:504055910969245697>"));
-			noteEmotes.Add(Note.RT, Emote.Parse("<:OcarinaRT:504055920003645482>"));
-			noteEmotes.Add(Note.Up, Emote.Parse("<:OcarinaUp:501908088635392001>"));
-			noteEmotes.Add(Note.Left, Emote.Parse("<:OcarinaLeft:501908096713621515>"));
-			noteEmotes.Add(Note.Right, Emote.Parse("<:OcarinaRight:501908104737456128>"));
-			noteEmotes.Add(Note.Down, Emote.Parse("<:OcarinaDown:501908112249192449>"));
-			noteEmotes.Add(Note.A, Emote.Parse("<:OcarinaA:501908119933157387>"));
-			noteEmotes.Add(Note.B, Emote.Parse("<:OcarinaB:504055892191346708>"));
-			noteEmotes.Add(Note.Start, Emote.Parse("<:OcarinaStart:504055901116694539>"));
+			noteEmotes.Add(Note.LT, Emote.Parse("<:noteL:526524530840174612>"));
+			noteEmotes.Add(Note.RT, Emote.Parse("<:noteR:526524545310654505>"));
+			noteEmotes.Add(Note.Up, Emote.Parse("<:noteUp:526524459016781824>"));
+			noteEmotes.Add(Note.Left, Emote.Parse("<:noteLeft:526524479367544882>"));
+			noteEmotes.Add(Note.Right, Emote.Parse("<:noteRight:526524488284635156>"));
+			noteEmotes.Add(Note.Down, Emote.Parse("<:noteDown:526524469263466517>"));
+			noteEmotes.Add(Note.A, Emote.Parse("<:noteA:526524502595600385>"));
+			noteEmotes.Add(Note.B, Emote.Parse("<:noteB:526524512179716129>"));
+			noteEmotes.Add(Note.Start, Emote.Parse("<:noteStart:526524521176629251>"));
 			noteEmotes.Add(Note.Rest, null);
 			noteEmotes.Add(Note.Bar, null);
 			noteEmotes.Add(Note.NewStaff, null);

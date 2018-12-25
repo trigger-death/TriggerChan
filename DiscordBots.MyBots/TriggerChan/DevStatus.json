@@ -1,0 +1,66 @@
+﻿{
+  "message_id": 0,
+
+  "content": null,
+  "title": "Trigger's Development Status",
+  "desc": "Below are the tools/programs/etc that trigger_death is working on creating, updating, or fixing. Order changes often and without warning.",
+  "url": "https://github.com/trigger-death",
+
+  "color": "#00C6D8",
+
+  "working": [
+    {
+      "status": "Finishing",
+      "title": "TriggersTools.ILPatching",
+      "url": null,
+      "desc": "A patcher library for use with [Terraria Rupee Replacer](https://github.com/trigger-death/TerrariaRupeeReplacer) and [Terraria Item Modifier](https://github.com/trigger-death/TerrariaItemModifier) patchers"
+    }
+  ],
+  "backlog": [
+    {
+      "status": "Fix",
+      "title": "Terraria Item Modifier",
+      "url": "https://github.com/trigger-death/TerrariaItemModifier",
+      "desc": "Support to co-exist with Terraria Patcher"
+    },
+    {
+      "status": "WIP",
+      "title": "Grisaia Sprite Viewer",
+      "url": "https://github.com/trigger-death/GrisaiaExtractor",
+      "desc": "Extract sprites from Grisaia games and display them with all the parts combined"
+    },
+    {
+      "status": "WIP",
+      "title": "WinDirStat.NET",
+      "url": "https://github.com/trigger-death/WinDirStat.Net",
+      "desc": "C# implementation of WinDirStat with a more responsive and cleaner UI"
+    },
+    {
+      "status": "Feature",
+      "title": "trigger-death.github.io",
+      "url": "http://trigger-death.github.io/",
+      "desc": "Add support for *Replaying* status to Visual Novel List"
+    },
+    {
+      "status": "Fix",
+      "title": "TriggersTools.SteinsGate.Divergence",
+      "url": "https://github.com/trigger-death/TriggersTools.SteinsGate",
+      "desc": "Stop using static property settings for Divergence Drawer, this breaks async"
+    },
+    {
+      "status": "WIP, Eventually",
+      "title": "RCT2 Tools",
+      "url": "https://github.com/trigger-death/RCT2Tools",
+      "desc": "Upgrade to WPF, cleanup the UI, and reintroduce the Steam Stub"
+    }
+
+  ],
+  "eternal": [
+    {
+      "status": "Eternal WIP",
+      "title": "trigger_chan",
+      "url": "https://github.com/trigger-death/TriggerChan",
+      "desc": "More features and bugfixes, see <#506093502568988697>"
+    }
+  ]
+}

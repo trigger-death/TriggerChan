@@ -12,6 +12,7 @@ using TriggersTools.DiscordBots.TriggerChan.Database;
 using TriggersTools.DiscordBots.Utils;
 using TriggersTools.DiscordBots.Commands;
 using TriggersTools.DiscordBots.TriggerChan.Commands;
+using TriggersTools.DiscordBots.TriggerChan.Services;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 	[Name("Superuser")]
@@ -20,14 +21,40 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 	[IsLockable(false)]
 	public class SuperuserModule : DiscordBotModule {
 
+		#region Fields
+
+		private readonly DevelopmentService devService;
+
+		#endregion
+
 		#region Constructors
 
 		/// <summary>
 		/// Constructs the <see cref="SuperuserModule"/>.
 		/// </summary>
-		public SuperuserModule(DiscordBotServiceContainer services) : base(services) { }
+		public SuperuserModule(DiscordBotServiceContainer services,
+							   DevelopmentService devService)
+			: base(services)
+		{
+			this.devService = devService;
+		}
 
 		#endregion
+
+		[Name("updatedevstatus")]
+		[Command("updatedevstatus")]
+		[RequiresHomeGuild]
+		public async Task<RuntimeResult> UpdateDevStatus() {
+			await devService.UpdateDevStatusAsync().ConfigureAwait(false);
+			return EmoteResults.FromSuccess();
+		}
+		[Name("updatewelcome")]
+		[Command("updatewelcome")]
+		[RequiresHomeGuild]
+		public async Task<RuntimeResult> UpdateWelcome() {
+			await devService.UpdateWelcomeAsync().ConfigureAwait(false);
+			return EmoteResults.FromSuccess();
+		}
 
 		[Name("shutdown")]
 		[Command("shutdown")]
@@ -42,7 +69,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		[Summary("Restarts the bot to help fix any errors that have accumulated")]
 		public async Task Restart() {
 			await ReplyAsync("`Restarting...`").ConfigureAwait(false);
-			await DiscordBot.RestartAsync(Context, "`Hello world!`").ConfigureAwait(false);
+			await DiscordBot.RestartAsync(Context, "`Yahallo~`").ConfigureAwait(false);
 		}
 
 		[Name("error")]
@@ -63,14 +90,16 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 
 		[Name("status <status>")]
 		[Command("status")]
-		public Task SetStatus(ActivityType activity, [Remainder] string name) {
-			return Client.SetGameAsync(name, type: activity);
+		public async Task<RuntimeResult> SetStatus(ActivityType activity, [Remainder] string name) {
+			await Client.SetGameAsync(name, type: activity).ConfigureAwait(false);
+			return EmoteResults.FromSuccess();
 		}
 
 		[Name("visibility <visibility>")]
 		[Command("visibility"), Alias("visible")]
-		public Task SetVisibility(UserStatus status) {
-			return Client.SetStatusAsync(status);
+		public async Task<RuntimeResult>SetVisibility(UserStatus status) {
+			await Client.SetStatusAsync(status).ConfigureAwait(false);
+			return EmoteResults.FromSuccess();
 		}
 
 		[Name("supersay <text>")]

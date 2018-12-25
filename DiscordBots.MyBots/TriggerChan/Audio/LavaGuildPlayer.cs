@@ -399,7 +399,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Audio {
 
 		private Embed BuildStatusEmbed() {
 			var embed = new EmbedBuilder() {
-				Title = $"{configParser.EmbedPrefix}Not Playing",// <:002_lurk:451813979795226634>
+				Title = $"{configParser.EmbedPrefix}Not Playing",
 				Color = configParser.EmbedColor,
 			};
 			if (CurrentTrack != null) {
@@ -411,13 +411,13 @@ namespace TriggersTools.DiscordBots.TriggerChan.Audio {
 					$"{Format.Sanitize(track.Title)}\n";
 				/*if (info.CurrentSong is SongDownloadInfo download &&
 					download.DownloadStatus == DownloadStatus.InProgress) {
-					title = "Downloading <a:processing:507585439536906241> ";
+					title = "Downloading <a:processing:526524731487158283> ";
 					if (download.Proxy != null) {
 						title += " though proxy";
 					}
 				}
 				else {*/
-				title = $"{configParser.EmbedPrefix}Playing <a:equalizer:507584731060240384> ";
+				title = $"{configParser.EmbedPrefix}Playing <a:equalizer:526524761065652224> ";
 					description += $"`{player.Position.ToPlayString()} / {track.Length.ToPlayString()}`";
 				//}
 				embed.WithTitle(title);

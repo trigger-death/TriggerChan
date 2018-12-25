@@ -34,6 +34,8 @@ namespace TriggersTools.DiscordBots.Services {
 			if (message.Author.Id == Client.CurrentUser.Id) return;
 			// Modules use the AllowBots precondition attribute, so let them pass... for now.
 			if (message.Source != MessageSource.User && message.Source != MessageSource.Bot) return;
+			// Do we have the base level of required permissions?
+			if (!await message.Channel.CanRespondAsync(Client).ConfigureAwait(false)) return;
 
 			var context = Contexting.CreateCommandContext(message);
 
