@@ -7,6 +7,7 @@ using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using TriggersTools.DiscordBots.Extensions;
 using TriggersTools.DiscordBots.Utils;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Services {
@@ -27,8 +28,10 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				return embed.Build();
 			}
 			private void BuildList(string name, DevItem[] list, EmbedBuilder embed) {
-				if (list.Length != 0)
-					embed.AddField($"{name}", string.Join("\n", list.Select(item => item.Build())));
+				embed.PagifyField(name, list.Select(item => item.Build()));
+				//PagifyField(embed, name, list.Select(item => item.Build()));
+				//if (list.Length != 0)
+				//	embed.AddField($"{name}", string.Join("\n", list.Select(item => item.Build())));
 			}
 		}
 		private class DevItem {

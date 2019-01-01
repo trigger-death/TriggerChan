@@ -10,13 +10,19 @@
 
   "working": [
     {
-      "status": "Finishing",
-      "title": "TriggersTools.ILPatching",
+      "status": "All Projects on Hold",
+      "title": "Until rapid/heavy eye blinking gets better",
       "url": null,
-      "desc": "A patcher library for use with [Terraria Rupee Replacer](https://github.com/trigger-death/TerrariaRupeeReplacer) and [Terraria Item Modifier](https://github.com/trigger-death/TerrariaItemModifier) patchers"
+      "desc": "I've been dealing with this since October, but it's been getting significantly worse lately. It is definitely a tick of some kind but I just pray it's nother *another* focal dystonia affliction."
     }
   ],
   "backlog": [
+    {
+      "status": "Finishing",
+      "title": "TriggersTools.ILPatching",
+      "url": "https://github.com/trigger-death/TriggersTools.ILPatching",
+      "desc": "A patcher library for use with [Terraria Rupee Replacer](https://github.com/trigger-death/TerrariaRupeeReplacer) and [Terraria Item Modifier](https://github.com/trigger-death/TerrariaItemModifier) patchers"
+    },
     {
       "status": "Fix",
       "title": "Terraria Item Modifier",
@@ -48,12 +54,17 @@
       "desc": "Stop using static property settings for Divergence Drawer, this breaks async"
     },
     {
+      "status": "Update",
+      "title": "TriggersTools.Asciify",
+      "url": "https://github.com/trigger-death/TriggersTools.Asciify",
+      "desc": "Apply fixes used in triggy's Asciify library"
+    },
+    {
       "status": "WIP, Eventually",
       "title": "RCT2 Tools",
       "url": "https://github.com/trigger-death/RCT2Tools",
       "desc": "Upgrade to WPF, cleanup the UI, and reintroduce the Steam Stub"
     }
-
   ],
   "eternal": [
     {

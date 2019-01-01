@@ -7,6 +7,7 @@ using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using TriggersTools.DiscordBots.Extensions;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Services {
 	partial class DevelopmentService {
@@ -26,12 +27,16 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				return embed.Build();
 			}
 			private void BuildRules(EmbedBuilder embed) {
-				if (Rules.Length != 0)
-					embed.AddField($"The {Rules.Length} Pledges", string.Join("\n", Rules.Select((item, i) => $"**`{(i + 1)})`** {item}")));
+				embed.PagifyField($"The {Rules.Length} Pledges", Rules.Select((item, i) => $"**`{(i + 1)})`** {item}"));
+				//PagifyField(embed, $"The {Rules.Length} Pledges", Rules.Select((item, i) => $"**`{(i + 1)})`** {item}"));
+				//if (Rules.Length != 0)
+				//	embed.AddField($"The {Rules.Length} Pledges", string.Join("\n", Rules.Select((item, i) => $"**`{(i + 1)})`** {item}")));
 			}
 			private void BuildChannels(EmbedBuilder embed) {
-				if (Channels.Length != 0)
-					embed.AddField($"Channels of Note", string.Join("\n", Channels.Select(item => item.Build())));
+				embed.PagifyField("Channels of Note", Channels.Select(item => item.Build()));
+				//PagifyField(embed, "Channels of Note", Channels.Select(item => item.Build()));
+				//if (Channels.Length != 0)
+				//	embed.AddField($"Channels of Note", string.Join("\n", Channels.Select(item => item.Build())));
 			}
 		}
 		private class ChannelItem {

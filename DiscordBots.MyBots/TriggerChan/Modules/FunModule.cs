@@ -29,7 +29,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		private readonly AsciifyService asciify;
 		private readonly TalkBackService talkBack;
 
-
 		public FunModule(TriggerServiceContainer services,
 						 MALApiDowntimeService malApiDowntime,
 						 DivergenceService divergence,
@@ -169,16 +168,87 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			text = string.Join(" 👏 ", words);
 			return ReplyAsync(text);
 		}
-		[Name("vaporwave <text>")]
+		[Group("vaporwave"), Alias("vapor", "aesthetic")]
+		[Usage("[quote] <text...>")]
+		[Summary("Ｃｒｅａｔｅ　ａｅｓｔｈｅｔｉｃａｌｌｙ　ｐｌｅａｓｉｎｇ　ｔｅｘｔ")]
+		public class VarporwaveGroup : TriggerModule {
+			
+			private readonly Dictionary<char, char> fullWidthMap = new Dictionary<char, char>();
+			
+			public VarporwaveGroup(TriggerServiceContainer services) : base(services) {
+				fullWidthMap.Add(' ', '　');
+				for (char c = '!'; c <= '~'; c++) {
+					fullWidthMap.Add(c, (char) (c + 0xFF00 - ' '));
+				}
+				fullWidthMap.Add('⦅', '｟');
+				fullWidthMap.Add('⦆', '｠');
+				fullWidthMap.Add('｡', '。');
+				fullWidthMap.Add('｢', '「');
+				fullWidthMap.Add('｣', '」');
+				fullWidthMap.Add('､', '、');
+				fullWidthMap.Add('¢', '￠');
+				fullWidthMap.Add('£', '￡');
+				fullWidthMap.Add('¬', '￢');
+				fullWidthMap.Add('¦', '￤');
+				fullWidthMap.Add('¥', '￥');
+				fullWidthMap.Add('₩', '￦');
+			}
+
+			[Name("vaporwave <text>")]
+			[Command("")]
+			[Example("Running in the 90's", "Outputs: *Ｒｕｎｎｉｎｇ　ｉｎ　ｔｈｅ　９０＇ｓ*")]
+			public Task Vaporwave([Remainder] string text) {
+				return ReplyAsync(VaporwaveText(text));
+			}
+			[Name("vaporwave quote <text>")]
+			[Command("quote")]
+			[Example("Nattive Patties", "Outputs: *【Ｎａｔｔｉｖｅ　Ｐａｔｔｉｅｓ】*")]
+			[Priority(1)]
+			public Task VaporwaveQuote([Remainder] string text) {
+				return ReplyAsync($"【{VaporwaveText(text)}】");
+			}
+
+			private string VaporwaveText(string text) {
+				char[] letters = text.ToCharArray();
+				//return string.Join(" ", letters);
+				for (int i = 0; i < letters.Length; i++) {
+					if (fullWidthMap.TryGetValue(letters[i], out char c))
+						letters[i] = c;
+				}
+				return new string(letters);
+			}
+		}
+		/*[Name("vaporwave <text>")]
 		[Command("vaporwave"), Alias("vapor", "aesthetic")]
 		[Usage("<text...>")]
 		[Summary("C r e a t e   a e s t h e t i c l y   p l e a s i n g   t e x t")]
 		[Example("Running in the 90's", "Outputs: *R u n n i n g   i n   t h e   9 0 ' s*")]
 		public Task Vaporwave([Remainder] string text) {
 			char[] letters = text.ToCharArray();
-			text = string.Join(" ", letters);
-			return ReplyAsync(text);
+			//text = string.Join(" ", letters);
+			//return ReplyAsync(text);
+			for (int i = 0; i < letters.Length; i++) {
+				if (fullWidthMap.TryGetValue(letters[i], out char c))
+					letters[i] = c;
+			}
+			return ReplyAsync(new string(letters));
 		}
+		[Name("vaporwavequote <text>")]
+		[Command("vaporwave quote"), Alias("vapor quote", "aesthetic quote")]
+		[Usage("<text...>")]
+		[Summary("C r e a t e   a e s t h e t i c l y   p l e a s i n g   t e x t")]
+		[Example("quote Nattive Patties", "Outputs: *【Ｎａｔｔｉｖｅ　Ｐａｔｔｉｅｓ】*")]
+		[Priority(1)]
+		public Task VaporwaveQuote([Remainder] string text) {
+			char[] letters = text.ToCharArray();
+			//text = string.Join(" ", letters);
+			//return ReplyAsync(text);
+			for (int i = 0; i < letters.Length; i++) {
+				if (fullWidthMap.TryGetValue(letters[i], out char c))
+					letters[i] = c;
+			}
+			return ReplyAsync("【" + new string(letters) + "】");
+		}*/
 
 		[Name("tasts")]
 		[Command("tasts")]

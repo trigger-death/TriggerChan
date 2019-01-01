@@ -20,7 +20,7 @@
     <PackageProjectUrl>https://github.com/trigger-death/TriggerChan</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/trigger-death/TriggerChan/blob/master/License.md</PackageLicenseUrl>
     <Description>I was made by trigger_death for use in a small selection of Discord servers. My selling features are spoilers, inserting claps between words, drawing Divergence Meters, and other fun or helpful commands.</Description>
-    <Version>2.0.17-beta0007</Version>
+    <Version>2.0.19</Version>
     <Configurations>Debug;Release;Publish</Configurations>
   </PropertyGroup>
 

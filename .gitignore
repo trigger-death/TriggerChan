@@ -25,6 +25,9 @@
 [Cc]onfig.[Pp]rotected.Release.json
 [Cc]onfig.[Pp]rivate.Release.json
 
+# Lavalink server
+Lavalink.jar
+
 # No need to bring over migration data
 Migrations/
 

@@ -13,6 +13,7 @@ using Discord.Commands;
 using Discord.Net;
 using Discord.WebSocket;
 using TriggersTools.DiscordBots.Commands;
+using TriggersTools.DiscordBots.Extensions;
 using TriggersTools.DiscordBots.Services;
 using TriggersTools.DiscordBots.TriggerChan.Commands;
 using TriggersTools.DiscordBots.TriggerChan.Extensions;
@@ -423,8 +424,19 @@ namespace TriggersTools.DiscordBots.TriggerChan.Audio {
 				embed.WithTitle(title);
 				embed.WithDescription(description);
 			}
-			string queuedList = "";
-			int count = 0;
+			IEnumerable<string> ListTracks() {
+				int index = 0;
+				foreach (LavaTrack track in Queue) {
+					index++;
+					string item = $"`{index})` {Format.Sanitize(track.Title)}";
+					if (track.Length != TimeSpan.Zero)
+						item += $" `[{track.Length.ToPlayString()}]`";
+					yield return item;
+				}
+				if (index == 0)
+					yield return "*No queued tracks*";
+			}
+			/*string queuedList = "";
 			foreach (LavaTrack track in Queue) {
 				count++;
 				queuedList += $"`{count})` {Format.Sanitize(track.Title)}";
@@ -432,9 +444,10 @@ namespace TriggersTools.DiscordBots.TriggerChan.Audio {
 					queuedList += $" `[{track.Length.ToPlayString()}]`";
 				queuedList += "\n";
 			}
+			embed.AddField($"Queued Tracks: {Queue.Count}", queuedList);
 			if (string.IsNullOrEmpty(queuedList))
-				queuedList = "*No queued tracks*";
-			embed.AddField($"Queued Tracks: {count}", queuedList);
+				queuedList = "*No queued tracks*";*/
+			embed.PagifyField($"Queued Tracks: {Queue.Count}", ListTracks());
 			return embed.Build();
 		}
 

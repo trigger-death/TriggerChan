@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 
 namespace TriggerChanDeploy {
-	static class Program {
+	public static class Program {
 
 		static string Project { get; set; }
 		static string Configuration { get; set; }
@@ -18,11 +18,12 @@ namespace TriggerChanDeploy {
 		static string ProcessName => Path.GetFileNameWithoutExtension(ExecutableName);
 		static string ExecutablePath => Path.Combine(DeployLocation, ExecutableName);
 		static string LibrariesPath => Path.Combine(DeployLocation, "libraries");
+		static bool ConfigFiles = false;
 
-		static int Main(string[] args) {
+		public static int Main(string[] args) {
 			Console.WriteLine("==== Discord Bot Deploy ====");
-			if (args.Length != 7) {
-				Console.WriteLine("Usage: DiscordBotDeploy.exe <project> <configuration> <framework> <runtime> <exeName> <publishLocation> <deployLocation>");
+			if (args.Length < 7 || args.Length > 8) {
+				Console.WriteLine("Usage: DiscordBotDeploy.exe <project> <configuration> <framework> <runtime> <exeName> <publishLocation> <deployLocation> [config]");
 				Console.ReadLine();
 				return -1;
 			}
@@ -35,11 +36,14 @@ namespace TriggerChanDeploy {
 				ExecutableName = args[4];
 				PublishLocation = Path.GetFullPath(args[5]);
 				DeployLocation = Path.GetFullPath(args[6]);
+				ConfigFiles = args.Length == 8;
 
-				Publish();
+				if (!ConfigFiles)
+					Publish();
 				//KillBot();
 				CopyPublished();
-				RunBot();
+				if (!ConfigFiles)
+					RunBot();
 
 			} catch (Exception ex) {
 				Console.ForegroundColor = ConsoleColor.Red;
@@ -143,13 +147,15 @@ namespace TriggerChanDeploy {
 				.Where(f => File.GetLastWriteTimeUtc(GetPublish(f)) == File.GetLastWriteTimeUtc(GetDeploy(f)));
 
 			Console.ForegroundColor = ConsoleColor.Red;
-			foreach (string file in deleteFiles) {
-				Console.WriteLine($"Deleted {file}");
-				File.Delete(GetDeploy(file));
-			}
-			foreach (string dir in deleteDirs) {
-				Console.WriteLine($"Deleted {dir}");
-				Directory.Delete(GetDeploy(dir));
+			if (!ConfigFiles) {
+				foreach (string file in deleteFiles) {
+					Console.WriteLine($"Deleted {file}");
+					File.Delete(GetDeploy(file));
+				}
+				foreach (string dir in deleteDirs) {
+					Console.WriteLine($"Deleted {dir}");
+					Directory.Delete(GetDeploy(dir));
+				}
 			}
 			Console.ForegroundColor = ConsoleColor.Yellow;
 			foreach (string file in replaceFiles) {
@@ -223,6 +229,10 @@ namespace TriggerChanDeploy {
 				.Where(f => !f.StartsWith(Path.Combine(location, "Temp"),
 					StringComparison.InvariantCultureIgnoreCase))
 				.Where(f => string.Compare(Path.GetExtension(f), ".sqlite") != 0)
+				.Where(f => string.Compare(Path.GetFileName(f), "DiscordBot.TotalUptime.txt") != 0)
+				.Where(f => !ConfigFiles || string.Compare(Path.GetExtension(f), ".json") == 0 ||
+											string.Compare(Path.GetExtension(f), ".yml")  == 0 ||
+											string.Compare(Path.GetExtension(f), ".txt")  == 0)
 				//.Where(f => f.DirectoryName != location)
 				.Select(f => MoveLibrary(f.Substring(location.Length + 1)))
 				.ToArray();
