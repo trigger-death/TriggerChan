@@ -218,37 +218,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 				return new string(letters);
 			}
 		}
-		/*[Name("vaporwave <text>")]
-		[Command("vaporwave"), Alias("vapor", "aesthetic")]
-		[Usage("<text...>")]
-		[Summary("C r e a t e   a e s t h e t i c l y   p l e a s i n g   t e x t")]
-		[Example("Running in the 90's", "Outputs: *R u n n i n g   i n   t h e   9 0 ' s*")]
-		public Task Vaporwave([Remainder] string text) {
-			char[] letters = text.ToCharArray();
-			//text = string.Join(" ", letters);
-			//return ReplyAsync(text);
-			for (int i = 0; i < letters.Length; i++) {
-				if (fullWidthMap.TryGetValue(letters[i], out char c))
-					letters[i] = c;
-			}
-			return ReplyAsync(new string(letters));
-		}
-		[Name("vaporwavequote <text>")]
-		[Command("vaporwave quote"), Alias("vapor quote", "aesthetic quote")]
-		[Usage("<text...>")]
-		[Summary("C r e a t e   a e s t h e t i c l y   p l e a s i n g   t e x t")]
-		[Example("quote Nattive Patties", "Outputs: *【Ｎａｔｔｉｖｅ　Ｐａｔｔｉｅｓ】*")]
-		[Priority(1)]
-		public Task VaporwaveQuote([Remainder] string text) {
-			char[] letters = text.ToCharArray();
-			//text = string.Join(" ", letters);
-			//return ReplyAsync(text);
-			for (int i = 0; i < letters.Length; i++) {
-				if (fullWidthMap.TryGetValue(letters[i], out char c))
-					letters[i] = c;
-			}
-			return ReplyAsync("【" + new string(letters) + "】");
-		}*/
 
 		[Name("tasts")]
 		[Command("tasts")]
