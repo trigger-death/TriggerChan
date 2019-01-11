@@ -11,7 +11,6 @@ namespace TriggersTools.DiscordBots.Database.Model {
 	/// There is no conversion cost.
 	/// </summary>
 	public class SnowflakeSet : ICollection<ulong>, IReadOnlyCollection<ulong> {
-
 		#region Fields
 
 		/// <summary>

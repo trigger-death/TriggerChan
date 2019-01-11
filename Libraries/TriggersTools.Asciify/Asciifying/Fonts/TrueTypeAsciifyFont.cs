@@ -306,7 +306,7 @@ namespace TriggersTools.Asciify.Asciifying.Fonts {
 		}
 
 		private SizeF MeasureString(string text, Font font) {
-			using (Bitmap bitmap = new Bitmap(1, 1))
+			using (Bitmap bitmap = new Bitmap(1, 1, PixelFormat.Format32bppArgb))
 			using (Graphics g = Graphics.FromImage(bitmap)) {
 				g.TextRenderingHint = TextRenderingHint.SingleBitPerPixelGridFit;
 				return g.MeasureString(text, font);

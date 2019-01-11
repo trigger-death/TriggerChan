@@ -246,7 +246,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			embed.WithFooter($"{configParser.Nickname} {configParser.Version}, built on {configParser.BuildDate}");
 
 			//embed.WithImageUrl(@"https://cdn.discordapp.com/attachments/436949335947870240/506494327250223104/VJMgPcQ.png");
-			embed.WithImageUrl(@"https://raw.githubusercontent.com/trigger-death/TriggerChan/master/DiscordBots.MyBots/TriggerChan/Resources/UrlImages/TriggerChanWide.png");
+			embed.WithImageUrl(@"https://raw.githubusercontent.com/trigger-death/TriggerChan/master/DiscordBots.MyBots/TriggerChan/Resources/UrlImages/triggerchan_wide.png");
 		}
 
 		[Name("stats")]

@@ -16,6 +16,11 @@
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net471|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Asciifying\Asciifiers\Internal\AsciifierBase2.cs" />
     <Compile Remove="Asciifying\Asciifiers\Internal\AsciifierBase3.cs" />

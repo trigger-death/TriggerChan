@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net471</TargetFrameworks>
+    <TargetLatestRuntimePatch>false</TargetLatestRuntimePatch>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\DiscordBots.MyBots\TriggerChan\TriggerChan.csproj" />
+  </ItemGroup>
+
+</Project>

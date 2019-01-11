@@ -13,7 +13,6 @@ using TriggersTools.DiscordBots.Utils;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Services {
 	public partial class DevelopmentService : TriggerService {
-
 		#region Fields
 
 		private readonly ulong devStatusChannelId;
@@ -35,10 +34,12 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 		#endregion
 		
 		private T Load<T>() where T : Embeddable, new() {
-			return JsonConvert.DeserializeObject<T>(File.ReadAllText(new T().File));
+			string path = Path.Combine(DiscordBot.ConfigDirectory, new T().File);
+			return JsonConvert.DeserializeObject<T>(File.ReadAllText(path));
 		}
 		/*private void Save<T>(T embeddable) where T : Embeddable, new() {
-			File.WriteAllText(embeddable.File, JsonConvert.SerializeObject(embeddable));
+			string path = Path.Combine(DiscordBot.ConfigDirectory, mbeddable.File);
+			File.WriteAllText(path, JsonConvert.SerializeObject(embeddable));
 		}*/
 
 		public Task UpdateDevStatusAsync() => UpdateAsync<DevStatus>(devStatusChannelId);
@@ -69,17 +70,19 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 		}
 
 		private ulong LoadMessageId<T>(T embeddable) where T : Embeddable, new() {
-			if (File.Exists(embeddable.MessageIdFile))
-				return ulong.Parse(File.ReadAllText(embeddable.MessageIdFile));
+			string path = Path.Combine(DiscordBot.StateDirectory, embeddable.MessageIdFile);
+			if (File.Exists(path))
+				return ulong.Parse(File.ReadAllText(path));
 			return 0;
 		}
 		private void SaveMessageId<T>(T embeddable, ulong messageId) where T : Embeddable, new() {
-			File.WriteAllText(embeddable.MessageIdFile, messageId.ToString());
+			string path = Path.Combine(DiscordBot.StateDirectory, embeddable.MessageIdFile);
+			File.WriteAllText(path, messageId.ToString());
 		}
 
 		private abstract class Embeddable {
-			public string File => Path.Combine(AppContext.BaseDirectory, $"{GetType().Name}.json");
-			public string MessageIdFile => Path.Combine(AppContext.BaseDirectory, $"{GetType().Name}.MessageId.json");
+			public string File => $"{GetType().Name}.json";
+			public string MessageIdFile => $"{GetType().Name}.MessageId.json";
 
 			//[JsonProperty(PropertyName = "message_id")]
 			//public ulong MessageId { get; set; }

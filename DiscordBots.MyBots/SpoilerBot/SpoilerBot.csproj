@@ -5,6 +5,11 @@
     <RootNamespace>TriggersTools.DiscordBots.SpoilerBot</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net471|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Database\SpoilerDbContext.cs" />
     <Compile Remove="Database\SpoilerDbContextFactory.cs" />

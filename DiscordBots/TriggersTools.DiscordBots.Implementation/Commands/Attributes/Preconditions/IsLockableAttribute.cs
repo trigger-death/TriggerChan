@@ -11,7 +11,6 @@ namespace TriggersTools.DiscordBots.Commands {
 	/// A precondition to check if a command or module is locked.
 	/// </summary>
 	public class IsLockableAttribute : IsLockableBaseAttribute {
-		
 		#region Constructors
 		
 		/// <summary>

@@ -44,7 +44,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			}
 		}
 
-		private const int FontSize = 11;
+		private const int FontSize = 11; // 11pt, 72px
 		private const string FontName = "Arial";
 
 		private const int Border = 2;
@@ -82,10 +82,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				for (int i = 0; i < columnWidths.Length; i++)
 					columnWidths[i] = MinColumnWidth;
 				foreach (GuildEmote emote in emotes) {
-					labelWidths[column, row] = (int) GraphicsUtils.MeasureStringF($":{emote.Name}:", font).Width + Spacing * 2;
-						/*TextMeasurer.Measure(
-						, new RendererOptions(font)
-						).Width + Spacing * 2;*/
+					labelWidths[column, row] = GraphicsUtils.MeasureStringCeiling($":{emote.Name}:", font).Width + Spacing * 2;
 					columnWidths[column] = Math.Max(columnWidths[column], labelWidths[column, row]);
 					column++;
 					if (column == columns) {
@@ -120,9 +117,10 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			using (Brush backgroundBrush = new SolidBrush(Color.FromArgb(47, 49, 54)))
 			using (Brush borderBrush = new SolidBrush(Color.FromArgb(40, 43, 48)))
 			using (Font font = new Font(FontName, FontSize, FontStyle.Regular)) {
-				Bitmap bitmap = new Bitmap(imageSize.Width, imageSize.Height);
+				Bitmap bitmap = new Bitmap(imageSize.Width, imageSize.Height, PixelFormat.Format32bppPArgb);
 				try {
 					using (Graphics g = Graphics.FromImage(bitmap)) {
+						g.PageUnit = GraphicsUnit.Pixel;
 						g.Clear(Color.FromArgb(47, 49, 54));
 						g.FillRectangle(borderBrush, new Rectangle(0, 0, Border, bitmap.Height));
 						g.FillRectangle(borderBrush, new Rectangle(bitmap.Width - Border, 0, Border, bitmap.Height));
@@ -150,8 +148,9 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 		private async Task DrawEmote(Graphics g, Font font, Point point, int columnWidth, GuildEmote emote) {
 			using (Bitmap emoteImg = await GetEmote(emote).ConfigureAwait(false)) {
 				point.Y += Spacing;
+				g.SmoothingMode = SmoothingMode.HighQuality;
 				g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-
+				g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 				Rectangle emoteRect = new Rectangle(
 					point.X + (columnWidth - EmoteSize) / 2, point.Y,
 					EmoteSize, EmoteSize);

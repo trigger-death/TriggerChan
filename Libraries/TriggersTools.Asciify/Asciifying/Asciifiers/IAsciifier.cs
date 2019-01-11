@@ -32,6 +32,7 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 		bool ForegroundOnly { get; set; }
 
 		double Progress { get; }
+		//double Total { get; }
 	}
 	public interface IColorAsciifier : IAsciifier {
 		IColorSpaceComparison Comparer { get; set; }

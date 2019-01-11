@@ -1,0 +1,5 @@
+﻿# These files are ignored and not removed from the deployed config directory
+
+# All files in here are used throughout the bot's lifetime
+[Ll]ogs/
+[Ss]tate/

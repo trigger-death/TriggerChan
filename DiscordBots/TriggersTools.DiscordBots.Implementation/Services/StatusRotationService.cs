@@ -12,7 +12,6 @@ using TriggersTools.DiscordBots.Services;
 
 namespace TriggersTools.DiscordBots.Services {
 	public class StatusRotationService : DiscordBotService {
-
 		#region Private structs
 
 		private struct DiscordStatus {

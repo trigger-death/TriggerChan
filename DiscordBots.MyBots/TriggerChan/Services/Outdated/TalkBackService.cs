@@ -87,12 +87,12 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 		private readonly Regex TriggyRegex = new Regex(@"\btriggy\b", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 		
 		public override void Initialize() {
-			Client.MessageReceived += OnMessageReceived;
-			Client.ReactionAdded += OnReactionAdded;
+			Client.MessageReceived += OnMessageReceivedAsync;
+			Client.ReactionAdded += OnReactionAddedAsync;
 			InitILoveTriggerChanRegex();
 		}
 
-		private async Task OnReactionAdded(Cacheable<IUserMessage, ulong> msg, ISocketMessageChannel channel, SocketReaction reaction) {
+		private async Task OnReactionAddedAsync(Cacheable<IUserMessage, ulong> msg, ISocketMessageChannel channel, SocketReaction reaction) {
 			if (!(channel is IGuildChannel guildChannel)) return;
 
 			// Do we have the base level of required permissions?
@@ -119,13 +119,13 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			}
 		}
 
-		public async Task<int> GetPinReactCount(SocketCommandContext context) {
+		public async Task<int> GetPinReactCountAsync(SocketCommandContext context) {
 			using (var db = GetDb<TriggerDbContext>())
 				return (await db.FindGuildAsync(context.Guild.Id).ConfigureAwait(false)).PinReactCount;
 			//return (await contexting.FindGuildAsync(context.Guild.Id, true).ConfigureAwait(false)).PinReactCount;
 		}
 
-		public async Task SetPinReactCount(SocketCommandContext context, int count) {
+		public async Task SetPinReactCountAsync(SocketCommandContext context, int count) {
 			using (var db = GetDb<TriggerDbContext>()) {
 				Guild guild = await db.FindGuildAsync(context.Guild.Id).ConfigureAwait(false);
 
@@ -143,13 +143,13 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			channel.ReactBackTimer.Reset();
 		}
 
-		public async Task<TimeSpan> GetTalkBackCooldown(SocketCommandContext context) {
+		public async Task<TimeSpan> GetTalkBackCooldownAsync(SocketCommandContext context) {
 			using (var db = GetDb<TriggerDbContext>())
 				return (await db.FindGuildAsync(context.Guild.Id).ConfigureAwait(false)).TalkBackCooldown;
 			//return (await contexting.FindGuildAsync(context.Guild.Id, true).ConfigureAwait(false)).TalkBackCooldown;
 		}
 
-		public async Task SetTalkBackCooldown(SocketCommandContext context, TimeSpan time) {
+		public async Task SetTalkBackCooldownAsync(SocketCommandContext context, TimeSpan time) {
 			using (var db = GetDb<TriggerDbContext>()) {
 				Guild guild = await db.FindGuildAsync(context.Guild.Id).ConfigureAwait(false);
 
@@ -161,13 +161,13 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			}
 		}
 
-		public async Task<bool> GetTalkBack(SocketCommandContext context) {
+		public async Task<bool> GetTalkBackAsync(SocketCommandContext context) {
 			using (var db = GetDb<TriggerDbContext>())
 				return (await db.FindGuildAsync(context.Guild.Id).ConfigureAwait(false)).TalkBackEnabled;
 			//return (await contexting.FindGuildAsync(context.Guild.Id, true).ConfigureAwait(false)).TalkBackEnabled;
 		}
 		
-		public async Task<bool> SetTalkBack(SocketCommandContext context, bool enabled) {
+		public async Task<bool> SetTalkBackAsync(SocketCommandContext context, bool enabled) {
 			using (var db = GetDb<TriggerDbContext>()) {
 				Guild guild = await db.FindGuildAsync(context.Guild.Id).ConfigureAwait(false);
 
@@ -190,7 +190,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			if (Config["client_id"] != null) {
 				names.Add($"<@{Config["client_id"]}>");
 			}
-			const string W = @"(\s|^)+";
 			names.AddRange(new string[] {
 				$"triggerchan",
 				$"trigger_chan",
@@ -200,7 +199,9 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				$"triggy_chan",
 				$"triggy-chan",
 				$"triggy chan",
-				$"triggy"
+				$"triggy",
+				$"{Client.CurrentUser.Username}",
+				$"{Client.CurrentUser.Username}#{Client.CurrentUser.Discriminator}",
 			});
 
 			string name = "(";
@@ -211,10 +212,11 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			}
 			name += ")";
 
+			const string W = @"(\s|^)+";
 			const string I = @"i";
 			const string Really = @"(re*a*l+y+)";
-			const string Love = @"(l+o+v+e+s*|l+u+v+s*|.?❤.?|\<3+|le?i+e?k+e*s*|daisuki|daisuke|suki)";
-			const string Daisuki = @"(daisuki|daisuke|suki|.?❤.?|\<3+)";
+			const string Love = @"(l+o+v+e+s*|l+u+v+s*|.?❤.?|<+3+|le?i+e?k+e*s*|daisuki|daisuke|suki)";
+			const string Daisuki = @"(daisuki|daisuke|suki|.?❤.?|<+3+)";
 			const string Heart = @"(.?❤.?)";
 			const string Dont = @"(?<!(do?n'?t|do?e?sn'?t|donn?ot|do not))";
 			const string You = @"(yo+u+|u+)";
@@ -228,8 +230,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				$"{Begin}{name}{W}{Heart}{End}",
 				$"{Begin}{Daisuki}{W}{name}{End}",
 				$"{Begin}{name}{W}{Daisuki}{End}",
-				$"{Client.CurrentUser.Username}",
-				$"{Client.CurrentUser.Username}#{Client.CurrentUser.Discriminator}"
 			};
 
 			ILoveRegex = new Regex[patterns.Length];
@@ -240,24 +240,25 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			}
 		}
 
-		private async Task OnMessageReceived(SocketMessage s) {
+		private async Task OnMessageReceivedAsync(SocketMessage s) {
 			if (!(s is SocketUserMessage msg)) return; // Ensure the message is from a user/bot
 			if (!(s.Channel is IGuildChannel)) return; // Only talkback in guilds
 			if (msg.Author.IsBot) return;
+			if (await BotBans.IsUserBannedAsync(msg.Author.Id).ConfigureAwait(false)) return;
 
 			// Do we have the base level of required permissions?
 			if (!await s.Channel.CanRespondAsync(Client).ConfigureAwait(false)) return;
 
 			var context = new DiscordBotCommandContext(Services, Client, msg);
 			
-			if (await GetTalkBack(context).ConfigureAwait(false)) {
+			if (await GetTalkBackAsync(context).ConfigureAwait(false)) {
 				// Don't reactback if we already responded with talkback
-				if (!await ILoveTriggerChan(msg).ConfigureAwait(false))
-					await ReactToTriggy(msg).ConfigureAwait(false);
+				if (!await ILoveTriggerChanAsync(msg).ConfigureAwait(false))
+					await ReactToTriggyAsync(msg).ConfigureAwait(false);
 			}
 		}
 
-		private async Task ReactToTriggy(SocketUserMessage msg) {
+		private async Task ReactToTriggyAsync(SocketUserMessage msg) {
 			if (!(msg.Channel is IGuildChannel guildChannel)) return;
 
 			var context = new SocketCommandContext(Client, msg);
@@ -278,7 +279,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 		}
 
 
-		private async Task<bool> ILoveTriggerChan(SocketUserMessage msg) {
+		private async Task<bool> ILoveTriggerChanAsync(SocketUserMessage msg) {
 			if (!(msg.Channel is IGuildChannel guildChannel)) return false;
 
 			var context = new SocketCommandContext(Client, msg);

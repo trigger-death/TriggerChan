@@ -1,0 +1,9 @@
+﻿# These files are included and moved to config_path
+
+# Beta Config Files
+[Cc]onfig.[Pp]rotected.Beta.json
+[Cc]onfig.[Pp]rivate.Beta.json
+[Cc]onfig.[Pp]ublic.Beta.json
+[Cc]onfig.[Pp]rotected.Debug.json
+[Cc]onfig.[Pp]rivate.Debug.json
+[Cc]onfig.[Pp]ublic.Debug.json

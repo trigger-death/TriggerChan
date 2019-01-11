@@ -13,7 +13,6 @@ namespace TriggersTools.DiscordBots.Database {
 	/// See <a href="https://stackoverflow.com/a/26177005/7517185">source</a>.
 	/// </remarks>
 	public class ByteEncrypter : IByteEncrypter {
-
 		#region Constants
 
 		/// <summary>

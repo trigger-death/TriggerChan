@@ -8,7 +8,6 @@ namespace TriggersTools.DiscordBots.Commands {
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 	public class AllowBotsAttribute : PreconditionAttribute {
-
 		#region Fields
 
 		/// <summary>

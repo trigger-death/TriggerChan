@@ -4,8 +4,6 @@ namespace TriggersTools.DiscordBots.Utils {
 	/// A string representation of a Url along with its location in text.
 	/// </summary>
 	public struct StringUrl {
-
-
 		#region Constants
 
 		/// <summary>

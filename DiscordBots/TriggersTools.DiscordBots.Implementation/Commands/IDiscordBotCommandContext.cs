@@ -1,4 +1,5 @@
 ﻿using Discord.Commands;
+using Discord.WebSocket;
 using TriggersTools.DiscordBots.Database.Model;
 using TriggersTools.DiscordBots.Services;
 
@@ -19,5 +20,9 @@ namespace TriggersTools.DiscordBots.Commands {
 		/// Gets the argument position in the command after the prefix.
 		/// </summary>
 		int ArgPos { get; set; }
+		/// <summary>
+		/// Gets the connected Discord socket client.
+		/// </summary>
+		new DiscordSocketClient Client { get; }
 	}
 }

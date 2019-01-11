@@ -34,5 +34,8 @@ namespace TriggersTools.DiscordBots.TriggerChan.Commands {
 		public static RuntimeResult FromNotInVoice() {
 			return ReactionResult.FromSuccess(TriggerReactions.NotInVoice);
 		}
+		public static RuntimeResult FromBanned() {
+			return ReactionResult.FromSuccess(TriggerReactions.Banned);
+		}
 	}
 }

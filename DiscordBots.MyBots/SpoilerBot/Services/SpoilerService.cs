@@ -30,7 +30,6 @@ namespace TriggersTools.DiscordBots.SpoilerBot.Services {
 	public partial class SpoilerService<TDbContext> : DiscordBotService, ISpoilerService
 		where TDbContext : DbContextEx, ISpoilerDbContext
 	{
-
 		#region Fields
 
 		/// <summary>

@@ -14,7 +14,6 @@ namespace TriggersTools.DiscordBots.Reactions {
 	/// An abstract service for defining all reactions a bot works with.
 	/// </summary>
 	public abstract class ReactionService : DiscordBotService {
-		
 		#region Constructors
 
 		/// <summary>

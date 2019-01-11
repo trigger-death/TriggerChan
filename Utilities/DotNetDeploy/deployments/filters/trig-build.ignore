@@ -1,0 +1,26 @@
+﻿# These files are ignored and not moved from the build directory
+
+# Config Files
+[Cc]onfig.[Pp]rotected.Beta.json
+[Cc]onfig.[Pp]rivate.Beta.json
+[Cc]onfig.[Pp]ublic.Beta.json
+[Cc]onfig.[Pp]rotected.Debug.json
+[Cc]onfig.[Pp]rivate.Debug.json
+[Cc]onfig.[Pp]ublic.Debug.json
+![Cc]onfig.json
+![Cc]onfig.[Pp]rotected.json
+![Cc]onfig.[Pp]rivate.json
+![Cc]onfig.[Pp]ublic.json
+![Cc]onfig.[Pp]rotected.Release.json
+![Cc]onfig.[Pp]rivate.Release.json
+![Cc]onfig.[Pp]ublic.Release.json
+
+# Home Server Status
+![Dd]ev[Ss]tatus.json
+![Ww]elcome.json
+
+# Lavalink
+[Aa]pplication.yml
+[Ll]avalink.jar
+
+[Ll]ogs/

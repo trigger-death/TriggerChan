@@ -24,8 +24,8 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 			MaxDegreeOfParallelism = 1,
 		};
 		private readonly object progressLock = new object();
-		private int cmag;
-		private int cmagIndex;
+		volatile private int cmag;
+		volatile private int cmagIndex;
 		public double Progress {
 			get {
 				lock (progressLock) {
@@ -36,6 +36,16 @@ namespace TriggersTools.Asciify.Asciifying.Asciifiers {
 				}
 			}
 		}
+		/*public double Total {
+			get {
+				lock (progressLock) {
+					if (cmag == 0)
+						return 0d;
+					else
+						return (double) cmagIndex;
+				}
+			}
+		}*/
 
 		public IAsciifyFont Font { get; private set; }
 		public AsciifyPalette Palette { get; private set; }

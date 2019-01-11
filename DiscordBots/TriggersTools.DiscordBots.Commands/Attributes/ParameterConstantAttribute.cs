@@ -10,7 +10,6 @@ namespace TriggersTools.DiscordBots.Commands {
 	/// An attribute stating the parameter must equate to at least one of the listed constants.
 	/// </summary>
 	public class ParameterConstantAttribute : ParameterPreconditionAttribute {
-
 		/// <summary>
 		/// The constants that the parameter name must match.
 		/// </summary>

@@ -14,7 +14,6 @@ namespace TriggersTools.DiscordBots {
 	/// A context for Discord bot services, modules, and command contexts.
 	/// </summary>
 	public interface IDiscordBotServiceContainer {
-
 		#region Properties
 
 		/// <summary>

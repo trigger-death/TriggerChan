@@ -66,7 +66,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			}
 		}
 		
-		[Group("ani")]
+		[Group("ani"), Alias("anilist")]
 		[Usage("[<user>|profile <aniUser>|assign <aniUser>|unassign]")]
 		[Summary("Lookup or register your AniList profile")]
 		public class AniListGroup : DatabaseProfileModule {

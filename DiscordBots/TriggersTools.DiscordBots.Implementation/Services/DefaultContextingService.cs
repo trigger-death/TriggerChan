@@ -14,7 +14,6 @@ namespace TriggersTools.DiscordBots.Services {
 	/// The default <see cref="IContextingService"/> implementation.
 	/// </summary>
 	public class DefaultContextingService : DiscordBotService, IContextingService {
-
 		#region Constructors
 
 		public DefaultContextingService(DiscordBotServiceContainer services) : base(services) { }

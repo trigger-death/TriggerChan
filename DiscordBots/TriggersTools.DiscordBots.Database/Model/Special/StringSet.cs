@@ -10,7 +10,6 @@ namespace TriggersTools.DiscordBots.Database.Model {
 	/// There is no conversion cost.
 	/// </summary>
 	public class StringSet : ICollection<string>, IReadOnlyCollection<string> {
-
 		#region Fields
 
 		/// <summary>

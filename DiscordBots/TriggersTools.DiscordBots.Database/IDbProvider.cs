@@ -51,7 +51,8 @@ namespace TriggersTools.DiscordBots.Database {
 		/// The options builder from <see cref="DbContext.OnConfiguring(DbContextOptionsBuilder)"/>.
 		/// </param>
 		/// <param name="db">The database being configured.</param>
-		void Configure(DbContextOptionsBuilder optionsBuilder, DbContextEx db);
+		/// <returns>The creation mode to use for the database.</returns>
+		DbCreationMode Configure(DbContextOptionsBuilder optionsBuilder, DbContextEx db);
 	}
 
 	/// <summary>

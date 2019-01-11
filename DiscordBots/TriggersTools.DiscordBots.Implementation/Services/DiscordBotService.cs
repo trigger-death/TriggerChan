@@ -13,7 +13,6 @@ namespace TriggersTools.DiscordBots.Services {
 	/// A base class for all discord bot services.
 	/// </summary>
 	public class DiscordBotService : IDiscordBotService, IDiscordBotServiceContainer, IDisposable {
-
 		#region Fields
 
 		/// <summary>

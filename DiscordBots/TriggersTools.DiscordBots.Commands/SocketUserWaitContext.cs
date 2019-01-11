@@ -12,7 +12,6 @@ namespace TriggersTools.DiscordBots.Commands {
 	/// The command wait context for bot commands that require input over time.
 	/// </summary>
 	public class SocketUserWaitContext : SocketCommandContext, IUserWaitContext {
-
 		#region Fields
 
 		/// <summary>

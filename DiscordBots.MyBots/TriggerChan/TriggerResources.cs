@@ -25,7 +25,7 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 		public static readonly string OcarinaImagesDir = Path.Combine(ImagesDir, "Ocarina");
 		public static readonly string AsciifyImagesDir = Path.Combine(ImagesDir, "Asciify");
 		public static readonly string TalkbackImagesDir = Path.Combine(ImagesDir, "Talkback");
-		public static readonly string TempImagesDir = Path.Combine(ImagesDir, "Temp");
+		public static readonly string TempImagesDir = Path.Combine(AppContext.BaseDirectory, ".config", "tmp", "images");
 
 		static TriggerResources() {
 			Directory.CreateDirectory(ImagesDir);

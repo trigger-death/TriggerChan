@@ -15,7 +15,6 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 	/// A context for Trigger-Chan services, modules, and command contexts.
 	/// </summary>
 	public interface ITriggerServiceContainer : IDiscordBotServiceContainer {
-
 		#region Properties
 		
 		/// <summary>

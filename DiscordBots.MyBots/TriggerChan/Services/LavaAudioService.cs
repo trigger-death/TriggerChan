@@ -39,20 +39,12 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 
 		private async Task OnReadyAsync() {
 			node = await lavalink.ConnectAsync(Client, new LavaConfig {
-				Authorization = "youshallnotpass",
+				Authorization = Config["lavalink:password"],
 				Endpoint = new Endpoint {
-					Host = "127.0.0.1",
-					Port = 2333,
+					Host = Config["lavalink:address"],
+					Port = ushort.Parse(Config["lavalink:port"]),
 				},
 			}).ConfigureAwait(false);
-			/*await node.StopAsync().ConfigureAwait(false);
-			node = await lavalink.ConnectAsync(Client, new LavaConfig {
-				Authorization = "youshallnotpass",
-				Endpoint = new Endpoint {
-					Host = "127.0.0.1",
-					Port = 2333,
-				},
-			}).ConfigureAwait(false);*/
 			node.Finished += OnPlayerFinishedAsync;
 			node.Exception += OnPlayerExceptionAsync;
 			node.Updated += OnPlayerUpdatedAsync;

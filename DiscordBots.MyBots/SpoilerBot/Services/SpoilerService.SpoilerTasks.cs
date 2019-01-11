@@ -12,7 +12,6 @@ using TriggersTools.DiscordBots.SpoilerBot.Utils;
 
 namespace TriggersTools.DiscordBots.SpoilerBot.Services {
 	partial class SpoilerService<TDbContext> {
-
 		#region SpoilTask
 
 		/// <summary>

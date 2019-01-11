@@ -33,7 +33,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Profiles {
 				UrlName = "MyAnimeList.net",
 				Url = @"https://myanimelist.net/",
 				ImageUrl = @"https://i.imgur.com/DUikkqZ.png",
-				//ImageUrl = @"https://raw.githubusercontent.com/trigger-death/TriggerChan/master/DiscordBots.MyBots/TriggerChan/Resources/UrlImages/MyAnimeListIcon.png",
+				//ImageUrl = @"https://raw.githubusercontent.com/trigger-death/TriggerChan/master/DiscordBots.MyBots/TriggerChan/Resources/UrlImages/myanimelist_icon.png",
 				Color = new Color(46, 81, 162),
 			});
 			AddDatabaseInfo(new DatabaseInfo {
@@ -44,7 +44,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Profiles {
 				UrlName = "AniList.co",
 				Url = @"https://anilist.co/",
 				//ImageUrl = @"https://i.imgur.com/p7K6gAR.png",
-				ImageUrl = @"https://raw.githubusercontent.com/trigger-death/TriggerChan/master/DiscordBots.MyBots/TriggerChan/Resources/UrlImages/AniListIcon.png",
+				ImageUrl = @"https://raw.githubusercontent.com/trigger-death/TriggerChan/master/DiscordBots.MyBots/TriggerChan/Resources/UrlImages/anilist_icon.png",
 				Color = new Color(2, 169, 255),
 			});
 			AddDatabaseInfo(new DatabaseInfo {
@@ -55,7 +55,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Profiles {
 				UrlName = "Kitsu.io",
 				Url = @"https://kitsu.io/",
 				ImageUrl = @"https://i.imgur.com/TFxzIX5.png",
-				//ImageUrl = @"https://raw.githubusercontent.com/trigger-death/TriggerChan/master/DiscordBots.MyBots/TriggerChan/Resources/UrlImages/KitsuIcon.png",
+				//ImageUrl = @"https://raw.githubusercontent.com/trigger-death/TriggerChan/master/DiscordBots.MyBots/TriggerChan/Resources/UrlImages/kitsu_icon.png",
 				Color = new Color(247, 81, 57),
 				//Color = new Color(50, 38, 50),
 			});
@@ -67,7 +67,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Profiles {
 				UrlName = "VNDb.org",
 				Url = @"https://vndb.org/",
 				//ImageUrl = @"https://i.imgur.com/jaXF2bv.png",
-				ImageUrl = @"https://raw.githubusercontent.com/trigger-death/TriggerChan/master/DiscordBots.MyBots/TriggerChan/Resources/UrlImages/VNdbIcon.png",
+				ImageUrl = @"https://raw.githubusercontent.com/trigger-death/TriggerChan/master/DiscordBots.MyBots/TriggerChan/Resources/UrlImages/vndb_icon.png",
 				Color = new Color(17, 34, 51),
 			});
 			AddDatabaseInfo(new DatabaseInfo {
@@ -78,7 +78,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Profiles {
 				UrlName = "MyFigureCollection.net",
 				Url = @"https://myfigurecollection.net/",
 				ImageUrl = @"https://i.imgur.com/EjFScAj.png",
-				//ImageUrl = @"https://raw.githubusercontent.com/trigger-death/TriggerChan/master/DiscordBots.MyBots/TriggerChan/Resources/UrlImages/MyFigureCollectionIcon.png",
+				//ImageUrl = @"https://raw.githubusercontent.com/trigger-death/TriggerChan/master/DiscordBots.MyBots/TriggerChan/Resources/UrlImages/myfigurecollection_icon.png",
 				Color = new Color(87, 161, 82),
 			});
 		}

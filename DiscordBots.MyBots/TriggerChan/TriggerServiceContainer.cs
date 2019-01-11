@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TriggersTools.DiscordBots.TriggerChan.Services;
 
 namespace TriggersTools.DiscordBots.TriggerChan {
 	/// <summary>
@@ -15,13 +16,16 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 	/// which is extremely important in my situation.
 	/// </remarks>
 	public class TriggerServiceContainer : DiscordBotServiceContainer {
-
-		#region Fields
+		#region Properties
 
 		/// <summary>
 		/// Gets the home guild Ids section.
 		/// </summary>
 		public IConfigurationSection Home => Config.GetSection("ids:discord:home");
+		/// <summary>
+		/// Gets the service used for managing banishments from the bots.
+		/// </summary>
+		public BotBanService BotBans => GetService<BotBanService>();
 
 		#endregion
 

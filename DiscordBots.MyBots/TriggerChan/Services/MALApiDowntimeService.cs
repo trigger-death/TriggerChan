@@ -13,7 +13,6 @@ using TriggersTools.DiscordBots.TriggerChan.Utils;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Services {
 	public class MALApiDowntimeService {
-
 		#region Constants
 
 		// Strings
@@ -27,13 +26,13 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 		private const string FontFamily = "Arial";
 
 		// Font Sizes
-		private const float CounterSize = 124;
-		private const float TitleSize = 50;
-		private const float UnitSize = 28;
+		private const float CounterSize = 124; // 800px
+		private const float TitleSize = 50; // 330px
+		private const float UnitSize = 28; // 182px
 
 		// Measurements
-		private const int PaddingX = 10;
-		private const int ColonSpaceX = -36;
+		private const int PaddingX = 40;
+		private const int ColonSpaceX = 19;//-36; + 55
 		private const int TitleY = 8;
 		private const int CounterY = 122;
 		private const int UnitY = 352;
@@ -68,71 +67,88 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			
 			using (Brush redBrush = new SolidBrush(Color.FromArgb(161, 46, 49)))
 			using (Brush blueBrush = new SolidBrush(Color.FromArgb(46, 81, 162)))
-			using (Font titleFont   = new Font(FontFamily, TitleSize, FontStyle.Bold))
-			using (Font counterFont = new Font(FontFamily, CounterSize))
-			using (Font unitFont    = new Font(FontFamily, UnitSize)) {
-				
+			using (Font titleFont   = new Font(FontFamily, TitleSize, FontStyle.Bold, GraphicsUnit.Point))
+			using (Font counterFont = new Font(FontFamily, CounterSize, GraphicsUnit.Point))
+			using (Font unitFont    = new Font(FontFamily, UnitSize, GraphicsUnit.Point)) {
+
+				int counterOffset = GraphicsUtils.FontOffsetCeiling(counterFont).X;
+				int unitOffset = GraphicsUtils.FontOffsetCeiling(unitFont).X;
+				int titleOffset = GraphicsUtils.FontOffsetCeiling(titleFont).X;
+
 				Size titleSize = GraphicsUtils.MeasureStringCeiling(Title, titleFont);
 
-				Size daysSize    = GraphicsUtils.MeasureStringCeiling(days,    counterFont);
-				Size hoursSize   = GraphicsUtils.MeasureStringCeiling(hours,   counterFont);
-				Size minutesSize = GraphicsUtils.MeasureStringCeiling(minutes, counterFont);
-				Size secondsSize = GraphicsUtils.MeasureStringCeiling(seconds, counterFont);
+				int daysSize    = GraphicsUtils.MeasureStringCeiling(days,    counterFont).Width;
+				int hoursSize   = GraphicsUtils.MeasureStringCeiling(hours,   counterFont).Width;
+				int minutesSize = GraphicsUtils.MeasureStringCeiling(minutes, counterFont).Width;
+				int secondsSize = GraphicsUtils.MeasureStringCeiling(seconds, counterFont).Width;
 
-				Size unitDaysSize    = GraphicsUtils.MeasureStringCeiling(Days,    unitFont);
-				Size unitHoursSize   = GraphicsUtils.MeasureStringCeiling(Hours,   unitFont);
-				Size unitMinutesSize = GraphicsUtils.MeasureStringCeiling(Minutes, unitFont);
-				Size unitSecondsSize = GraphicsUtils.MeasureStringCeiling(Seconds, unitFont);
+				int unitDaysSize    = GraphicsUtils.MeasureStringCeiling(Days,    unitFont).Width;
+				int unitHoursSize   = GraphicsUtils.MeasureStringCeiling(Hours,   unitFont).Width;
+				int unitMinutesSize = GraphicsUtils.MeasureStringCeiling(Minutes, unitFont).Width;
+				int unitSecondsSize = GraphicsUtils.MeasureStringCeiling(Seconds, unitFont).Width;
 
-				Size colonSize = GraphicsUtils.MeasureStringCeiling(":", counterFont);
+				int colonSize = GraphicsUtils.MeasureStringCeiling(":", counterFont).Width;
 
-				int width = PaddingX;
-				Point daysPoint         = new Point(width, CounterY); width += daysSize.Width    + ColonSpaceX;
-				Point daysColonPoint    = new Point(width, CounterY); width += colonSize.Width   + ColonSpaceX;
-				Point hoursPoint        = new Point(width, CounterY); width += hoursSize.Width   + ColonSpaceX;
-				Point hoursColonPoint   = new Point(width, CounterY); width += colonSize.Width   + ColonSpaceX;
-				Point minutesPoint      = new Point(width, CounterY); width += minutesSize.Width + ColonSpaceX;
-				Point minutesColonPoint = new Point(width, CounterY); width += colonSize.Width   + ColonSpaceX;
-				Point secondsPoint      = new Point(width, CounterY); width += secondsSize.Width + PaddingX;
+				// Temporarily take out the font offset, add it back at the end.
+				int width = PaddingX - counterOffset;
+				Point daysPoint         = new Point(width, CounterY); width += daysSize    + ColonSpaceX;
+				Point daysColonPoint    = new Point(width, CounterY); width += colonSize   + ColonSpaceX;
+				Point hoursPoint        = new Point(width, CounterY); width += hoursSize   + ColonSpaceX;
+				Point hoursColonPoint   = new Point(width, CounterY); width += colonSize   + ColonSpaceX;
+				Point minutesPoint      = new Point(width, CounterY); width += minutesSize + ColonSpaceX;
+				Point minutesColonPoint = new Point(width, CounterY); width += colonSize   + ColonSpaceX;
+				Point secondsPoint      = new Point(width, CounterY); width += secondsSize + PaddingX + counterOffset;
 
-				Point titlePoint = new Point((width - titleSize.Width) / 2, TitleY);
+				/*Point titlePoint = new Point((width - titleSize.Width - titleOffset) / 2, TitleY);
 
-				Point unitDaysPoint    = new Point(daysPoint.X    + ((daysSize.Width    - unitDaysSize.Width) / 2), UnitY);
-				Point unitHoursPoint   = new Point(hoursPoint.X   + ((hoursSize.Width   - unitHoursSize.Width) / 2), UnitY);
-				Point unitMinutesPoint = new Point(minutesPoint.X + ((minutesSize.Width - unitMinutesSize.Width) / 2), UnitY);
-				Point unitSecondsPoint = new Point(secondsPoint.X + ((secondsSize.Width - unitSecondsSize.Width) / 2), UnitY);
+				Point unitDaysPoint    = new Point(daysPoint.X    + ((daysSize    - unitDaysSize    - unitOffset) / 2), UnitY);
+				Point unitHoursPoint   = new Point(hoursPoint.X   + ((hoursSize   - unitHoursSize   - unitOffset) / 2), UnitY);
+				Point unitMinutesPoint = new Point(minutesPoint.X + ((minutesSize - unitMinutesSize - unitOffset) / 2), UnitY);
+				Point unitSecondsPoint = new Point(secondsPoint.X + ((secondsSize - unitSecondsSize - unitOffset) / 2), UnitY);*/
 
-				Point offset = Point.Empty;
+				Point titlePoint = new Point(width / 2, TitleY);
 
-				int widthSecondsUnitDiff = (unitSecondsPoint.X + unitSecondsSize.Width + PaddingX) - width;
+				Point unitDaysPoint    = new Point(daysPoint.X    + (daysSize    / 2) + counterOffset, UnitY);
+				Point unitHoursPoint   = new Point(hoursPoint.X   + (hoursSize   / 2) + counterOffset, UnitY);
+				Point unitMinutesPoint = new Point(minutesPoint.X + (minutesSize / 2) + counterOffset, UnitY);
+				Point unitSecondsPoint = new Point(secondsPoint.X + (secondsSize / 2) + counterOffset, UnitY);
+
+				Size offset = Size.Empty;
+
+				int widthSecondsUnitDiff = (unitSecondsPoint.X + (secondsSize / 2) + PaddingX) - width;
 				if (widthSecondsUnitDiff > 0) {
-					offset.X += widthSecondsUnitDiff;
+					offset.Width += widthSecondsUnitDiff;
 					width += widthSecondsUnitDiff * 2;
 				}
 
 				Bitmap image = new Bitmap(width, Height, PixelFormat.Format24bppRgb);
 				using (Graphics g = Graphics.FromImage(image)) {
+					g.PageUnit = GraphicsUnit.Pixel;
 					g.InterpolationMode = InterpolationMode.HighQualityBicubic;
 					g.TextRenderingHint = TextRenderingHint.AntiAlias;
 					g.SmoothingMode     = SmoothingMode.HighQuality;
 
 					g.Clear(Color.White);
+
+					StringFormat center = new StringFormat {
+						Alignment = StringAlignment.Center,
+					};
 					
-					g.DrawString(Title, titleFont, blueBrush, Point.Add(offset, (Size) titlePoint));
+					g.DrawString(Title, titleFont, blueBrush, Point.Add(titlePoint, offset), center);
 
-					g.DrawString(days,    counterFont, blueBrush, Point.Add(offset, (Size) daysPoint));
-					g.DrawString(hours,   counterFont, blueBrush, Point.Add(offset, (Size) hoursPoint));
-					g.DrawString(minutes, counterFont, blueBrush, Point.Add(offset, (Size) minutesPoint));
-					g.DrawString(seconds, counterFont, redBrush,  Point.Add(offset, (Size) secondsPoint));
+					g.DrawString(days,    counterFont, blueBrush, Point.Add(daysPoint,    offset));
+					g.DrawString(hours,   counterFont, blueBrush, Point.Add(hoursPoint,   offset));
+					g.DrawString(minutes, counterFont, blueBrush, Point.Add(minutesPoint, offset));
+					g.DrawString(seconds, counterFont, redBrush,  Point.Add(secondsPoint, offset));
 
-					g.DrawString(":", counterFont, blueBrush, Point.Add(offset, (Size) daysColonPoint));
-					g.DrawString(":", counterFont, blueBrush, Point.Add(offset, (Size) hoursColonPoint));
-					g.DrawString(":", counterFont, blueBrush, Point.Add(offset, (Size) minutesColonPoint));
+					g.DrawString(":", counterFont, blueBrush, Point.Add(daysColonPoint,    offset));
+					g.DrawString(":", counterFont, blueBrush, Point.Add(hoursColonPoint,   offset));
+					g.DrawString(":", counterFont, blueBrush, Point.Add(minutesColonPoint, offset));
 
-					g.DrawString(Days,    unitFont, blueBrush, Point.Add(offset, (Size) unitDaysPoint));
-					g.DrawString(Hours,   unitFont, blueBrush, Point.Add(offset, (Size) unitHoursPoint));
-					g.DrawString(Minutes, unitFont, blueBrush, Point.Add(offset, (Size) unitMinutesPoint));
-					g.DrawString(Seconds, unitFont, blueBrush, Point.Add(offset, (Size) unitSecondsPoint));
+					g.DrawString(Days,    unitFont, blueBrush, Point.Add(unitDaysPoint,    offset), center);
+					g.DrawString(Hours,   unitFont, blueBrush, Point.Add(unitHoursPoint,   offset), center);
+					g.DrawString(Minutes, unitFont, blueBrush, Point.Add(unitMinutesPoint, offset), center);
+					g.DrawString(Seconds, unitFont, blueBrush, Point.Add(unitSecondsPoint, offset), center);
 
 				}
 				return image;

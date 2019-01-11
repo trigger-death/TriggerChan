@@ -12,7 +12,6 @@ namespace TriggersTools.DiscordBots.Commands {
 	/// A context for waiting for additional command input after the initial execution.
 	/// </summary>
 	public interface IUserWaitContext : ICommandContext, IDisposable {
-		
 		/// <summary>
 		/// Gets the user friendly name of the wait context.
 		/// </summary>

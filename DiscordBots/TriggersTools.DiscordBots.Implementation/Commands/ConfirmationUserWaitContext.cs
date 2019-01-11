@@ -15,7 +15,6 @@ namespace TriggersTools.DiscordBots.Context {
 	/// A wait context for confirming a question.
 	/// </summary>
 	public class ConfirmationUserWaitContext : DiscordBotUserWaitContext {
-
 		#region Fields
 
 		public ConfirmationType Type { get; }

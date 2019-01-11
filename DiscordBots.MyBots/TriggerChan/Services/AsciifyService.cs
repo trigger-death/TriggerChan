@@ -40,7 +40,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 		public Task Task { get; set; }
 	}
 	public class AsciifyService : TriggerService {
-
 		#region Constants
 
 		public const int MaxWidth = 2048;
@@ -103,7 +102,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			//string asciifyStr = $"**Asciifying:** `{filename}` with Smooth {(smooth ? "yes" : "no")}, Scale {scale:P}";
 			//string asciifyStr = $"**Asciifying:** `{filename}` with Smoothness {smoothness}, Scale {scale:P}";
 			var embed = new EmbedBuilder {
-				Title = $"{configParser.EmbedPrefix}Asciifying... <a:processing:processing>",
+				Title = $"{configParser.EmbedPrefix}Asciifying... <a:processing:526524731487158283>",
 				Color = configParser.EmbedColor,
 				Description = $"Algorithm: **{(smooth ? "Sectioned" : "Dot")}**\n" +
 							  $"Scale: **{scale:P1}**",
@@ -112,6 +111,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 
 			async Task updateProgress(MessageUpdater updater) {
 				embed.Fields.Clear();
+				//embed.AddField("Progress", $"{(asciifier?.Progress ?? 0d):P0} - {watch.Elapsed.ToDHMSString()}");
 				embed.AddField("Progress", $"{(asciifier?.Progress ?? 0d):P0} - {watch.Elapsed.ToDHMSString()}");
 				await updater.UpdateAsync(embed: embed.Build()).ConfigureAwait(false);
 			}

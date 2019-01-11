@@ -1,0 +1,4 @@
+﻿# These files are ignored and not removed from the deploy directory
+
+/.[Cc]onfig/[Ss]tate/
+/.[Cc]onfig/[Ll]ogs/

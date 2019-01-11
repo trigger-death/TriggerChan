@@ -7,7 +7,6 @@ using TriggersTools.DiscordBots.Reactions;
 
 namespace TriggersTools.DiscordBots.SpoilerBot.Reactions {
 	public class SpoilerReactions : ReactionService {
-
 		#region Constants
 
 		// Category Names

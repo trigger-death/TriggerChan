@@ -4,7 +4,6 @@ namespace TriggersTools.DiscordBots.Commands {
 	/// A services for handling scoped wait contexts.
 	/// </summary>
 	public interface IWaitContextService {
-
 		/// <summary>
 		/// Gets the existing wait context for the user.
 		/// </summary>

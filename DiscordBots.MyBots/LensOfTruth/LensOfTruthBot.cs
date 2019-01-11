@@ -21,6 +21,7 @@ using TriggersTools.DiscordBots.SpoilerBot.Reactions;
 using TriggersTools.DiscordBots.Extensions;
 using TriggersTools.DiscordBots.Utils;
 using Discord.WebSocket;
+using System.IO;
 
 namespace TriggersTools.DiscordBots.SpoilerBot {
 	public class LensOfTruthBot : DiscordBot {
@@ -55,7 +56,7 @@ namespace TriggersTools.DiscordBots.SpoilerBot {
 		
 		public override IConfigurationRoot LoadConfig() {
 			var builder = new ConfigurationBuilder()			// Create a new instance of the config builder
-				.SetBasePath(AppContext.BaseDirectory)			// Specify the default location for the config file
+				.SetBasePath(Directory.GetCurrentDirectory())	// Specify the default location for the config file
 				.AddJsonFile("Config.Public.json")				// Add this (json encoded) file to the configuration
 				.AddJsonFile(GetType(), "Config.Private.json");	// Add this embedded private (json encoded) file to the configuration
 			return Config = builder.Build();								// Build the configuration

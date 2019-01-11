@@ -12,7 +12,6 @@ namespace TriggersTools.DiscordBots.Database {
 	/// The static design-time transfer class for <see cref="DbContextEx"/>s.
 	/// </summary>
 	public static class DbContextExTransfer {
-
 		#region Transfer
 
 		public static void Transfer(IDbContextExFactory factory, string srcConfigurationType, string destConfigurationType) {
@@ -32,7 +31,7 @@ namespace TriggersTools.DiscordBots.Database {
 				.GetMethod(nameof(TransferTable), BindingFlags.NonPublic | BindingFlags.Static);
 			using (var dbSrc = GetDb(factory, srcConfigurationType))
 			using (var dbDest = GetDb(factory, destConfigurationType)) {
-				dbDest.Database.EnsureCreated();
+				dbDest.Database.Migrate();
 				var tables = DbReflection.GetTables(dbSrc, dbDest);
 
 				foreach (var mt in tables) {

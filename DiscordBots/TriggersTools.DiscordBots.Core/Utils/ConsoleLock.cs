@@ -9,7 +9,6 @@ namespace TriggersTools.DiscordBots.Utils {
 	/// This must be used in a using statement or be properly discosed of.
 	/// </summary>
 	public class ConsoleLock : IDisposable {
-
 		#region Fields
 
 		/// <summary>

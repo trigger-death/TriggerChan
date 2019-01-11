@@ -7,6 +7,7 @@ using TriggersTools.DiscordBots.Commands;
 using TriggersTools.DiscordBots.Services;
 using TriggersTools.DiscordBots.TriggerChan.Database;
 using TriggersTools.DiscordBots.TriggerChan.Model;
+using TriggersTools.DiscordBots.TriggerChan.Reactions;
 using WeCantSpell.Hunspell;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Services {
@@ -14,7 +15,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 	/// A service for checking, executing, and removing mispelled spoiler commands.
 	/// </summary>
 	public class SpoilerCommandHandlerService : CommandHandlerService {
-
 		#region Fields
 
 		/// <summary>
@@ -55,8 +55,23 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			if (text.Length >= 4 && text[1] == ';' && !char.IsWhiteSpace(text[2]) && char.IsWhiteSpace(text[3]))
 				return false;
 			Guild guild;
-			using (var db = GetDb<TriggerDbContext>())
+			User user;
+			int argPos = 0;
+			// Don't spellcheck mention commands
+			context.Message.HasMentionPrefix(Client.CurrentUser, ref argPos);
+
+			using (var db = GetDb<TriggerDbContext>()) {
 				guild = await db.FindGuildAsync(context).ConfigureAwait(false);
+				user = await db.FindUserAsync(context.User.Id).ConfigureAwait(false);
+			}
+			if (user.Banned) {
+				if (context.Message.Content.Substring(context.ArgPos).StartsWith("help", StringComparison.OrdinalIgnoreCase)) {
+					var dm = await context.User.GetOrCreateDMChannelAsync().ConfigureAwait(false);
+					await dm.SendMessageAsync("You have been banned from using me for abusing me. ❤️").ConfigureAwait(false);
+				}
+				await context.Message.AddReactionAsync(TriggerReactions.Banned).ConfigureAwait(false);
+				return false;
+			}
 			return (!context.User.IsBot || (guild != null && guild.AllowBotSpoilers));
 		}
 

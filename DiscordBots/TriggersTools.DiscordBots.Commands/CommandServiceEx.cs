@@ -17,7 +17,6 @@ namespace TriggersTools.DiscordBots.Commands {
 	/// The extened command service that incorperates <see cref="CommandSetDetails"/> and <see cref="IWaitContextService"/>.
 	/// </summary>
 	public class CommandServiceEx : CommandService, IWaitContextService {
-
 		#region Fields
 
 		/// <summary>

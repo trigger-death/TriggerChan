@@ -28,6 +28,10 @@ namespace TriggersTools.DiscordBots.TriggerChan.Model {
 			get => Id;
 			set => Id = value;
 		}
+		/// <summary>
+		/// Gets if the guild has been banned from the use of the bot.
+		/// </summary>
+		public bool Banned { get; set; }
 
 		/// <summary>
 		/// Checks if the user has asked this information to be deleted.

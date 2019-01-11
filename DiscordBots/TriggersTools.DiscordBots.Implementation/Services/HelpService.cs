@@ -50,7 +50,6 @@ namespace TriggersTools.DiscordBots.Services {
 	/// The services for getting information on commands and modules.
 	/// </summary>
 	public class HelpService : DiscordBotService {
-
 		#region Constants
 
 		public const string AboutTitle = "$NICKNAME$";
@@ -407,14 +406,14 @@ namespace TriggersTools.DiscordBots.Services {
 
 		#region Build About
 
-		public async Task<Embed> BuildAboutEmbedAsync(ICommandContext context, Func<EmbedBuilder, Task> addFields) {
+		public async Task<Embed> BuildAboutEmbedAsync(IDiscordBotCommandContext context, Func<EmbedBuilder, Task> addFields) {
 			var embed = new EmbedBuilder {
 				Color = configParser.EmbedColor,
 				Title = $"{configParser.EmbedPrefix}{configParser.ParseTitle("about", AboutTitle)}",
 			};
 			//embed.WithThumbnailUrl(Client.CurrentUser.GetAvatarUrl());
 
-			embed.Description = configParser.ParseLinks("about");
+			embed.Description = configParser.ParseLinks("about", context);
 			string aboutDesc = configParser.ParseDescription("about", AboutDesc);
 			if (aboutDesc != null)
 				embed.AddField("About", aboutDesc);

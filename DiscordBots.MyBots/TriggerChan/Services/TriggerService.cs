@@ -18,7 +18,11 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 		/// Gets the home guild Ids section.
 		/// </summary>
 		public IConfigurationSection Home => Services.Home;
-		
+		/// <summary>
+		/// Gets the service used for managing banishments from the bots.
+		/// </summary>
+		public BotBanService BotBans => Services.BotBans;
+
 		#endregion
 
 		#region Constructors

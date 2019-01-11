@@ -1,0 +1,14 @@
+﻿# These files are included and moved to config_path
+
+# Config Files
+[Cc]onfig.json
+[Cc]onfig.[Pp]rotected.json
+[Cc]onfig.[Pp]rivate.json
+[Cc]onfig.[Pp]ublic.json
+[Cc]onfig.[Pp]rotected.Release.json
+[Cc]onfig.[Pp]rivate.Release.json
+[Cc]onfig.[Pp]ublic.Release.json
+
+# Home Server Status
+[Dd]ev[Ss]tatus.json
+[Ww]elcome.json

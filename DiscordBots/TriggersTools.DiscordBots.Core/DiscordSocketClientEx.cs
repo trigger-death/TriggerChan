@@ -5,7 +5,6 @@ using Discord.WebSocket;
 
 namespace TriggersTools.DiscordBots {
 	public class DiscordSocketClientEx : DiscordSocketClient {
-
 		#region Events
 
 		/// <summary>

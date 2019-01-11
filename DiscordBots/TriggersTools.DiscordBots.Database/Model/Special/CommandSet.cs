@@ -5,7 +5,6 @@ using System.Text;
 
 namespace TriggersTools.DiscordBots.Database.Model {
 	public class CommandSet : ICollection<string>, IReadOnlyCollection<string> {
-
 		#region Fields
 
 		private readonly HashSet<string> set = new HashSet<string>();

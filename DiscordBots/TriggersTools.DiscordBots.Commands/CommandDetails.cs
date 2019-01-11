@@ -13,7 +13,6 @@ namespace TriggersTools.DiscordBots.Commands {
 	/// Details about a single command, or multiple commands that share the same name.
 	/// </summary>
 	public class CommandDetails {
-
 		#region Builder
 
 		/// <summary>

@@ -1,0 +1,17 @@
+﻿{
+  // Customization
+  "prefix": "tb/",
+  "nickname": "Luluco β",
+  "embed_color": "#EA416E",
+
+  //"config_path": "../.config/luluco",
+
+  // StatusRotationService: List all status rotations
+  "status": {
+    // Statuses used in release mode, (or when no debug statuses are present)
+    "release": [
+      "$WATCHING$",
+      "for enemy Segfaults"
+    ]
+  }
+}

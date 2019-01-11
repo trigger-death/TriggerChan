@@ -9,7 +9,6 @@ namespace TriggersTools.DiscordBots.Utils {
 	/// A static helper class for loading embedded resource streams.
 	/// </summary>
 	public static class Embedding {
-
 		#region GetResourceNames
 
 		/// <summary>

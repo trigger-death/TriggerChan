@@ -62,13 +62,22 @@ namespace TriggersTools.DiscordBots.TriggerChan.Database {
 			return await Users.FindAsync(userId).ConfigureAwait(false);
 		}
 
-		public async Task EnsureEndUserData(ulong userId) {
+		public async Task<User> EnsureEndUserData(ulong userId) {
 			var eud = await Users.FindAsync(userId).ConfigureAwait(false);
-			if (eud == null)
-				await Users.AddAsync(new User { EndUserDataId = userId }).ConfigureAwait(false);
+			if (eud == null) {
+				eud = new User { EndUserDataId = userId };
+				await Users.AddAsync(eud).ConfigureAwait(false);
+			}
+			return eud;
 		}
-		public Task EnsureEndUserData(IDbEndUserData dbEud) {
+		public Task<User> EnsureEndUserData(IDbEndUserData dbEud) {
 			return EnsureEndUserData(dbEud.EndUserDataId);
+		}
+		Task ISpoilerDbContext.EnsureEndUserData(ulong userId) {
+			return EnsureEndUserData(userId);
+		}
+		Task ISpoilerDbContext.EnsureEndUserData(IDbEndUserData dbEud) {
+			return EnsureEndUserData(dbEud);
 		}
 
 		public async Task<User> LoadEndUserData(ulong userId) {
@@ -84,6 +93,14 @@ namespace TriggersTools.DiscordBots.TriggerChan.Database {
 			return RemoveEndUserDataBase(Users, userId);
 		}
 
+		public async Task<Guild> GetOrAddGuild(ulong guildId) {
+			Guild guild = await Guilds.FindAsync(guildId).ConfigureAwait(false);
+			if (guild == null) {
+				await Guilds.AddAsync(guild = new Guild { Id = guildId }).ConfigureAwait(false);
+				await SaveChangesAsync().ConfigureAwait(false);
+			}
+			return guild;
+		}
 		public async Task<Guild> GetOrAddGuild(ICommandContext context) {
 			if (context.Guild != null) {
 				Guild guild = await Guilds.FindAsync(context.Guild.Id).ConfigureAwait(false);

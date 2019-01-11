@@ -4,7 +4,6 @@ using System.Text;
 
 namespace TriggersTools.DiscordBots.Database {
 	public struct EndUserDataInfo {
-
 		#region Fields
 
 		public string Key { get; }

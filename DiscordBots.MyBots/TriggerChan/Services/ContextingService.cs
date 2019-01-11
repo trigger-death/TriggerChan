@@ -15,7 +15,6 @@ using TriggersTools.DiscordBots.TriggerChan.Model;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Services {
 	public partial class ContextingService : DiscordBotService, IContextingService {
-
 		#region Constructors
 
 		public ContextingService(DiscordBotServiceContainer services) : base(services) { }

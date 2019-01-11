@@ -8,7 +8,6 @@ namespace TriggersTools.DiscordBots.Commands {
 	/// Require that the command is invoked in a channel not marked as NSFW.
 	/// </summary>
 	public class RequiresSfwAttribute : PreconditionAttribute {
-
 		/// <summary>
 		/// Checks if the <paramref name="command"/> has the sufficient permission to be executed.
 		/// </summary>

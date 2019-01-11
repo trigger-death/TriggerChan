@@ -15,7 +15,6 @@ namespace TriggersTools.DiscordBots.Modules {
 	/// The basic module for all Discord bot commands.
 	/// </summary>
 	public class DiscordBotBasicModule : ModuleBaseEx<DiscordBotCommandContext> {
-
 		#region Constructors
 
 		/// <summary>

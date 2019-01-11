@@ -174,8 +174,9 @@ namespace TriggersTools.Asciify.Extensions {
 		}
 
 		public static void OpenInMSPaint(this Bitmap bitmap, [CallerMemberName] string fileName = null) {
-			Directory.CreateDirectory("Temp");
-			string file = Path.ChangeExtension(Path.Combine("Temp", fileName), ".png");
+			Directory.CreateDirectory("tmp");
+			Directory.CreateDirectory(Path.Combine("tmp", "images"));
+			string file = Path.ChangeExtension(Path.Combine("tmp", "images", fileName), ".png");
 			bitmap.Save(file);
 			ProcessStartInfo start = new ProcessStartInfo {
 				UseShellExecute = false,

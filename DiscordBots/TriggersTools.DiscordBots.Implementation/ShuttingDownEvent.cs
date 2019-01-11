@@ -24,7 +24,6 @@ namespace TriggersTools.DiscordBots {
 	/// The event args for shutting down of the bot.
 	/// </summary>
 	public class ShuttingDownEventArgs {
-
 		#region Fields
 
 		/// <summary>

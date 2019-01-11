@@ -18,15 +18,29 @@
 
 # Config files with sensitive information
 [Cc]onfig.json
-[Cc]onfig.[Pp]rotected.json
-[Cc]onfig.[Pp]rivate.json
-[Cc]onfig.[Pp]rotected.Debug.json
-[Cc]onfig.[Pp]rivate.Debug.json
-[Cc]onfig.[Pp]rotected.Release.json
-[Cc]onfig.[Pp]rivate.Release.json
+*.[Pp]rotected.json
+*.[Pp]rivate.json
+*.[Pp]rotected.*.json
+*.[Pp]rivate.*.json
+!*.[Pp]rotected.[Ee]xample.json
+!*.[Pp]rivate.[Ee]xample.json
+
 
 # Lavalink server
 Lavalink.jar
+Application.yml
+
+# Private Keys
+*.pem
+*.ppk
+
+# DotNetDeploy files
+/Utilities/TriggerChanAWSDeploy/deployments/*.json
+!/Utilities/TriggerChanAWSDeploy/deployments/*-example.json
+!/Utilities/TriggerChanAWSDeploy/deployments/keys/example-key.ppk
+/Utilities/DotNetDeploy/deployments/*.json
+!/Utilities/DotNetDeploy/deployments/*-example.json
+!/Utilities/DotNetDeploy/deployments/keys/example-key.ppk
 
 # No need to bring over migration data
 Migrations/

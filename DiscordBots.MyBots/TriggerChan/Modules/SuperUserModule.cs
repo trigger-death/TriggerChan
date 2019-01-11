@@ -13,6 +13,10 @@ using TriggersTools.DiscordBots.Utils;
 using TriggersTools.DiscordBots.Commands;
 using TriggersTools.DiscordBots.TriggerChan.Commands;
 using TriggersTools.DiscordBots.TriggerChan.Services;
+using TriggersTools.DiscordBots.TriggerChan.Model;
+using TriggersTools.DiscordBots.Extensions;
+using TriggersTools.DiscordBots.TriggerChan.Reactions;
+using System.Linq;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 	[Name("Superuser")]
@@ -20,7 +24,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 	[RequiresSuperuser]
 	[IsLockable(false)]
 	public class SuperuserModule : DiscordBotModule {
-
 		#region Fields
 
 		private readonly DevelopmentService devService;
@@ -60,7 +63,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		[Command("shutdown")]
 		[Summary("Shuts down the bot without restarting it")]
 		public async Task Shutdown() {
-			await ReplyAsync("`Shutting down...`").ConfigureAwait(false);
+			await ReplyAsync("`See you later...`").ConfigureAwait(false);
 			await DiscordBot.ShutdownAsync(Context).ConfigureAwait(false);
 		}
 
@@ -68,7 +71,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		[Command("restart")]
 		[Summary("Restarts the bot to help fix any errors that have accumulated")]
 		public async Task Restart() {
-			await ReplyAsync("`Restarting...`").ConfigureAwait(false);
+			await ReplyAsync("`Be right back...`").ConfigureAwait(false);
 			await DiscordBot.RestartAsync(Context, "`Yahallo World!`").ConfigureAwait(false);
 		}
 
@@ -82,10 +85,11 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		[Name("reloadconfig")]
 		[Command("reloadconfig")]
 		[Summary("Reloads the configuration file. Services should respond to updated changes")]
-		public async Task ReloadConfig() {
+		public async Task<RuntimeResult> ReloadConfig() {
 			var message = await ReplyAsync("`Reloading Config...`").ConfigureAwait(false);
 			await DiscordBot.ReloadConfigAsync().ConfigureAwait(false);
 			await message.ModifyAsync(c => c.Content = "`Reloading Config... Reloaded!`").ConfigureAwait(false);
+			return EmoteResults.FromSuccess();
 		}
 
 		[Name("status <status>")]
@@ -138,26 +142,27 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			[Command("")]
 			[Priority(0)]
 			[Example("Check recent errors", "Write a Notice of *Check recent errors* to the log file")]
-			public Task LogNotice([Remainder] string message) {
+			public Task<RuntimeResult> LogNotice([Remainder] string message) {
 				return LogAsync(message, LogSeverities.Notice);
 			}
 			[Name("log warning <message>")]
 			[Command("warning")]
 			[Priority(1)]
 			[Example("That last thing was acting strange", "Write a Warning of *That last thing was acting strange* to the log file")]
-			public Task LogWarning([Remainder] string message) {
+			public Task<RuntimeResult> LogWarning([Remainder] string message) {
 				return LogAsync(message, LogSeverity.Warning);
 			}
 			[Name("log error <message>")]
 			[Command("error")]
 			[Priority(1)]
 			[Example("Something went very wrong", "Write an Error of *Something went very wrong* to the log file")]
-			public Task LogError([Remainder] string message) {
+			public Task<RuntimeResult> LogError([Remainder] string message) {
 				return LogAsync(message, LogSeverity.Error);
 			}
 
-			private Task LogAsync(string message, LogSeverity severity) {
-				return Logging.LogAsync(new LogMessage(severity, $"{Context.User.Username}#{Context.User.Discriminator}", message), logFile: true, noticeFile: true);
+			private async Task<RuntimeResult> LogAsync(string message, LogSeverity severity) {
+				await Logging.LogAsync(new LogMessage(severity, $"{Context.User.Username}#{Context.User.Discriminator}", message), logFile: true, noticeFile: true).ConfigureAwait(false);
+				return EmoteResults.FromSuccess();
 			}
 		}
 
@@ -189,6 +194,127 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 			public async Task EraseGuild(ulong id) {
 				var wait = new EraseEndUserDataWaitContext(Context, EndUserDataType.Guild, id);
 				await wait.StartAsync().ConfigureAwait(false);
+			}
+		}
+
+		[Group("botban")]
+		[Usage("<user|guild> <id>")]
+		[Summary("Ban the user or guild from using the bot")]
+		public class BotBanGroup : DiscordBotModule {
+
+			#region Constructors
+
+			/// <summary>
+			/// Constructs the <see cref="BotBanGroup"/>.
+			/// </summary>
+			public BotBanGroup(DiscordBotServiceContainer services) : base(services) { }
+
+			#endregion
+
+			[Name("botban user <userId>")]
+			[Command("user")]
+			[Example("497125828120018945", "Bans the user with this Id from using the bot")]
+			public async Task<RuntimeResult> BotBanUser(ulong id) {
+				using (var db = GetDb<TriggerDbContext>()) {
+					User user = await db.FindUserAsync(id).ConfigureAwait(false);
+					string[] owners = Config.GetArray("ids:discord:superuseres");
+					if (user.Banned) {
+						await ReplyAsync("This user is already banned.").ConfigureAwait(false);
+						return NormalResult.FromSuccess();
+					}
+					else if (owners.Any(idStr => ulong.Parse(idStr) == id)) {
+						await ReplyAsync("You can't ban a superuser! *Baka.*").ConfigureAwait(false);
+						return NormalResult.FromSuccess();
+					}
+					else {
+							user.Banned = true;
+						db.ModifyOnly(user, u => u.Banned);
+						await db.SaveChangesAsync().ConfigureAwait(false);
+						return EmoteResults.FromSuccess();
+					}
+				}
+			}
+
+			[Name("botban guild <guildId>")]
+			[Command("guild")]
+			[Example("436949335947870238", "Bans the guild with this Id from using the bot")]
+			public async Task<RuntimeResult> BotBanGuild(ulong id) {
+				using (var db = GetDb<TriggerDbContext>()) {
+					Guild guild = await db.FindGuildAsync(id).ConfigureAwait(false);
+					ulong homeGuild = ulong.Parse(Config["ids:discord:home:guild"]);
+					ulong emoteGuild = ulong.Parse(Config["ids:discord:home:emote_guild"]);
+					if (guild.Banned) {
+						await ReplyAsync("This guild is already banned.").ConfigureAwait(false);
+						return NormalResult.FromSuccess();
+					}
+					else if (id == homeGuild || id == emoteGuild) {
+						await ReplyAsync("You can't ban your home guilds! *Baka.*").ConfigureAwait(false);
+						return NormalResult.FromSuccess();
+					}
+					else {
+						guild.Banned = true;
+						db.ModifyOnly(guild, g => g.Banned);
+						await db.SaveChangesAsync().ConfigureAwait(false);
+						try {
+							await Client.GetGuild(id).LeaveAsync().ConfigureAwait(false);
+							return ReactionResult.FromSuccess(TriggerReactions.Success, new Emoji("🚪"));
+						} catch { }
+						return EmoteResults.FromSuccess();
+					}
+				}
+			}
+		}
+
+		[Group("botunban")]
+		[Usage("<user|guild> <id>")]
+		[Summary("Unbans the user or guild from using the bot")]
+		public class BotUnbanGroup : DiscordBotModule {
+
+			#region Constructors
+
+			/// <summary>
+			/// Constructs the <see cref="BotBanGroup"/>.
+			/// </summary>
+			public BotUnbanGroup(DiscordBotServiceContainer services) : base(services) { }
+
+			#endregion
+
+			[Name("botunban user <userId>")]
+			[Command("user")]
+			[Example("497125828120018945", "Unbans the user with this Id from using the bot")]
+			public async Task<RuntimeResult> BotUnbanUser(ulong id) {
+				using (var db = GetDb<TriggerDbContext>()) {
+					User user = await db.FindUserAsync(id).ConfigureAwait(false);
+					if (!user.Banned) {
+						await ReplyAsync("This user is not banned.").ConfigureAwait(false);
+						return NormalResult.FromSuccess();
+					}
+					else {
+						user.Banned = false;
+						db.ModifyOnly(user, u => u.Banned);
+						await db.SaveChangesAsync().ConfigureAwait(false);
+						return EmoteResults.FromSuccess();
+					}
+				}
+			}
+
+			[Name("botunban guild <guildId>")]
+			[Command("guild")]
+			[Example("436949335947870238", "Unbans the guild with this Id from using the bot")]
+			public async Task<RuntimeResult> BotUnbanGuild(ulong id) {
+				using (var db = GetDb<TriggerDbContext>()) {
+					Guild guild = await db.FindGuildAsync(id).ConfigureAwait(false);
+					if (!guild.Banned) {
+						await ReplyAsync("This guild is not banned.").ConfigureAwait(false);
+						return NormalResult.FromSuccess();
+					}
+					else {
+						guild.Banned = false;
+						db.ModifyOnly(guild, g => g.Banned);
+						await db.SaveChangesAsync().ConfigureAwait(false);
+						return EmoteResults.FromSuccess();
+					}
+				}
 			}
 		}
 	}

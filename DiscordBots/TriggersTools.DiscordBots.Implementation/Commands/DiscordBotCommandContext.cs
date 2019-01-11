@@ -14,7 +14,6 @@ namespace TriggersTools.DiscordBots.Commands {
 	/// The context for all Discord bot commands.
 	/// </summary>
 	public class DiscordBotCommandContext : SocketCommandContext, IDiscordBotCommandContext, IDiscordBotServiceContainer {
-
 		#region Fields
 
 		/// <summary>

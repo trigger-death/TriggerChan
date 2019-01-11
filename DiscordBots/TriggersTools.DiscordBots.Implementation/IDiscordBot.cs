@@ -14,7 +14,6 @@ namespace TriggersTools.DiscordBots {
 	/// The interface for a Discord bot that manages everything.
 	/// </summary>
 	public interface IDiscordBot {
-
 		#region Properties
 
 		/// <summary>
@@ -37,6 +36,14 @@ namespace TriggersTools.DiscordBots {
 		/// Gets the configuration information file. This must be assigned on <see cref="LoadConfig"/>.
 		/// </summary>
 		IConfigurationRoot Config { get; }
+		/// <summary>
+		/// Gets the directory used to store config files.
+		/// </summary>
+		string ConfigDirectory { get; }
+		/// <summary>
+		/// Gets the directory used to store state files.
+		/// </summary>
+		string StateDirectory { get; }
 		/// <summary>
 		/// Gets the total memory usage of the garbage collector.
 		/// </summary>
@@ -148,6 +155,10 @@ namespace TriggersTools.DiscordBots {
 		/// Asynchronously tells the Discord bot that everything has been setup.
 		/// </summary>
 		Task StartAsync();
+		/// <summary>
+		/// Tells the Discord bot that startup has completed, and startup errors should not be thrown anymore.
+		/// </summary>
+		void EndStartup();
 		/// <summary>
 		/// Asynchronously shuts down the bot.
 		/// </summary>

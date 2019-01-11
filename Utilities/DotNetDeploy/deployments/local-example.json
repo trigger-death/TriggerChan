@@ -1,0 +1,27 @@
+{
+  "name": "Example Local", // (Optional)
+  "filters": [
+    "example-build.ignore",
+    "example-build-2.ignore",
+    "example-deploy.ignore"
+  ],
+  "publish": {
+    "output": "C:\\ExampleBot\\DiscordBots.MyBots\\ExampleBot",
+    "project": "C:\\ExampleBot\\DiscordBots.MyBots\\ExampleBot.Daemon\\ExampleBot.Daemon.csproj",
+    "configuration": "Release",
+    "framework": "net471",
+    "runtime": "win10-x64"
+  },
+  "deploy": {
+    // Sftp/Local
+    "mode": "Local",
+    "config_destination": "C:\\Programs\\Services\\Luluco\\.config",
+    "destination": "C:\\Programs\\Services\\Luluco",
+    // Commands to execute before deployment
+    "pre_deploy": [
+    ],
+    // Commands to execute after deployment
+    "post_deploy": [
+    ]
+  }
+}

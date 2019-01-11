@@ -15,7 +15,6 @@ namespace TriggersTools.DiscordBots.Commands {
 	/// </summary>
 	/// <typeparam name="TContext">A class that implements <see cref="ICommandContext"/>.</typeparam>
 	public class ModuleBaseEx<TContext> : ModuleBase<TContext> where TContext : class, ICommandContext {
-
 		#region ReplyFileAsync
 
 		/// <summary>

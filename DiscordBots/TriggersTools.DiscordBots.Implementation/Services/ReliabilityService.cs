@@ -58,7 +58,6 @@ namespace TriggersTools.DiscordBots.Services {
 	/// [Bash (Unix)] https://stackoverflow.com/a/697064
 	/// </remarks>
 	public sealed class ReliabilityService {
-
 		#region Constants
 		
 		/// <summary>
@@ -200,7 +199,7 @@ namespace TriggersTools.DiscordBots.Services {
 		/// <summary>
 		/// Forcefully restarts the program.
 		/// </summary>
-		private void ForceRestart() => Environment.Exit(0);
+		private void ForceRestart() => Environment.Exit(10);
 
 		#endregion
 

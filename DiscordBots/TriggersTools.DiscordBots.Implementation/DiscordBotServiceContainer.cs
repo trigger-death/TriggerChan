@@ -19,7 +19,6 @@ namespace TriggersTools.DiscordBots {
 	/// which is extremely important in my situation.
 	/// </remarks>
 	public class DiscordBotServiceContainer : IServiceProvider, IDisposable {
-
 		#region Fields
 
 		/// <summary>
@@ -134,7 +133,7 @@ namespace TriggersTools.DiscordBots {
 				foreach (IDiscordBotService service in GetServices<IDiscordBotService>(ServiceLifetime.Singleton))
 					service.Initialize();
 				foreach (DbContext context in GetDbContexts())
-					context.Database.EnsureCreated();
+					context.Database.Migrate();
 			}
 		}
 

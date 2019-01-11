@@ -7,7 +7,6 @@ namespace TriggersTools.DiscordBots.Extensions {
 	/// Extension methods for the <see cref="Random"/> class.
 	/// </summary>
 	public static class RandomGenericExtensions {
-
 		#region Choose
 
 		/// <summary>

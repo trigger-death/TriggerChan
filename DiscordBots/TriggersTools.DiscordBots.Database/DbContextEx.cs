@@ -10,7 +10,6 @@ namespace TriggersTools.DiscordBots.Database {
 	/// The base bot database context.
 	/// </summary>
 	public partial class DbContextEx : DbContext {
-
 		#region Fields
 
 		/// <summary>

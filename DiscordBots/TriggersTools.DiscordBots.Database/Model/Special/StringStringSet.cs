@@ -8,7 +8,6 @@ namespace TriggersTools.DiscordBots.Database.Model {
 	/// A set of strings
 	/// </summary>
 	public class StringSet : ICollection<string>, IReadOnlyCollection<string> {
-
 		#region Fields
 
 		private readonly HashSet<string> set = new HashSet<string>();

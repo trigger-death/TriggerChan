@@ -12,7 +12,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 	/// A struct containing both a <see cref="TimeZoneInfo"/> and its associated IANA <see cref="string"/>.
 	/// </summary>
 	public struct IanaTimeZone {
-
 		#region Fields
 
 		/// <summary>
@@ -105,7 +104,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 	/// A list of <see cref="IanaTimeZone"/>s that match a single abbreviation.
 	/// </summary>
 	public class TimeZoneAbbreviationMatches {
-		
 		#region Fields
 
 		/// <summary>
@@ -171,7 +169,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 	}
 
 	public class TimeZoneService {
-
 		#region enum DaylightSavings
 
 		private enum DaylightSavings {

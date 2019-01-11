@@ -53,6 +53,9 @@ namespace TriggersTools.DiscordBots.TriggerChan.Reactions {
 		[Description("The reply was sent to you as a direct message")]
 		[Category(BotResponses)]
 		public static Emoji DMSent { get; } = new Emoji("📨");
+		[Description("You have been banned from using the bot")]
+		[Category(BotResponses)]
+		public static Emoji Banned { get; } = new Emoji("👮");
 
 		#endregion
 

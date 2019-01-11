@@ -9,7 +9,6 @@ namespace TriggersTools.DiscordBots {
 	/// </summary>
 	/// <typeparam name="T">The delegate type of the event.</typeparam>
 	public class AsyncEvent<T> where T : class {
-
 		#region Fields
 
 		/// <summary>

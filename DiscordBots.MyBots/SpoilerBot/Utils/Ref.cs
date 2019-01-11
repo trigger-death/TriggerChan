@@ -8,7 +8,6 @@ namespace TriggersTools.DiscordBots.SpoilerBot.Utils {
 	/// </summary>
 	/// <typeparam name="T">The type of the referenced value.</typeparam>
 	internal class Ref<T> : Ref, IRef<T> {
-
 		#region Fields
 
 		/// <summary>
@@ -35,7 +34,6 @@ namespace TriggersTools.DiscordBots.SpoilerBot.Utils {
 	/// A referenceable type that counts the number of references to it manually.
 	/// </summary>
 	internal class Ref : IRef {
-
 		#region Add/RemoveRef
 
 		/// <summary>
@@ -111,7 +109,6 @@ namespace TriggersTools.DiscordBots.SpoilerBot.Utils {
 	/// A referenceable interface that counts the number of references to it manually.
 	/// </summary>
 	internal interface IRef {
-		
 		#region Add/RemoveRef
 
 		/// <summary>
@@ -170,7 +167,6 @@ namespace TriggersTools.DiscordBots.SpoilerBot.Utils {
 	/// </summary>
 	/// <typeparam name="T">The type of the referenced value.</typeparam>
 	internal interface IRef<out T> : IRef {
-
 		/// <summary>
 		/// Gets the value contained by this ref.
 		/// </summary>

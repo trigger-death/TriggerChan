@@ -153,7 +153,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 
 		#region Constants
 
-		private const string ScarecrowsSongFile = "Scarecrow.ocarina";
+		private string ScarecrowsSongFile => Path.Combine(DiscordBot.StateDirectory, "Scarecrow.ocarina");
 
 		#endregion
 
@@ -345,7 +345,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			noteAliases[note].Add(new NoteAlias(alias, emoji, primary));
 		}
 		private Bitmap LoadBitmap(string name) {
-			return (Bitmap) Image.FromFile(Path.Combine(AppContext.BaseDirectory, @"Resources\Images\Ocarina", $"{name}.png"));
+			return (Bitmap) Image.FromFile(Path.Combine(AppContext.BaseDirectory, "Resources", "Images", "Ocarina", $"{name}.png"));
 		}
 		private void AddSong(string title, string notesStr) {
 			songs.Add(new Song(title, ParseStaffs(notesStr)[0]));
@@ -618,10 +618,10 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			
 			imageHeight += (int) Math.Ceiling((StaffHeight + StaffLineSpacing) * (staffs.Length - 1) * scale - (StaffHeight - scaledHeight));
 
-			Bitmap bitmap = new Bitmap(SandstoneWidth, imageHeight);
+			Bitmap bitmap = new Bitmap(SandstoneWidth, imageHeight, PixelFormat.Format32bppPArgb);
 			try {
 				using (Graphics g = Graphics.FromImage(bitmap))
-				using (Bitmap staffBitmap = new Bitmap(staffWidth, StaffHeight)) {
+				using (Bitmap staffBitmap = new Bitmap(staffWidth, StaffHeight, PixelFormat.Format32bppPArgb)) {
 					g.PageUnit = GraphicsUnit.Pixel;
 					g.InterpolationMode = InterpolationMode.NearestNeighbor;
 					
@@ -638,9 +638,10 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 						g.DrawImageUnscaled(sandstoneImages[0], 0, -(SandstoneHeight - imageHeight) / 2);
 					}
 					if (hasTitle) {
-						using (Bitmap titleBitmap = new Bitmap(TitleWidth, TitleHeight)) {
+						using (Bitmap titleBitmap = new Bitmap(TitleWidth, TitleHeight, PixelFormat.Format32bppPArgb)) {
 							using (Graphics gt = Graphics.FromImage(titleBitmap))
-							using (Font font = new Font("Gabriola", 38, FontStyle.Bold))  {
+							using (Font font = new Font("Gabriola", 38, FontStyle.Bold)) {
+								gt.PageUnit = GraphicsUnit.Pixel;
 								gt.InterpolationMode = InterpolationMode.NearestNeighbor;
 								gt.TextRenderingHint = TextRenderingHint.AntiAlias;
 								gt.DrawImageUnscaled(titleBarImage, 0, 0);

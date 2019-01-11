@@ -13,7 +13,6 @@ namespace TriggersTools.DiscordBots.SpoilerBot.Services {
 	/// The interface for the non-generic spoiler service.
 	/// </summary>
 	public partial interface ISpoilerService {
-
 		#region Run Spoiler
 
 		/// <summary>

@@ -22,7 +22,6 @@ namespace TriggersTools.DiscordBots.Utils {
 	/// A Discord code block section.
 	/// </summary>
 	public struct CodeBlock {
-
 		#region Constants
 
 		/// <summary>

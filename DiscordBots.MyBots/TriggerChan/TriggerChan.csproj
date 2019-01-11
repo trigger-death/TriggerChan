@@ -20,8 +20,9 @@
     <PackageProjectUrl>https://github.com/trigger-death/TriggerChan</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/trigger-death/TriggerChan/blob/master/License.md</PackageLicenseUrl>
     <Description>I was made by trigger_death for use in a small selection of Discord servers. My selling features are spoilers, inserting claps between words, drawing Divergence Meters, and other fun or helpful commands.</Description>
-    <Version>2.0.19</Version>
+    <Version>2.0.23-beta0001</Version>
     <Configurations>Debug;Release;Publish</Configurations>
+    <TargetLatestRuntimePatch>false</TargetLatestRuntimePatch>
   </PropertyGroup>
 
   <!-- MSBump Configuration -->
@@ -37,10 +38,18 @@
     <DefineConstants>TRACE;PUBLISH</DefineConstants>
     <Optimize>true</Optimize>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net471|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
 
   <!-- NuGet Packages -->
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="MSBump" Version="2.3.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -68,25 +77,10 @@
   <!-- Config.json Files -->
   <ItemGroup>
     <None Remove="Config.Private.Example.json" />
-    <EmbeddedResource Include="Config.Private.Example.json">
+    <EmbeddedResource Include=".config\Config.Private.Example.json">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <None Update="Application.yml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Config.Public.Debug.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Config.Private.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="Config.Private.Release.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Config.Private.Debug.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Config.Public.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -135,6 +129,25 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include=".config\application.Example.yml" />
+    <None Include=".config\Config.Private.Beta.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include=".config\Config.Private.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include=".config\Config.Public.Beta.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include=".config\Config.Public.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include=".config\DevStatus.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include=".config\Welcome.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Unused\ContextBase.cs" />
     <None Include="Outdated\Maya\Decipherer.cs" />
     <None Include="Outdated\Maya\DownloadInfo.cs" />
@@ -191,12 +204,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Images\*\*.gif">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="DevStatus.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Lavalink.jar">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Images\Amane_Wink.png">
@@ -347,9 +354,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Welcome.Example.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Welcome.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -6,6 +6,7 @@
     <ApplicationIcon>Resources\TriggerChan.Right.ico</ApplicationIcon>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Configurations>Debug;Release;Publish</Configurations>
+    <TargetLatestRuntimePatch>false</TargetLatestRuntimePatch>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
@@ -16,9 +17,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Publish'">
     <OutputPath>..\TriggerChan\bin\Publish\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Publish|net471|AnyCPU'">
     <Optimize>true</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net471|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\DiscordBots\TriggersTools.DiscordBots.Daemon\TriggersTools.DiscordBots.Daemon.csproj" />

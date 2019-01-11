@@ -21,10 +21,10 @@ namespace TriggersTools.DiscordBots.Commands {
 		public override async Task<PreconditionResult> CheckPermissionsAsync(ICommandContext contextBase,
 			CommandInfo command, IServiceProvider services)
 		{
-			IDiscordBotCommandContext context = (IDiscordBotCommandContext) contextBase;
-			var ownerResult = await base.CheckPermissionsAsync(context, command, services).ConfigureAwait(false);
-			if (ownerResult.IsSuccess)
-				return PreconditionResult.FromSuccess();
+			DiscordBotCommandContext context = (DiscordBotCommandContext) contextBase;
+			//var ownerResult = await base.CheckPermissionsAsync(context, command, services).ConfigureAwait(false);
+			//if (ownerResult.IsSuccess)
+			//	return PreconditionResult.FromSuccess();
 			string[] owners = context.Config.GetArray("ids:discord:superuseres");
 			if (owners.Any(id => ulong.Parse(id) == context.User.Id))
 				return PreconditionResult.FromSuccess();

@@ -18,7 +18,6 @@ namespace TriggersTools.DiscordBots.Modules {
 	public class DiscordBotModule<TCommandContext> : ModuleBaseEx<TCommandContext>, IDiscordBotServiceContainer
 		where TCommandContext : class, IDiscordBotCommandContext
 	{
-
 		#region Fields
 
 		/// <summary>

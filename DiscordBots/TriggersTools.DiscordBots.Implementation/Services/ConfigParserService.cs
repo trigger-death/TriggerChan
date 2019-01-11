@@ -8,12 +8,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using TriggersTools.Build;
+using TriggersTools.DiscordBots.Commands;
 using TriggersTools.DiscordBots.Extensions;
 using TriggersTools.DiscordBots.Utils;
 
 namespace TriggersTools.DiscordBots.Services {
 	public class ConfigParserService : DiscordBotService {
-
 		#region Constants
 
 		public const string UsernameToken = "USERNAME";
@@ -160,15 +160,24 @@ namespace TriggersTools.DiscordBots.Services {
 		public string ParseDescription(string descriptionName, string defaultDescription = null) {
 			return Parse(DescriptionsPath, descriptionName + "_desc", defaultDescription);
 		}
-		public string ParseLinks(string linksName) {
+		public string ParseLinks(string linksName, IDiscordBotCommandContext context) {
 			var links = Config.GetSection(Combine(DescriptionsPath, linksName + "_links"));
 			List<string> linkList = new List<string>();
 			if (links != null) {
+				ulong toxicGuild = ulong.MaxValue;
+				string toxicGuildStr = Config["ids:discord:toxic_guild"];
+				if (toxicGuildStr != null)
+					toxicGuild = ulong.Parse(toxicGuildStr);
+				bool isToxicGuild = ((context.Guild?.Id ?? 0UL) == toxicGuild);
 				foreach (var child in links.GetChildren()) {
 					string name = child["name"];
 					string url = child["url"];
-					if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(url)) {
-						linkList.Add($"[{name}]({url})");
+					string lowerName = name.ToLower();
+					// One guild with some toxic members who've had a history of harssment that I don't want harassing my home server
+					if (!isToxicGuild || (!lowerName.Contains("github") && !lowerName.Contains("invite"))) {
+						if (!string.IsNullOrWhiteSpace(name) && !string.IsNullOrWhiteSpace(url)) {
+							linkList.Add($"[{name}]({url})");
+						}
 					}
 				}
 			}

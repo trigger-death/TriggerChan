@@ -13,7 +13,6 @@ namespace TriggersTools.DiscordBots.Services {
 	/// A service for checking for and executing commands.
 	/// </summary>
 	public class CommandHandlerService : DiscordBotService {
-
 		#region Constructors
 
 		/// <summary>

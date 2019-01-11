@@ -22,7 +22,6 @@ namespace TriggersTools.DiscordBots.SpoilerBot.Modules {
 	[RequiresContext(ContextType.Guild)]
 	[AllowBots(true)]
 	public class SpoilerModule : DiscordBotModule {
-		
 		#region Constructors
 		
 		public SpoilerModule(DiscordBotServiceContainer services) : base(services) { }

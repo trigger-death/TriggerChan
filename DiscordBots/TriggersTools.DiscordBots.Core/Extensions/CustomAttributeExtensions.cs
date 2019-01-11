@@ -6,7 +6,6 @@ namespace TriggersTools.DiscordBots.Extensions {
 	/// Additional extension methods for use with <see cref="Attribute"/>s.
 	/// </summary>
 	public static class CustomAttributeExtensions {
-
 		#region IsDefined<T>
 		
 		/// <summary>

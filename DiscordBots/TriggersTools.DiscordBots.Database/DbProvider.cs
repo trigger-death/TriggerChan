@@ -14,7 +14,6 @@ using TriggersTools.DiscordBots.Extensions;
 
 namespace TriggersTools.DiscordBots.Database {
 	public abstract class DbProvider : IDbProvider {
-		
 		#region Private Classes
 
 		private class EntityInfo {
@@ -118,6 +117,23 @@ namespace TriggersTools.DiscordBots.Database {
 				get => encrypterDirections[(int) direction];
 			}
 		}
+		/// <summary>
+		/// An info struct returned by <see cref="GetSectionInfo"/>.
+		/// </summary>
+		private struct SectionInfo {
+			/// <summary>
+			/// The section in the config file to load the configuration from.
+			/// </summary>
+			public IConfigurationSection Section { get; set; }
+			/// <summary>
+			/// The configuration type used by the configuration section.
+			/// </summary>
+			public IDbConfiguration Configuration { get; set; }
+			/// <summary>
+			/// The database creation mode from the database or configuration section.
+			/// </summary>
+			public DbCreationMode CreationMode { get; set; }
+		}
 
 		#endregion
 
@@ -159,6 +175,10 @@ namespace TriggersTools.DiscordBots.Database {
 		/// The byte encrypter interface.
 		/// </summary>
 		private readonly IByteEncrypter encrypter;
+		/*/// <summary>
+		/// The default creation mode used for all databases.
+		/// </summary>
+		private readonly DbCreationMode defaultCreationMode;*/
 
 		#endregion
 
@@ -167,6 +187,7 @@ namespace TriggersTools.DiscordBots.Database {
 		public DbProvider(IConfigurationRoot config) {
 			this.config = config;
 			encrypter = new ByteEncrypter(config["database:encryption"]);
+			//defaultCreationMode = ParseCreationMode(config["database:creation_mode"]).Value;
 			AddConfigurations();
 			AddConverters();
 		}
@@ -298,9 +319,11 @@ namespace TriggersTools.DiscordBots.Database {
 		/// The options builder from <see cref="DbContext.OnConfiguring(DbContextOptionsBuilder)"/>.
 		/// </param>
 		/// <param name="db">The database being configured.</param>
-		public virtual void Configure(DbContextOptionsBuilder optionsBuilder, DbContextEx db) {
-			var (section, configuration) = GetSection(db.ContextType, db.ConfigurationType);
-			configuration.Configure(optionsBuilder, section);
+		/// <returns>The creation mode to use for the database.</returns>
+		public virtual DbCreationMode Configure(DbContextOptionsBuilder optionsBuilder, DbContextEx db) {
+			SectionInfo info = GetSectionInfo(db.ContextType, db.ConfigurationType);
+			info.Configuration.Configure(optionsBuilder, info.Section);
+			return info.CreationMode;
 		}
 
 		#endregion
@@ -413,14 +436,38 @@ namespace TriggersTools.DiscordBots.Database {
 		/// <param name="contextType">The configuration context type.</param>
 		/// <param name="configurationName">The configuration name inside the context.</param>
 		/// <returns>The configuration section and interface.</returns>
-		private (IConfigurationSection section, IDbConfiguration configuration) GetSection(
+		private SectionInfo GetSectionInfo(
 			string contextType, string configurationName) {
 			IConfigurationSection contextSection = config.GetSection($"database:{contextType}");
 			if (configurationName == null)
 				configurationName = contextSection["configuration"];
+			DbCreationMode defaultCreationMode = ParseCreationMode(contextSection["creation_mode"], false).Value;
 			IConfigurationSection configurationSection = contextSection.GetSection(configurationName);
 			string configurationType = configurationSection["type"];
-			return (configurationSection, configurations[configurationType]);
+			DbCreationMode? creationMode = ParseCreationMode(configurationSection["creation_mode"], true);
+			return new SectionInfo {
+				Section = configurationSection,
+				Configuration = configurations[configurationType],
+				CreationMode = creationMode ?? defaultCreationMode,
+			};
+		}
+		/// <summary>
+		/// Parses the <see cref="DbCreationMode"/> string and optionally can ignore null strings.
+		/// </summary>
+		/// <param name="s">The string to parse.</param>
+		/// <param name="allowNull">True if null strings return null.</param>
+		/// <returns>A valid <see cref="DbCreationMode"/>, or null if <paramref name="s"/> is null.</returns>
+		/// 
+		/// <exception cref="ArgumentNullException">
+		/// <paramref name="s"/> is null and <paramref name="allowNull"/> is false.
+		/// </exception>
+		/// <exception cref="ArgumentException">
+		/// <paramref name="s"/> is not a valid <see cref="DbCreationMode"/>.
+		/// </exception>
+		private DbCreationMode? ParseCreationMode(string s, bool allowNull) {
+			if (allowNull && string.IsNullOrEmpty(s))
+				return null;
+			return (DbCreationMode) Enum.Parse(typeof(DbCreationMode), s);
 		}
 
 		#endregion

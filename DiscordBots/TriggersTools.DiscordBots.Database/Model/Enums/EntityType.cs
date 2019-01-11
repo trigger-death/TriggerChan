@@ -42,8 +42,6 @@ namespace TriggersTools.DiscordBots.Database.Model {
 	}
 
 	public static class EntityTypeExtensions {
-
-
 		/// <summary>
 		/// Gets if the entity is owned by a guild.
 		/// </summary>

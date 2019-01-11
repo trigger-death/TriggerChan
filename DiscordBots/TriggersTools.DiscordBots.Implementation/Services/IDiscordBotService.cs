@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 
 namespace TriggersTools.DiscordBots.Services {
 	public interface IDiscordBotService {
-		
 		#region Properties
 
 		/// <summary>

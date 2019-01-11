@@ -14,7 +14,6 @@ namespace TriggersTools.DiscordBots.Services {
 	/// A service interface for command contexts.
 	/// </summary>
 	public interface IContextingService {
-
 		#region Properties
 
 		/// <summary>

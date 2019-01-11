@@ -18,7 +18,7 @@ namespace TriggersTools.DiscordBots.Services {
 	/// <summary>
 	/// The default <see cref="ILoggingService"/> implementation.
 	/// </summary>
-	public class DefaultLoggingService : ILoggingService, IDisposable {
+	public class DefaultLoggingService : DiscordBotService, ILoggingService/*, IDisposable*/ {
 		
 		#region Fields
 
@@ -34,30 +34,26 @@ namespace TriggersTools.DiscordBots.Services {
 		/// <summary>
 		/// Constructs the <see cref="DefaultLoggingService"/>.
 		/// </summary>
-		//public LoggingService(DiscordBotServiceContainer services) : base(services) {
-		public DefaultLoggingService(DiscordSocketClient client,
-							  CommandServiceEx commands,
-							  IConfigurationRoot config)
-		{
+		public DefaultLoggingService(DiscordBotServiceContainer services) : base(services) {
 			AppDomain.CurrentDomain.UnhandledException += AppDomain_UnhandledException;
 			TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
-			client.Log += OnLogAsync;
-			commands.Log += OnLogAsync;
-			bool.TryParse(config["log:debug"], out logDebug);
-			bool.TryParse(config["log:trace"], out logTrace);
-			bool.TryParse(config["log:print"], out logPrint);
-			bool.TryParse(config["log:notice"], out logNotice);
+			Client.Log += OnLogAsync;
+			Commands.Log += OnLogAsync;
+			bool.TryParse(Config["log:debug"], out logDebug);
+			bool.TryParse(Config["log:trace"], out logTrace);
+			bool.TryParse(Config["log:print"], out logPrint);
+			bool.TryParse(Config["log:notice"], out logNotice);
 		}
 
 		#endregion
 
 		#region Properties
 
-		private string BaseDirectory { get; } = Path.Combine(AppContext.BaseDirectory, "Logs");
+		private string BaseDirectory => Path.Combine(DiscordBot.ConfigDirectory, "logs");
 		private string BaseFile => $"{DateTime.UtcNow.ToString("yyyy-MM-dd")}.txt";
-		private string LogDirectory => Path.Combine(BaseDirectory, "Logs");
-		private string ErrorDirectory => Path.Combine(BaseDirectory, "Errors");
-		private string NoticeDirectory => Path.Combine(BaseDirectory, "Notices");
+		private string LogDirectory => BaseDirectory;// Path.Combine(BaseDirectory, "logs");
+		private string ErrorDirectory => Path.Combine(BaseDirectory, "errors");
+		private string NoticeDirectory => Path.Combine(BaseDirectory, "notices");
 		private string LogFile => Path.Combine(LogDirectory, BaseFile);
 		private string ErrorFile => Path.Combine(ErrorDirectory, BaseFile);
 		private string NoticeFile => Path.Combine(NoticeDirectory, BaseFile);
@@ -82,11 +78,11 @@ namespace TriggersTools.DiscordBots.Services {
 		/// <param name="msg">The log message to log.</param>
 		/// <param name="logFile">True if the log file should be written to.</param>
 		/// <param name="errorFile">True if the error file should be written to.</param>
-		public virtual async Task LogAsync(LogMessage msg, bool logFile = true, bool errorFile = false, bool noticeFile = false) {
+		public virtual Task LogAsync(LogMessage msg, bool logFile = true, bool errorFile = false, bool noticeFile = false) {
 			// Ignore these annoying messages
 			if (msg.Exception?.InnerException is WebSocketException ||
 				msg.Exception?.InnerException is WebSocketClosedException)
-				return;
+				return Task.FromResult<object>(null);
 
 			if (logFile) {
 				if (!Directory.Exists(LogDirectory))     // Create the log directory if it doesn't exist
@@ -141,9 +137,13 @@ namespace TriggersTools.DiscordBots.Services {
 						Console.WriteLine(logText);
 				}
 				else {
-					await Console.Out.WriteLineAsync(logText).ConfigureAwait(false);
+					using (ConsoleLock.Lock())
+						Console.WriteLine(logText);
+					// We can't use with with unix 'screen -dmS' command. What a pain
+					//await Console.Out.WriteLineAsync(logText).ConfigureAwait(false);
 				}
 			}
+			return Task.FromResult<object>(null);
 		}
 
 		/// <summary>
@@ -280,7 +280,7 @@ namespace TriggersTools.DiscordBots.Services {
 		/// <summary>
 		/// Disposes of the service.
 		/// </summary>
-		public void Dispose() {
+		public override void Dispose() {
 			AppDomain.CurrentDomain.UnhandledException -= AppDomain_UnhandledException;
 			TaskScheduler.UnobservedTaskException -= TaskScheduler_UnobservedTaskException;
 		}

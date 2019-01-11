@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace TriggersTools.DiscordBots.Database.Model {
 	public abstract class BlobList<T, TList> : IList<T> where TList : BlobList<T, TList>, new() {
-
 		#region Fields
 
 		/// <summary>

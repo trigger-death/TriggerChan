@@ -5,6 +5,11 @@
     <RootNamespace>TriggersTools.DiscordBots.Commands</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net462|AnyCPU'">
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="TriggersTools.DiscordBots.Analyzer" Version="1.0.1" />
   </ItemGroup>

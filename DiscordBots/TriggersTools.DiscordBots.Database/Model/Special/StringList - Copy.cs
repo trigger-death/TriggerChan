@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace TriggersTools.DiscordBots.Database.Model.Special {
 	public abstract class StringList<T, TList> : List<T> where TList : StringList<T, TList>, new() {
-
 		#region Constructors
 
 		/// <summary>

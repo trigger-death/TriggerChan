@@ -1,0 +1,39 @@
+{
+  "name": "Example AWS", // (Optional)
+  "filters": [
+    "example-build.ignore",
+    "example-build-2.ignore",
+    "example-deploy.ignore"
+  ],
+  "publish": {
+    "output": "C:\\ExampleBot\\DiscordBots.MyBots\\ExampleBot",
+    "project": "C:\\ExampleBot\\DiscordBots.MyBots\\ExampleBot.Daemon\\ExampleBot.Daemon.csproj",
+    "configuration": "Release",
+    "framework": "netcoreapp2.1",
+    "runtime": "ubuntu.18.04-x64"
+  },
+  "deploy": {
+    // Sftp/Local
+    "mode": "Sftp",
+    "config_destination": "/home/ubuntu/services/example-bot/.config",
+    "destination": "/home/ubuntu/services/example-bot",
+    // The session options to conect to SFTP
+    "sftp_session": {
+      "Protocol": "Sftp",
+      "HostName": "myhostname.com-or-ipaddress",
+      "UserName": "ubuntu",
+      "SshPrivateKeyPath": "example-key.ppk",
+      "GiveUpSecurityAndAcceptAnySshHostKey": true
+    },
+    // Commands to execute before deployment
+    "pre_deploy": [
+      // Kill the screen that runs in the background
+      "screen -S \"example-bot\" -p 0 -X quit"
+    ],
+    // Commands to execute after deployment
+    "post_deploy": [
+      // Start the screen that runs in the background, and can be attached to
+      "screen -dmS \"example-bot\" dotnet ~/services/example-bot/ExampleBot.Daemon.dll"
+    ]
+  }
+}

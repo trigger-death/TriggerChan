@@ -11,7 +11,6 @@ namespace TriggersTools.DiscordBots.Commands {
 	/// A precondition, that requires the user has a role designated for bot managers.
 	/// </summary>
 	public class RequiresManagerAttribute : PreconditionAttribute {
-
 		#region Precondition
 
 		/// <summary>

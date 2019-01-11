@@ -25,20 +25,6 @@ namespace TriggersTools.DiscordBots {
 	/// The base implementation of the <see cref="IDiscordBot"/> interface.
 	/// </summary>
 	public class DiscordBot : IDiscordBot, IDisposable {
-
-		#region Constants
-
-		/// <summary>
-		/// The file to read from when displaying the *restarted* message.
-		/// </summary>
-		private const string RestartMessageFile = "DiscordBot.RestartMessage.txt";
-		/// <summary>
-		/// The file to read and write to, storing the total uptime of the bot.
-		/// </summary>
-		private const string TotalUptimeFile = "DiscordBot.TotalUptime.txt";
-
-		#endregion
-
 		#region Fields
 
 		/// <summary>
@@ -54,6 +40,14 @@ namespace TriggersTools.DiscordBots {
 		/// </summary>
 		public IConfigurationRoot Config { get; protected set; }
 		/// <summary>
+		/// The directory used to store config files.
+		/// </summary>
+		public string ConfigDirectory { get; private set; } = AppContext.BaseDirectory;
+		/// <summary>
+		/// The directory used to store state files.
+		/// </summary>
+		public string StateDirectory { get; private set; } = AppContext.BaseDirectory;
+		/// <summary>
 		/// The previous uptime added to the current ellapsed time since the bot last connected.
 		/// </summary>
 		private TimeSpan previousUptime;
@@ -68,7 +62,11 @@ namespace TriggersTools.DiscordBots {
 		/// <summary>
 		/// The timer for saving the total uptime of the bot every so often.
 		/// </summary>
-		private readonly Timer saveTotalUptimeTimer;
+		private Timer saveTotalUptimeTimer;
+		/// <summary>
+		/// The timer run to call <see cref="GC.Collect"/>, making sure that unobserved tasks are caught.
+		/// </summary>
+		private Timer unobservedTaskTimer;
 
 		#endregion
 		
@@ -100,6 +98,14 @@ namespace TriggersTools.DiscordBots {
 		/// Gets the total memory usage of the garbage collector.
 		/// </summary>
 		public long GCUsage => GC.GetTotalMemory(false);
+		/// <summary>
+		/// The file to read from when displaying the *restarted* message.
+		/// </summary>
+		private string RestartMessageFile => Path.Combine(StateDirectory, "DiscordBot.RestartMessage.txt");
+		/// <summary>
+		/// The file to read and write to, storing the total uptime of the bot.
+		/// </summary>
+		private string TotalUptimeFile => Path.Combine(StateDirectory, "DiscordBot.TotalUptime.txt");
 
 		#endregion
 
@@ -151,17 +157,28 @@ namespace TriggersTools.DiscordBots {
 		#region Constructors
 
 		/// <summary>
-		/// Constructs the <see cref="DiscordBot"/>.
+		/// Constructs the <see cref="DiscordBot"/> with no custom config or state directories.
 		/// </summary>
-		public DiscordBot() {
+		public DiscordBot() : this(null, null) { }
+		/// <summary>
+		/// Constructs the <see cref="DiscordBot"/> with custom config and state directories.
+		/// </summary>
+		/// <param name="configDir">The optional custom config directory.</param>
+		/// <param name="stateDir">The optional custom state directory.</param>
+		public DiscordBot(string configDir, string stateDir) {
+			// Move to the state/config directory for dynamic files and accessible settings
+			ConfigDirectory = configDir ?? AppContext.BaseDirectory;
+			StateDirectory = stateDir ?? Path.Combine(AppContext.BaseDirectory, "state");
+			if (!Directory.Exists(ConfigDirectory))
+				Directory.CreateDirectory(ConfigDirectory);
+			if (!Directory.Exists(StateDirectory))
+				Directory.CreateDirectory(StateDirectory);
 			lastConnected = DateTime.UtcNow;
 			previousUptime = TimeSpan.Zero;
 			if (File.Exists(TotalUptimeFile)) {
 				string text = File.ReadAllText(TotalUptimeFile);
 				startupUptime = TimeSpan.Parse(text);
 			}
-			TimeSpan interval = SaveTotalUptimeInterval;
-			saveTotalUptimeTimer = new Timer(OnSaveTotalUptime, null, interval, interval);
 
 			// Let the bot display shutdown status when closed
 			AppDomain.CurrentDomain.ProcessExit += OnAppDomainProcessExit;
@@ -174,8 +191,7 @@ namespace TriggersTools.DiscordBots {
 		#endregion
 
 		#region Event Handlers
-
-
+		
 		/// <summary>
 		/// Called to keep track of the bot's uptime.
 		/// </summary>
@@ -204,12 +220,14 @@ namespace TriggersTools.DiscordBots {
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
 		private void OnAppDomainProcessExit(object sender, EventArgs e) {
-			try {
-				if (Client.ConnectionState == ConnectionState.Connected) {
-					Client.SetStatusAsync(UserStatus.Invisible).ConfigureAwait(false).GetAwaiter().GetResult();
-					Client.SetGameAsync("Shutting Down...").ConfigureAwait(false).GetAwaiter().GetResult();
-				}
-			} catch { }
+			if (Services != null) {
+				try {
+					if (Client.ConnectionState == ConnectionState.Connected) {
+						Client.SetStatusAsync(UserStatus.Invisible).ConfigureAwait(false).GetAwaiter().GetResult();
+						Client.SetGameAsync("Shutting Down...").ConfigureAwait(false).GetAwaiter().GetResult();
+					}
+				} catch { }
+			}
 		}
 		/// <summary>
 		/// Used to check for startup errors and raise <see cref="StartupError"/>.
@@ -221,17 +239,25 @@ namespace TriggersTools.DiscordBots {
 		/// Used to check for startup errors and raise <see cref="StartupError"/>.
 		/// </summary>
 		private void OnTaskSchedulerUnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e) {
+			// Maybe don't ignore this nonsense?
 			// Ignore this nonsense
-			if (e.Exception is AggregateException)
-				return;
+			//if (e.Exception is AggregateException)
+			//	return;
 			StartupError?.Invoke(e.Exception);
 		}
 		/// <summary>
 		/// Called to save the total uptime every so often.
 		/// </summary>
-		private void OnSaveTotalUptime(object state = null) {
+		private void OnSaveTotalUptimeTick(object state = null) {
 			if (RunState == DiscordBotRunState.Running || RunState == DiscordBotRunState.ShuttingDown)
 				File.WriteAllText(TotalUptimeFile, TotalUptime.ToString());
+		}
+		/// <summary>
+		/// Called periodically to run <see cref="GC.Collect"/>, making sure that unobserved tasks are caught.
+		/// </summary>
+		/// <param name="state"></param>
+		private void OnUnobservedTaskTick(object state = null) {
+			GC.Collect();
 		}
 
 		#endregion
@@ -242,10 +268,10 @@ namespace TriggersTools.DiscordBots {
 		/// Loads the configuration files used for the bot.
 		/// </summary>
 		public virtual IConfigurationRoot LoadConfig() {
-			var builder = new ConfigurationBuilder()    // Create a new instance of the config builder
-				.SetBasePath(AppContext.BaseDirectory)  // Specify the default location for the config file
-				.AddJsonFile("Config.json");            // Add this (json encoded) file to the configuration
-			return Config = builder.Build();                     // Build the configuration
+			var builder = new ConfigurationBuilder() // Create a new instance of the config builder
+				.SetBasePath(ConfigDirectory)        // Specify the default location for the config file
+				.AddJsonFile("Config.json");         // Add this (json encoded) file to the configuration
+			return Config = builder.Build();         // Build the configuration
 		}
 		/// <summary>
 		/// Loads the <see cref="DiscordSocketConfig"/> used to automatically setup the
@@ -344,6 +370,10 @@ namespace TriggersTools.DiscordBots {
 			Client.Connected += OnConnectedAysnc;
 			Client.Disconnected += OnDisconnectedAsync;
 			Client.Ready += OnFirstReadyAysnc;
+			TimeSpan interval = SaveTotalUptimeInterval;
+			saveTotalUptimeTimer = new Timer(OnSaveTotalUptimeTick, null, interval, interval);
+			interval = TimeSpan.FromSeconds(5);
+			unobservedTaskTimer = new Timer(OnUnobservedTaskTick, null, interval, interval);
 			await OnInitializeAsync().ConfigureAwait(false);
 			return Services;
 		}
@@ -353,11 +383,18 @@ namespace TriggersTools.DiscordBots {
 		public async Task StartAsync() {
 			RunState = DiscordBotRunState.Running;
 			await OnStartAsync().ConfigureAwait(false);
-			OnSaveTotalUptime();
+			OnSaveTotalUptimeTick();
+		}
 
+		public void EndStartup() {
 			// Stop looking for startup errors
 			AppDomain.CurrentDomain.UnhandledException -= OnAppDomainUnhandledException;
 			TaskScheduler.UnobservedTaskException -= OnTaskSchedulerUnobservedTaskException;
+			// Increase this interval after startup to reduce slowdowns
+			TimeSpan interval = TimeSpan.FromMinutes(1);
+			unobservedTaskTimer = new Timer(OnUnobservedTaskTick, null, interval, interval);
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
 		}
 		/// <summary>
 		/// Loads the commands and modules into the command service.
@@ -370,7 +407,7 @@ namespace TriggersTools.DiscordBots {
 		/// </summary>
 		/// <param name="initiator">The user that initiated the shutdown.</param>
 		public async Task ShutdownAsync(ICommandContext context = null) {
-			OnSaveTotalUptime();
+			OnSaveTotalUptimeTick();
 			await Client.SetGameAsync("Shutting Down...").ConfigureAwait(false);
 			await Client.SetStatusAsync(UserStatus.Invisible).ConfigureAwait(false);
 			RunState = DiscordBotRunState.ShuttingDown;
@@ -381,7 +418,7 @@ namespace TriggersTools.DiscordBots {
 		/// </summary>
 		/// <param name="initiator">The user that initiated the restart.</param>
 		public async Task RestartAsync(ICommandContext context = null, string restartMessage = null) {
-			OnSaveTotalUptime();
+			OnSaveTotalUptimeTick();
 			await Client.SetGameAsync("Restarting...").ConfigureAwait(false);
 			if (restartMessage != null && context != null)
 				if (restartMessage != null && context != null)
@@ -581,7 +618,8 @@ namespace TriggersTools.DiscordBots {
 		/// Disposes of the Discord bot.
 		/// </summary>
 		public void Dispose() {
-			saveTotalUptimeTimer.Dispose();
+			unobservedTaskTimer?.Dispose();
+			saveTotalUptimeTimer?.Dispose();
 		}
 
 		#endregion

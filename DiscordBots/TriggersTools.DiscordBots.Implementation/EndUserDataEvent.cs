@@ -11,7 +11,6 @@ namespace TriggersTools.DiscordBots {
 	/// Event args surrounding a change to End User Data.
 	/// </summary>
 	public class EndUserDataEventArgs {
-
 		#region Fields
 
 		/// <summary>

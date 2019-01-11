@@ -12,13 +12,7 @@ namespace TriggersTools.DiscordBots.Services {
 	/// The startup service for Discord bots.
 	/// </summary>
 	internal sealed class StartupService {
-
 		#region Fields
-
-		/// <summary>
-		/// True if the <see cref="BotServiceBase"/> services have been initialized.
-		/// </summary>
-		private bool initialized = false;
 		
 		/// <summary>
 		/// Gets the bot services context.
@@ -68,7 +62,7 @@ namespace TriggersTools.DiscordBots.Services {
 			string discordToken = DiscordBot.GetDiscordToken(); // Get the discord token from the config file
 
 			await Client.LoginAsync(TokenType.Bot, discordToken).ConfigureAwait(false);	// Login to discord
-			await Client.StartAsync().ConfigureAwait(false);                              // Connect to the websocket
+			await Client.StartAsync().ConfigureAwait(false);                            // Connect to the websocket
 			Client.Connected += OnInitializeAsync;
 		}
 
@@ -77,12 +71,13 @@ namespace TriggersTools.DiscordBots.Services {
 		/// </summary>
 		/// <returns></returns>
 		private async Task OnInitializeAsync() {
-			if (!initialized) {
-				initialized = true;
-				await DiscordBot.LoadCommandModulesAsync().ConfigureAwait(false);
-				Commands.InitializeDetails(Services);
-				Services.InitializeServices();
-			}
+			// Don't call this again
+			Client.Connected -= OnInitializeAsync;
+
+			await DiscordBot.LoadCommandModulesAsync().ConfigureAwait(false);
+			Commands.InitializeDetails(Services);
+			Services.InitializeServices();
+			DiscordBot.EndStartup();
 		}
 
 		#endregion

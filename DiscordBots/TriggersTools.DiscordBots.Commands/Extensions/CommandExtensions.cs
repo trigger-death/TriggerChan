@@ -11,7 +11,6 @@ namespace TriggersTools.DiscordBots.Commands {
 	/// <see cref="ParameterInfo"/> classes.
 	/// </summary>
 	public static class CommandExtensions {
-
 		#region Attributes
 
 		/// <summary>

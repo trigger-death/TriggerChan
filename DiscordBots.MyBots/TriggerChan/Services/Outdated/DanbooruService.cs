@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using TriggersTools.DiscordBots.TriggerChan.Danbooru;
+using TriggersTools.DiscordBots.TriggerChan.Database;
 using TriggersTools.DiscordBots.TriggerChan.Reactions;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Services {
@@ -154,7 +155,6 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 					IEmbed oldEmbed = message.Embeds.First();
 					if ((await ScoreReactions(message).ConfigureAwait(false)) < 0) {
 						try {
-							Console.WriteLine("REMOVING ALL REACTIONS!");
 							await message.ModifyAsync((p) => {
 								IUser user = reaction.User.Value;
 								var embed = MakeBaseEmbed();
@@ -180,9 +180,32 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 		}
 
 		public async Task<int> ScoreReactions(IUserMessage message) {
-			int agrees = (await message.GetReactionUsersAsync(TriggerReactions.Agreeable, 100).FirstOrDefault().ConfigureAwait(false))?.Count ?? 0;
-			int disagrees = (await message.GetReactionUsersAsync(TriggerReactions.Dangerous, 100).FirstOrDefault().ConfigureAwait(false))?.Count ?? 0;
-			return agrees - disagrees;
+			var agreesEnum = await message.GetReactionUsersAsync(TriggerReactions.Agreeable, 100).FirstOrDefault().ConfigureAwait(false);
+			var disagreesEnum = await message.GetReactionUsersAsync(TriggerReactions.Dangerous, 100).FirstOrDefault().ConfigureAwait(false);
+			using (var db = GetDb<TriggerDbContext>()) {
+				int agrees = 0;
+				int disagrees = 0;
+				if (agreesEnum != null) {
+					foreach (var user in agreesEnum) {
+						if (user.IsBot)
+							continue;
+						if (!(await db.FindUserAsync(user.Id).ConfigureAwait(false)).Banned)
+							agrees++;
+					}
+				}
+				if (disagreesEnum != null) {
+					foreach (var user in disagreesEnum) {
+						if (user.IsBot)
+							continue;
+						if (!(await db.FindUserAsync(user.Id).ConfigureAwait(false)).Banned)
+							disagrees++;
+					}
+				}
+				return agrees - disagrees;
+			}
+			//int agrees = (await message.GetReactionUsersAsync(TriggerReactions.Agreeable, 100).FirstOrDefault().ConfigureAwait(false))?.Count ?? 0;
+			//int disagrees = (await message.GetReactionUsersAsync(TriggerReactions.Dangerous, 100).FirstOrDefault().ConfigureAwait(false))?.Count ?? 0;
+			//return agrees - disagrees;
 		}
 
 		private static void AppendToQuery(ref string url, string name, object parameter) {
