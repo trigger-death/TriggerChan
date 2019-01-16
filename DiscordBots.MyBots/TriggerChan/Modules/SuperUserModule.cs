@@ -88,7 +88,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		public async Task<RuntimeResult> ReloadConfig() {
 			var message = await ReplyAsync("`Reloading Config...`").ConfigureAwait(false);
 			await DiscordBot.ReloadConfigAsync().ConfigureAwait(false);
-			await message.ModifyAsync(c => c.Content = "`Reloading Config... Reloaded!`").ConfigureAwait(false);
+			await message.ModifyAsync(m => m.Content = "`Reloading Config... Reloaded!`").ConfigureAwait(false);
 			return EmoteResults.FromSuccess();
 		}
 

@@ -127,6 +127,7 @@ namespace TriggersTools.DiscordBots.TriggerChan {
 
 				.AddSingleton<Random>()
 				.AddSingleton<BotBanService>()
+				.AddSingleton<EmbedService>()
 				;
 		}
 		/// <summary>

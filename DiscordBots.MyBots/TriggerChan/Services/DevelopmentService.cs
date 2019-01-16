@@ -57,9 +57,9 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				try {
 					message = await channel.GetMessageAsync(messageId).ConfigureAwait(false) as IUserMessage;
 					try {
-					await message.ModifyAsync(p => {
-						p.Content = content;
-						p.Embed = embed;
+					await message.ModifyAsync(m => {
+						m.Content = content;
+						m.Embed = embed;
 					}).ConfigureAwait(false);
 					} catch { }
 					return;

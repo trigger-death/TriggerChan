@@ -1,103 +1,124 @@
 ﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using RestSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using TriggersTools.DiscordBots.Commands;
 using TriggersTools.DiscordBots.TriggerChan.Danbooru;
 using TriggersTools.DiscordBots.TriggerChan.Database;
 using TriggersTools.DiscordBots.TriggerChan.Reactions;
+using TriggersTools.DiscordBots.Utils;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Services {
-	public class DanbooruService : TriggerService {
+	public partial class DanbooruService : TriggerService {
 
-		private readonly Random random;
+		#region Constants
 
-		#region Constructors
+		//private const string Domain = @"https://danbooru.donmai.us";
 
-		public DanbooruService(TriggerServiceContainer services,
-							   Random random)
-			: base(services)
-		{
-			this.random = random;
-		}
+		//private const string FooterText = "danbooru.donmai.us";
 
-		#endregion
-
-		private const string Domain = @"https://danbooru.donmai.us/";
-
-		private const string BaseCountsQueryUrl = @"https://danbooru.donmai.us/counts/posts.json";
-		private const string BasePostsQueryUrl = @"https://danbooru.donmai.us/posts.json?";
-		private const int PostLimit = 200; // Hard value
-		private const int PageLimit = 1000; // Hard value
-		private const int RetryLimit = 10; // Reduce load
+		private const string BaseCountsUrl = @"https://danbooru.donmai.us/counts/posts.json";
+		private const string BasePostsUrl = @"https://danbooru.donmai.us/posts.json?";
+		//private const int PostLimit = 200; // Hard value
+		//private const int PageLimit = 1000; // Hard value
+		//private const int RetryLimit = 10; // Reduce load
 
 		// You're not suppose to be here, you need to leave
 		private static readonly Regex DangerRegex =
 			new Regex(@"(^|\s)(loli(?!ta)|shota|bestiality|kids?|kindergarten|preschool|baby|babies)($|\s)",
 				RegexOptions.IgnoreCase);
-
+		private static readonly Regex TagRegex =
+			new Regex(@"^(?!(_|~))(\w|_|~|-|\(|\))+(?<!_)(|\*)$",
+				RegexOptions.IgnoreCase);
 		private static readonly Regex RatingRegex =
 			new Regex(@"(?:^|\+)(|-)rating\:(s|safe|q|questionable|e|explicit)(?:$|\+)",
 				RegexOptions.IgnoreCase);
 
-		private static readonly Regex TagRegex =
-			new Regex(@"^(?!(_|~))(\w|_|~|-|\(|\))+(?<!_)(|\*)$",
-				RegexOptions.IgnoreCase);
+		// You're not suppose to be here, you need to leave
+		/*private const string Danger2Pattern = @"^(loli(?!ta)|shota|bestiality|kids?|kindergarten|preschool|baby|babies)$";
+		private static readonly Regex Danger2Regex = new Regex(Danger2Pattern, RegexOptions.IgnoreCase);
 
-		private WebRequest CreateRequest(string url) {
+		// Bug where \- isn't escaped when used in a range, add it as its own entry.
+		private const string Tag2Pattern = @"^[!-+\-.-~]+$";
+		private static readonly Regex Tag2Regex = new Regex(Tag2Pattern);
+
+		private const string ArgumentsPattern = @"^Arguments: (?:\*none\*|`(?'args'.+?)`\n";
+		private static readonly Regex ArgumentsRegex = new Regex(ArgumentsPattern);*/
+
+		#endregion
+
+		/*#region Fields
+
+		private readonly RestClient rest;
+		private readonly int maxTags;
+
+		#endregion
+
+		#region Constructors
+
+		public DanbooruService(TriggerServiceContainer services) : base(services) {
+			rest = new RestClient(Domain);
+			maxTags = 2;
+		}
+
+		public override void Initialize() {
+			Credentials = new NetworkCredential() {
+				UserName = Config["danbooru_user"],
+				Password = Config["danbooru_pass"],
+				Domain = Domain,
+			};
+			Client.ReactionAdded += OnReactionAdded;
+		}
+
+#endregion*/
+
+
+	private WebRequest CreateRequest(string url) {
 			WebRequest request = WebRequest.Create(url);
 			request.Method = "GET";
 			return request;
 		}
-
 		private async Task<JObject> GetJObject(string url) {
 			WebRequest request = CreateRequest(url);
 			string text = ReadStreamFromResponse(await request.GetResponseAsync().ConfigureAwait(false));
 			return JObject.Parse(text);
 		}
-
 		private async Task<JArray> GetJArray(string url) {
 			WebRequest request = CreateRequest(url);
 			string text = ReadStreamFromResponse(await request.GetResponseAsync().ConfigureAwait(false));
 			return JArray.Parse(text);
 		}
-
-		private static JObject GetJson(WebResponse response) {
-			string text = ReadStreamFromResponse(response);
-			return JObject.Parse(text);
-		}
-
-		private static JArray GetJsonArray(WebResponse response) {
-			string text = ReadStreamFromResponse(response);
-			return JArray.Parse(text);
-		}
-
 		private static string ReadStreamFromResponse(WebResponse response) {
 			using (Stream responseStream = response.GetResponseStream())
 			using (var sr = new StreamReader(responseStream))
 				return sr.ReadToEnd();
 		}
 
-		private static string RatingToTag(DanbooruRating rating) {
+		/*private static string RatingToTag(DanbooruRating rating) {
 			switch (rating) {
-			case DanbooruRating.Any: return "";
-			case DanbooruRating.Safe: return "rating:s";
-			case DanbooruRating.Questionable: return "rating:q";
-			case DanbooruRating.Explicit: return "rating:e";
-			case DanbooruRating.NotSafe: return "-rating:s";
+			case DanbooruRating.Any:			 return "";
+			case DanbooruRating.Safe:			 return "rating:s";
+			case DanbooruRating.Questionable:	 return "rating:q";
+			case DanbooruRating.Explicit:		 return "rating:e";
+			case DanbooruRating.NotSafe:		 return "-rating:s";
 			case DanbooruRating.NotQuestionable: return "-rating:q";
-			case DanbooruRating.NotExplicit: return "-rating:e";
+			case DanbooruRating.NotExplicit:	 return "-rating:e";
 			default: return null;
 			}
-		}
+		}*/
 		
 		private string CheckTag(DanbooruRating rating, string tag) {
 			if (string.IsNullOrWhiteSpace(tag))
@@ -131,34 +152,27 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				return null;
 			return tagsStr.ToLower();
 		}
-		
-		public override void Initialize() {
-			/*Credentials = new NetworkCredential() {
-				UserName = Config["danbooru_user"],
-				Password = Config["danbooru_pass"],
-				Domain = Domain,
-			};*/
-			Client.ReactionAdded += OnReactionAdded;
-		}
 
-		private async Task OnReactionAdded(Cacheable<IUserMessage, ulong> msg, ISocketMessageChannel channel, SocketReaction reaction) {
+		/*private async Task OnReactionAdded2(Cacheable<IUserMessage, ulong> msg, ISocketMessageChannel channel, SocketReaction reaction) {
 			var emoji = reaction.Emote;
 			if (reaction.UserId == Client.CurrentUser.Id) return;
+			if (!IsLiveDanbooruEmbed(msg.Value, out string arguments, out ulong isOld, out var author)) return;
+			var message = msg.Value ?? await msg.DownloadAsync().ConfigureAwait(false);
 			if (emoji.Equals(TriggerReactions.Agreeable) || emoji.Equals(TriggerReactions.Dangerous)) {
-				var message = msg.Value ?? await msg.DownloadAsync().ConfigureAwait(false);
+				//var message = msg.Value ?? await msg.DownloadAsync().ConfigureAwait(false);
 				bool disagree = emoji.Equals(TriggerReactions.Dangerous);
 				// Confirm this is a danbooru post made by the bot
 				if (message.Author.Id == Client.CurrentUser.Id &&
 					message.Embeds.Any() && message.Embeds.First().Url.StartsWith(Domain) &&
-					message.Embeds.First().Description.Contains("**Score:**")) // Some method to know that its an active image
+					message.Embeds.First().Description.Contains("Score:")) // Some method to know that its an active image
 				{
 					IEmbed oldEmbed = message.Embeds.First();
 					if ((await ScoreReactions(message).ConfigureAwait(false)) < 0) {
 						try {
-							await message.ModifyAsync((p) => {
+							await message.ModifyAsync(m => {
 								IUser user = reaction.User.Value;
-								var embed = MakeBaseEmbed();
-								int index = oldEmbed.Description.IndexOf("**Score:**");
+								var embed = MakeBaseEmbed(author);
+								int index = oldEmbed.Description.IndexOf("Score:");
 								string desc = oldEmbed.Description.Substring(0, index);
 								if (disagree) {
 									if (!desc.EndsWith("\n"))
@@ -166,20 +180,22 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 									desc += $"Post deemed against Discord's policies by {Format.Sanitize(user.Username)}#{user.Discriminator}";
 								}
 								embed.WithDescription(desc);
-								p.Embed = embed.Build();
+								m.Embed = embed.Build();
 							}).ConfigureAwait(false);
 							await message.RemoveAllReactionsAsync().ConfigureAwait(false);
 						}
 						catch (Exception ex) {
 							Console.WriteLine(ex);
-							
 						}
 					}
-				}
+				//}
 			}
-		}
+			else if (emoji.Equals(TriggerReactions.Retry)) {
 
-		public async Task<int> ScoreReactions(IUserMessage message) {
+			}
+		}*/
+
+		/*public async Task<int> ScoreReactions(IUserMessage message) {
 			var agreesEnum = await message.GetReactionUsersAsync(TriggerReactions.Agreeable, 100).FirstOrDefault().ConfigureAwait(false);
 			var disagreesEnum = await message.GetReactionUsersAsync(TriggerReactions.Dangerous, 100).FirstOrDefault().ConfigureAwait(false);
 			using (var db = GetDb<TriggerDbContext>()) {
@@ -206,7 +222,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			//int agrees = (await message.GetReactionUsersAsync(TriggerReactions.Agreeable, 100).FirstOrDefault().ConfigureAwait(false))?.Count ?? 0;
 			//int disagrees = (await message.GetReactionUsersAsync(TriggerReactions.Dangerous, 100).FirstOrDefault().ConfigureAwait(false))?.Count ?? 0;
 			//return agrees - disagrees;
-		}
+		}*/
 
 		private static void AppendToQuery(ref string url, string name, object parameter) {
 			if (parameter == null)
@@ -233,10 +249,15 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			}
 
 
-			string countsQueryUrl = BaseCountsQueryUrl;
-			string postsQueryUrl = BasePostsQueryUrl;
+			string countsQueryUrl = BaseCountsUrl;
+			string postsQueryUrl = BasePostsUrl;
 
 			string tags = CombineTags(rating, tag1, tag2);
+			UrlBuilder countQuery = new UrlBuilder { BaseUrl = BaseCountsUrl };
+			UrlBuilder postsQuery = new UrlBuilder { BaseUrl = BasePostsUrl };
+			countQuery.Add("tags", tags);
+			postsQuery.Add("tags", tags);
+			postsQuery.Add("limit", PostLimit);
 			AppendToQuery(ref countsQueryUrl, "tags", tags);
 			AppendToQuery(ref postsQueryUrl, "tags", tags);
 
@@ -259,7 +280,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				for (int i = 1; i <= maxPages; i++)
 					availablePages.Add(i);
 				for (int i = 0; i < retries && availablePages.Any(); i++) {
-					int listIndex = random.Next(availablePages.Count);
+					int listIndex = Random.Next(availablePages.Count);
 					int page = availablePages[listIndex];
 					DanbooruPost post = await SearchPage(page, rating, minScore, postsQueryUrl, extraTags).ConfigureAwait(false);
 					if (post != null)
@@ -270,7 +291,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			else {
 				HashSet<int> triedPages = new HashSet<int>();
 				for (int i = 0; i < retries; i++) {
-					int page = random.Next(maxPages) + 1;
+					int page = Random.Next(maxPages) + 1;
 					if (triedPages.Add(page)) {
 						DanbooruPost post = await SearchPage(page, rating, minScore, postsQueryUrl, extraTags).ConfigureAwait(false);
 						if (post != null)
@@ -304,20 +325,21 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 
 			return result.ToObject<DanbooruPost>();*/
 		}
+		
 
-		public EmbedBuilder MakeBaseEmbed() {
+		/*public EmbedBuilder MakeBaseEmbed() {
 			var embed = new EmbedBuilder() {
 				Title = "Danbooru Post Result",
 				Color = new Color(186, 149, 113),
 				//Color = new Color(164, 128, 95),
 			};
-			embed.WithFooter("danbooru.donmai.us", @"https://i.imgur.com/fjMmTn4.png");
+			embed.WithFooter(FooterText, @"https://i.imgur.com/fjMmTn4.png");
 			return embed;
-		}
-
+		}*/
+		
 		public async Task<DanbooruPost> SearchPage(int page, DanbooruRating rating, int minScore, string queryUrl, IEnumerable<string> extraTags) {
 			AppendToQuery(ref queryUrl, "page", page);
-
+			
 			JArray results = await GetJArray(queryUrl).ConfigureAwait(false);
 
 			if (results.Count == 0)
@@ -327,7 +349,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			for (int i = 0; i < results.Count; i++)
 				available.Add(i);
 
-			int index = random.Next(results.Count);
+			int index = Random.Next(results.Count);
 			int listIndex = index;
 			JToken result = results[index];
 
@@ -336,7 +358,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				available.RemoveAt(listIndex);
 				if (!available.Any())
 					return null;
-				listIndex = random.Next(available.Count);
+				listIndex = Random.Next(available.Count);
 				index = available[listIndex];
 				result = results[index];
 			}
@@ -344,10 +366,11 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 			return result.ToObject<DanbooruPost>();
 		}
 
-		public async Task AddReactions(IUserMessage message) {
-			await message.AddReactionAsync(TriggerReactions.Agreeable).ConfigureAwait(false);
+		/*public async Task AddReactions(IUserMessage message) {
+			//await message.AddReactionAsync(TriggerReactions.Agreeable).ConfigureAwait(false);
 			await message.AddReactionAsync(TriggerReactions.Dangerous).ConfigureAwait(false);
-		}
+			await message.AddReactionAsync(TriggerReactions.Retry).ConfigureAwait(false);
+		}*/
 
 		public bool IsValid(JToken json, DanbooruRating rating, int minScore, IEnumerable<string> extraTags) {
 			int score = int.Parse((string) json["score"]);

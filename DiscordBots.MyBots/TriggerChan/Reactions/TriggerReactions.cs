@@ -64,12 +64,21 @@ namespace TriggersTools.DiscordBots.TriggerChan.Reactions {
 		[Description("Click to hear spoiler")]
 		[Category(BotActions)]
 		public static Emoji ViewSpoiler { get; } = new Emoji("🔍");
-		[Description("Marks a result as okay with Discord's policies")]
+		/*[Description("Marks a result as okay with Discord's policies")]
 		[Category(BotActions)]
-		public static Emoji Agreeable { get; } = new Emoji(char.ConvertFromUtf32(0x1F197)); // Squared OK
+		public static Emoji Agreeable { get; } = new Emoji("\U0001F197"); // Squared OK 🆗
 		[Description("Marks a result as against Discord's policies")]
 		[Category(BotActions)]
-		public static Emoji Dangerous { get; } = new Emoji(char.ConvertFromUtf32(0x1F694)); // Oncoming Police Car
+		public static Emoji Dangerous { get; } = new Emoji("\U0001F694"); // Oncoming Police Car 🚔*/
+		[Description("Redo the same action again and overwrite the current result")]
+		[Category(BotActions)]
+		public static Emoji Retry { get; } = new Emoji("\U0001f501"); // Repeat 🔁
+		[Description("Redo the same action again and make a new result")]
+		[Category(BotActions)]
+		public static Emoji DoAgain { get; } = new Emoji("\u23ed"); // Next Track ⏭️
+		[Description("Marks a result as against Discord's policies")]
+		[Category(BotActions)]
+		public static Emoji NoGood { get; } = new Emoji("🆖"); // No Good 🆖
 
 		#endregion
 

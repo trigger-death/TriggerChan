@@ -1,6 +1,4 @@
 ﻿{
-  "message_id": 0,
-
   "content": null,
   "title": "Trigger's Development Status",
   "desc": "Below are the tools/programs/etc that trigger_death is working on creating, updating, or fixing. Order changes often and without warning.",
@@ -9,12 +7,6 @@
   "color": "#00C6D8",
 
   "working": [
-    {
-      "status": "Starting",
-      "title": "Ability to ban users from using Triggy",
-      "url": "https://github.com/trigger-death/TriggerChan",
-      "desc": "Abuse the bot, you lose the bot."
-    },
     {
       "status": "All Projects on Hold",
       "title": "Until rapid/heavy eye blinking gets better",

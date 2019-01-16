@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
-using TriggersTools.DiscordBots.TriggerChan.Profiles.Readers.Json;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Profiles.Readers.AniList {
 	[JsonObject]

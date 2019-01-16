@@ -27,42 +27,43 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		}
 
 		[Command("danbooru")]
-		[Usage("[rating=sqe] [[tags=]tag1[,tag2]] [minscore=5] [retries=1-10] [extra=extra,tags...]")]
+		[Usage("[rating=sqe] [[tags=]tag1,tag2,...] [minscore=5] [retries=1-10]")]
 		[Summary("Looks up a random image on danbooru matching the search terms")]
 		[Remarks("Danbooru only allows searching for two main tags at once. " +
 			"Everything specified in extras will be manually searched for based on retries x 200 posts. " +
-			"Tags can start with '-' to be blacklisted and end with `*` to be open-ended. " +
+			"Tags can start with '-' to be blacklisted and use '*' as a wildcard. " +
 			"Ratings can be any combination of 's' (safe), 'q' (questionable), and 'e' (explicit).")]
 		public Task<RuntimeResult> DanbooruSearch([Remainder] string arguments = "") {
-			return DanbooruSearchAsync(true, DanbooruRating.Any, arguments);
+			return danbooru.CreateSearchAsync(Context, false, arguments);
+			//return DanbooruSearchAsync(true, DanbooruRating.Any, arguments);
 		}
 
 		[Command("hentai")]
-		[Usage("[rating=sqe] [[tags=]tag1[,tag2]] [minscore=5] [retries=1-10] [extra=extra,tags]")]
+		[Usage("[rating=sqe] [[tags=]tag1,tag2,...] [minscore=5] [retries=1-10]")]
 		[Summary("Looks up a random (nsfw by default) image on danbooru matching the search terms")]
 		[Remarks("Danbooru only allows searching for two main tags at once. " +
-			"Everything specified in extras will be manually searched for based on retries x 200 posts. " +
-			"Tags can start with '-' to be blacklisted and end with `*` to be open-ended. " +
+			"Everything specified after the first two will be manually searched for based on retries x 200 posts. " +
+			"Tags can start with '-' to be blacklisted and use '*' as a wildcard. " +
 			"Ratings can be any combination of 's' (safe), 'q' (questionable), and 'e' (explicit).")]
 		public Task<RuntimeResult> HentaiSearch([Remainder] string arguments = "") {
-			return DanbooruSearchAsync(true, DanbooruRating.NotSafe, arguments);
+			return danbooru.CreateSearchAsync(Context, true, arguments);
+			//return DanbooruSearchAsync(true, DanbooruRating.NotSafe, arguments);
 		}
 
 		private async Task<RuntimeResult> DanbooruSearchAsync(bool nsfw, DanbooruRating defaultRating, string arguments) {
 			IUserMessage searchMessage = null;
 			DanbooruPost post = null;
 			try {
-				if (arguments.Contains('&') || arguments.Contains('?') || arguments.Contains('/')) {
+				/*if (arguments.Contains('&') || arguments.Contains('?') || arguments.Contains('/')) {
 					return EmoteResults.FromInvalidArgument("Invalid characters in arguments");
-				}
+				}*/
 				bool tagsSpecified = false;
 				int? retries = null;
 				int? minScore = null;
 				DanbooruRating? rating = null;
-				string tag1 = null;
-				string tag2 = null;
-				List<string> extraTags = null;
-				string[] args = arguments.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+				List<string> tags = new List<string>();
+				//List<string> extraTags = null;
+				string[] args = arguments.Split(new char[0]); // This splits by whitespace
 				foreach (string arg in args) {
 					string[] parts = arg.Split(new char[] { '=' });
 					if (parts.Length == 1 || parts[0].ToLower() == "tags") {
@@ -71,15 +72,15 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 						}
 						tagsSpecified = true;
 						if (!string.IsNullOrEmpty(parts.Last())) {
-							string[] tags = parts.Last().Split(',');
-							if (tags.Length > 2) {
+							tags.AddRange(parts[parts.Length - 1].Split(','));
+							/*if (tags.Length > 2) {
 								return EmoteResults.FromInvalidArgument("More than two main tags");
 							}
 							else {
 								tag1 = tags[0];
 								if (tags.Length == 2)
 									tag2 = tags[1];
-							}
+							}*/
 						}
 					}
 					else {
@@ -106,7 +107,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 							}
 							rating = newRating;
 							break;
-						case "extra":
+						/*case "extra":
 						case "extras":
 						case "extratags":
 							if (extraTags != null) {
@@ -114,7 +115,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 							}
 							extraTags = new List<string>();
 							extraTags.AddRange(parts[1].Split(','));
-							break;
+							break;*/
 						case "retries":
 							if (retries.HasValue) {
 								return EmoteResults.FromInvalidArgument("Retries already specified");
@@ -143,10 +144,10 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 					}
 				}
 				try {
-					extraTags = extraTags ?? new List<string>();
+					//extraTags = extraTags ?? new List<string>();
 					rating = rating ?? defaultRating;
 					searchMessage = await ReplyAsync("🔎 Searching for a random danbooru image...").ConfigureAwait(false);
-					post = await danbooru.SearchAsync(rating.Value, tag1, tag2, minScore ?? 5, retries ?? 1, extraTags).ConfigureAwait(false);
+					//post = danbooru.Search(rating.Value, tags.ToArray(), minScore ?? 5, retries ?? 2);
 
 				} catch (InvalidTagsException ex) {
 					if (searchMessage != null)
@@ -165,7 +166,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 				await ReplyAsync("An error occurred while searching. The input may have been invalid.").ConfigureAwait(false);
 				return NormalResult.FromSuccess();
 			}
-			var embed = danbooru.MakeBaseEmbed();
+			var embed = danbooru.MakeBaseEmbed(null);
 			if (post == null) {
 				embed.WithDescription("No matching results found");
 			}
@@ -173,18 +174,18 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 				if (string.IsNullOrWhiteSpace(arguments))
 					arguments = "*none*";
 				else
-					arguments = Format.Sanitize(arguments);
+					arguments = $"`{Format.Sanitize(arguments)}`";
 				embed.WithUrl(post.PostUrl);
 				embed.WithDescription(//$"**Post:** <{post.PostUrl}>\n" +
-					$"**Arguments:** {arguments}\n" +
-					$"**Score:** {post.Score}{(nsfw ? $" | **Rating:** {post.Rating}" : "")}\n" +
+					$"Arguments: {arguments}\n" +
+					$"Score: **{post.Score}**{(nsfw ? $" | Rating: **{post.Rating}**" : "")}\n" +
 					$"{post.LargeFileUrl}");
-				embed.WithImageUrl(post.LargeFileUrl);
+				embed.WithImageUrl(post.FileUrl);
 			}
 			IUserMessage message = await ReplyAsync("", false, embed.Build()).ConfigureAwait(false);
-			if (post != null)
-				await danbooru.AddReactions(message).ConfigureAwait(false);
-			await searchMessage.DeleteAsync().ConfigureAwait(false);
+			//if (post != null)
+			//	await danbooru.AddReactions(message).ConfigureAwait(false);
+			//await searchMessage.DeleteAsync().ConfigureAwait(false);
 			return NormalResult.FromSuccess();
 		}
 	}

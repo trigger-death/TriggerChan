@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Danbooru {
-	public class JsonEnumStringConverter : JsonConverter {
+	public class JsonStringEnumConverter : JsonConverter {
 
 		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) {
 			string enumStr = (string) value;

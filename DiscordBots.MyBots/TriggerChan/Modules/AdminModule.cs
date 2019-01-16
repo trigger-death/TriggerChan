@@ -5,16 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using TriggersTools.DiscordBots.Commands;
+using TriggersTools.DiscordBots.Extensions;
 using TriggersTools.DiscordBots.Modules;
 using TriggersTools.DiscordBots.Services;
 using TriggersTools.DiscordBots.TriggerChan.Database;
 using TriggersTools.DiscordBots.TriggerChan.Model;
-using TriggersTools.DiscordBots.Utils;
-using TriggersTools.DiscordBots.Commands;
-using TriggersTools.DiscordBots.Extensions;
 using TriggersTools.DiscordBots.TriggerChan.Commands;
 using TriggersTools.DiscordBots.TriggerChan.Services;
 using TriggersTools.DiscordBots.TriggerChan.Reactions;
+using TriggersTools.DiscordBots.Utils;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Net.Http;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 	[Name("Admin")]
@@ -400,6 +403,55 @@ namespace TriggersTools.DiscordBots.TriggerChan.Modules {
 		public Task Lockable() {
 			return ReplyAsync(embed: help.BuildLockableList(Context, Commands.CommandSet));
 		}
+
+		[Group("embed")]
+		[Summary("Post a handmade embed with the help of the bot.")]
+		//[Remarks("Special Variables: `$CURRENTDATE$`, `$SERVERAUTHOR$`, `$SERVERFOOTER$`, `$USERAUTHOR$`, `$USERFOOTER$`")]
+		public class PostEmbedGroup : TriggerModule {
+
+			private readonly EmbedService embeds;
+
+			public PostEmbedGroup(TriggerServiceContainer services,
+								  EmbedService embeds)
+				: base(services)
+			{
+				this.embeds = embeds;
+			} 
+
+			[Name("embed <json>")]
+			[Command("")]
+			public async Task<RuntimeResult> PostEmbed([Remainder] string json) {
+				try {
+					json = await embeds.ReplaceTokensAsync(Context, json).ConfigureAwait(false);
+					var jsonMessage = JsonMessage.FromJson(RemoveCodeBlocks(json));
+					await Context.Channel.SendMessageAsync(jsonMessage).ConfigureAwait(false);
+				} catch (Exception ex) {
+					await Context.Channel.SendMessageAsync(ex.Message).ConfigureAwait(false);
+				}
+				return NormalResult.FromSuccess();
+			}
+			[Name("embed <attachment>")]
+			[Command("")]
+			public async Task<RuntimeResult> PostEmbed() {
+				if (Context.Message.Attachments.Count == 0)
+					return EmoteResults.FromInvalidArgument();
+				IAttachment attachment = Context.Message.Attachments.First();
+				using (var client = new HttpClient()) {
+					string json = await client.GetStringAsync(attachment.Url).ConfigureAwait(false);
+					return await PostEmbed(json).ConfigureAwait(false);
+				}
+			}
+
+			private static readonly Regex CodeBlockRegex = new Regex(@"^\s*```\w*\s*(?'code'.*)\s*```\s*$", RegexOptions.Singleline);
+
+			private string RemoveCodeBlocks(string json) {
+				Match match = CodeBlockRegex.Match(json);
+				if (match.Success)
+					return match.Groups["code"].Value;
+				return json;
+			}
+		}
+
 
 		[IsLockable(false)]
 		[Name("manager")]

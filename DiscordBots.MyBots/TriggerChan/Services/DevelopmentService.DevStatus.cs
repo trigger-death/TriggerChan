@@ -28,7 +28,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				return embed.Build();
 			}
 			private void BuildList(string name, DevItem[] list, EmbedBuilder embed) {
-				embed.PagifyField(name, list.Select(item => item.Build()));
+				embed.PaginateField(name, list.Select(item => item.Build()));
 				//PagifyField(embed, name, list.Select(item => item.Build()));
 				//if (list.Length != 0)
 				//	embed.AddField($"{name}", string.Join("\n", list.Select(item => item.Build())));

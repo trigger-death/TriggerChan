@@ -18,7 +18,7 @@ namespace TriggersTools.DiscordBots.Commands {
 		/// <param name="context">The context of the command.</param>
 		/// <param name="command">The command being executed.</param>
 		/// <param name="services">The service collection used for dependency injection.</param>
-		public override async Task<PreconditionResult> CheckPermissionsAsync(ICommandContext contextBase,
+		public override Task<PreconditionResult> CheckPermissionsAsync(ICommandContext contextBase,
 			CommandInfo command, IServiceProvider services)
 		{
 			DiscordBotCommandContext context = (DiscordBotCommandContext) contextBase;
@@ -27,8 +27,8 @@ namespace TriggersTools.DiscordBots.Commands {
 			//	return PreconditionResult.FromSuccess();
 			string[] owners = context.Config.GetArray("ids:discord:superuseres");
 			if (owners.Any(id => ulong.Parse(id) == context.User.Id))
-				return PreconditionResult.FromSuccess();
-			return PreconditionAttributeResult.FromError("You are not registed as a superuser of this bot", this);
+				return Task.FromResult(PreconditionResult.FromSuccess());
+			return Task.FromResult(PreconditionAttributeResult.FromError("You are not registed as a superuser of this bot", this));
 		}
 	}
 }

@@ -7,9 +7,12 @@ using System.Threading.Tasks;
 
 namespace TriggersTools.DiscordBots.Utils {
 	public static class UrlFormat {
+		#region Constants
 
 		private const string UrlPattern = @"^(?:(?:(?:http|https|ftp):\/\/)?(?:[a-zA-Z0-9\-\.])+(?:\.)(?:[a-zA-Z0-9]){2,4}(?:[a-zA-Z0-9\/+=%&_\.~?\-]*))*$";
 		private static readonly Regex UrlRegex = new Regex(UrlPattern, RegexOptions.IgnoreCase);
+
+		#endregion
 
 		/// <summary>
 		/// Gets if the string is a proper Url, optionaly surrounded with angled braces.
@@ -18,14 +21,10 @@ namespace TriggersTools.DiscordBots.Utils {
 		/// <returns>True if the string is a url.</returns>
 		public static bool IsUrl(string url) {
 			url = url.Trim();
-			if (url.StartsWith("<") && url.EndsWith(">")) {
-				string subUrl = url.Substring(1, url.Length - 2);
-				if (UrlRegex.IsMatch(subUrl))
-					return true;
-			}
+			if (url.StartsWith("<") && url.EndsWith(">"))
+				url = url.Substring(1, url.Length - 2);
 			return UrlRegex.IsMatch(url);
 		}
-
 		/// <summary>
 		/// Trims and removes the angled braces from the url input.
 		/// </summary>
@@ -44,6 +43,5 @@ namespace TriggersTools.DiscordBots.Utils {
 			isUrl = UrlRegex.IsMatch(url);
 			return url;
 		}
-
 	}
 }

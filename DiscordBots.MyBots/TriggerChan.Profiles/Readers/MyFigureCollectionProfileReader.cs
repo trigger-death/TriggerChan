@@ -167,7 +167,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Profiles.Readers {
 		}
 	}
 
-	public static class MFCExtensions {
+	internal static class MFCExtensions {
 
 		public static HtmlNode FirstWithClass(this IEnumerable<HtmlNode> doc, string targettedClass) {
 			return

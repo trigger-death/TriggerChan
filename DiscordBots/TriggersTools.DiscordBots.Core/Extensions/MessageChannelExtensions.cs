@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Discord;
+using Discord.Rest;
 using Discord.WebSocket;
 
 namespace TriggersTools.DiscordBots.Extensions {
@@ -8,10 +10,47 @@ namespace TriggersTools.DiscordBots.Extensions {
 	/// Extension methods for the <see cref="IMessageChannel"/> interface.
 	/// </summary>
 	public static class MessageChannelExtensions {
-		
+		/// <summary>
+		/// Sends a json message to this message channel.
+		/// </summary>
+		/// <param name="channel">The channel to send the message to.</param>
+		/// <param name="message">The json message to send.</param>
+		/// <param name="isTTS">Whether the message should be read aloud by Discord or not.</param>
+		/// <param name="options">The options to be used when sending the request.</param>
+		/// <returns>
+		/// A task that represents an asynchronous send operation for delivering the message. The task result
+		/// contains the sent message.
+		/// </returns>
+		public static Task<IUserMessage> SendMessageAsync(this IMessageChannel channel, JsonMessage message,
+			bool isTTS = false, RequestOptions options = null)
+		{
+			if (message == null)
+				throw new ArgumentNullException(nameof(message));
+			return channel.SendMessageAsync(message.Content, isTTS, message.Embed?.Build(), options);
+		}
+		/// <summary>
+		/// Sends a json message to this message channel.
+		/// </summary>
+		/// <param name="channel">The channel to send the message to.</param>
+		/// <param name="message">The json message to send.</param>
+		/// <param name="isTTS">Whether the message should be read aloud by Discord or not.</param>
+		/// <param name="options">The options to be used when sending the request.</param>
+		/// <returns>
+		/// A task that represents an asynchronous send operation for delivering the message. The task result
+		/// contains the sent message.
+		/// </returns>
+		public static Task<RestUserMessage> SendMessageAsync(this ISocketMessageChannel channel,
+			JsonMessage message, bool isTTS = false, RequestOptions options = null)
+		{
+			if (message == null)
+				throw new ArgumentNullException(nameof(message));
+			return channel.SendMessageAsync(message.Content, isTTS, message.Embed?.Build(), options);
+		}
+
 		/// <summary>
 		/// Sends a file to this message channel with an optional caption.
 		/// </summary>
+		/// <param name="channel">The channel to send the file message to.</param>
 		/// <param name="data">The binary data of the file to be sent.</param>
 		/// <param name="filename">The name of the attachment.</param>
 		/// <param name="text">The message to be sent.</param>
@@ -28,9 +67,13 @@ namespace TriggersTools.DiscordBots.Extensions {
 		/// may upload the file and refer to the file with "attachment://filename.ext" in the
 		/// <see cref="EmbedBuilder.ImageUrl"/>. See the example section for its usage.
 		/// </remarks>
-		public static async Task<IUserMessage> SendFileAsync(this IMessageChannel channel, byte[] data, string filename, string text = null, bool isTTS = false, Embed embed = null, RequestOptions options = null) {
+		public static async Task<IUserMessage> SendFileAsync(this IMessageChannel channel, byte[] data,
+			string filename, string text = null, bool isTTS = false, Embed embed = null,
+			RequestOptions options = null)
+		{
 			using (MemoryStream stream = new MemoryStream(data))
-				return await channel.SendFileAsync(stream, filename, text, isTTS, embed, options).ConfigureAwait(false);
+				return await channel.SendFileAsync(stream, filename, text, isTTS, embed, options)
+									.ConfigureAwait(false);
 		}
 
 		/// <summary>
@@ -39,7 +82,9 @@ namespace TriggersTools.DiscordBots.Extensions {
 		/// <param name="channel">The channel to check the permissions of.</param>
 		/// <param name="client">The guild client used to get the current user.</param>
 		/// <returns>True if the bot can respond.</returns>
-		public static async Task<bool> CanRespondAsync(this IMessageChannel channel, DiscordSocketClient client) {
+		public static async Task<bool> CanRespondAsync(this IMessageChannel channel,
+			DiscordSocketClient client)
+		{
 			if (channel is IGuildChannel guildChannel) {
 				IGuildUser guildUser = await guildChannel.Guild.GetCurrentUserAsync().ConfigureAwait(false);
 				ChannelPermissions permissions = guildUser.GetPermissions(guildChannel);

@@ -27,13 +27,13 @@ namespace TriggersTools.DiscordBots.TriggerChan.Services {
 				return embed.Build();
 			}
 			private void BuildRules(EmbedBuilder embed) {
-				embed.PagifyField($"The {Rules.Length} Pledges", Rules.Select((item, i) => $"**`{(i + 1)})`** {item}"));
+				embed.PaginateField($"The {Rules.Length} Pledges", Rules.Select((item, i) => $"**`{(i + 1)})`** {item}"));
 				//PagifyField(embed, $"The {Rules.Length} Pledges", Rules.Select((item, i) => $"**`{(i + 1)})`** {item}"));
 				//if (Rules.Length != 0)
 				//	embed.AddField($"The {Rules.Length} Pledges", string.Join("\n", Rules.Select((item, i) => $"**`{(i + 1)})`** {item}")));
 			}
 			private void BuildChannels(EmbedBuilder embed) {
-				embed.PagifyField("Channels of Note", Channels.Select(item => item.Build()));
+				embed.PaginateField("Channels of Note", Channels.Select(item => item.Build()));
 				//PagifyField(embed, "Channels of Note", Channels.Select(item => item.Build()));
 				//if (Channels.Length != 0)
 				//	embed.AddField($"Channels of Note", string.Join("\n", Channels.Select(item => item.Build())));

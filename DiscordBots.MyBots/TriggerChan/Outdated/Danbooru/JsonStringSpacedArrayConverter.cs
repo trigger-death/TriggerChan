@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Text;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Danbooru {
-	public class JsonStringArrayConverter : JsonConverter {
+	public class JsonStringSpacedArrayConverter : JsonConverter {
 
 		public char Separator { get; set; }
 
-		public JsonStringArrayConverter() {
+		public JsonStringSpacedArrayConverter() {
 			Separator = ' ';
 		}
 		

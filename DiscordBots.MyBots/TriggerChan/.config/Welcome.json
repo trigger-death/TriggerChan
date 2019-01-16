@@ -1,6 +1,4 @@
 ﻿{
-  "message_id": 0,
-
   "content": null,
 
   "title": "Welcome to Trigger's Development Server!",
@@ -27,15 +25,11 @@
     },
     {
       "id": 526553767848575007,
-      "desc": "Discussion and Bug Reports for Trigger's Tools & Games."
+      "desc": "Discussion and Bug Reports for Trigger's Tools & Games or give feedback for the server."
     },
     {
       "id": 526220955215724564,
       "desc": "Discuss development of your own programs, etc."
-    },
-    {
-      "id": 526220403773931543,
-      "desc": "Use bot commands for <@&437027061668904971>."
     },
     {
       "id": 519993471361220609,

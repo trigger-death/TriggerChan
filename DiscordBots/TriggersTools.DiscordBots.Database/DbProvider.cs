@@ -64,7 +64,7 @@ namespace TriggersTools.DiscordBots.Database {
 			/// <summary>
 			/// The value converter for the property.
 			/// </summary>
-			public ValueConverter Converter { get; set; }
+			public ValueConverter Converter { get; }
 
 
 			public PropertyConverterInfo(PropertyInfo prop, ValueConverter converter) : base(prop) {
@@ -75,11 +75,11 @@ namespace TriggersTools.DiscordBots.Database {
 			/// <summary>
 			/// The value converter for the property.
 			/// </summary>
-			public ValueEncrypters Encrypters { get; set; }
+			public ValueEncrypters Encrypters { get; }
 			/// <summary>
 			/// Gets the default encrypt direction for the property.
 			/// </summary>
-			public EncryptDirection Direction { get; set; }
+			public EncryptDirection Direction { get; }
 			
 			public PropertyEncrypterInfo(PropertyInfo prop, ValueEncrypters encrypters,
 				EncryptDirection direction)

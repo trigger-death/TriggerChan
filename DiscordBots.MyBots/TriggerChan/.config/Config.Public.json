@@ -118,12 +118,15 @@
       "Ghost Stories dub",
       "Space☆Dandy",
       "Haiyore! Nyaruko-san",
+      "Neon Genesis Evangelion",
 
       // Watching Non-anime
       "The IT Crowd",
+      "Bionicle: Mask of Light",
 
-      // Watching AMVs
+      // Watching Videos
       "Just Funkin' Dandy",
+      "ME!ME!ME!",
 
       // Watching Jokes
       "out for Enemy Stands",
@@ -150,6 +153,7 @@
       "Walk Like An Egyptian",
       "You Say Run",
       "PADORU PADORU",
+      "Excalibur's legend, which dates back to the 12th Century you see",
 
       // Listening Vague
       "Nep, Nep, Nep, Nep, Nep, Nep! (10 Hours)",
@@ -158,12 +162,14 @@
       "Distance OST",
       "Touhou remixes",
       "Dubbed Anime OPs",
+      "Radio FM-KCZ",
 
       // Listening Jokes
       "Leskinen's beautiful voice",
 
       // Streaming
-      "$STREAMING$"
+      "$STREAMING$",
+      "Shinji getting in the Robot"
 
     ] /*,
     // Optional debug statuses

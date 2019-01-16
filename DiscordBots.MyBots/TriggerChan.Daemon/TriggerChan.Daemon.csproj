@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net471;net462;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>net471;netcoreapp2.1</TargetFrameworks>
     <ApplicationIcon>Resources\TriggerChan.Right.ico</ApplicationIcon>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Configurations>Debug;Release;Publish</Configurations>

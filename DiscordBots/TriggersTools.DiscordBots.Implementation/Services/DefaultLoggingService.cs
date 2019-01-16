@@ -26,6 +26,7 @@ namespace TriggersTools.DiscordBots.Services {
 		private readonly bool logTrace;
 		private readonly bool logPrint;
 		private readonly bool logNotice;
+		private readonly object fileLock = new object();
 
 		#endregion
 		
@@ -84,41 +85,49 @@ namespace TriggersTools.DiscordBots.Services {
 				msg.Exception?.InnerException is WebSocketClosedException)
 				return Task.FromResult<object>(null);
 
-			if (logFile) {
-				if (!Directory.Exists(LogDirectory))     // Create the log directory if it doesn't exist
-					Directory.CreateDirectory(LogDirectory);
-				if (!File.Exists(LogFile))               // Create today's log file if it doesn't exist
-					File.Create(LogFile).Dispose();
-			}
-			if (errorFile || msg.Exception != null) {
-				if (!Directory.Exists(ErrorDirectory))     // Create the error directory if it doesn't exist
-					Directory.CreateDirectory(ErrorDirectory);
-				if (!File.Exists(ErrorFile))               // Create today's error file if it doesn't exist
-					File.Create(ErrorFile).Dispose();
-			}
-			if (noticeFile) {
-				if (!Directory.Exists(NoticeDirectory))     // Create the log directory if it doesn't exist
-					Directory.CreateDirectory(NoticeDirectory);
-				if (!File.Exists(NoticeFile))               // Create today's log file if it doesn't exist
-					File.Create(NoticeFile).Dispose();
+			lock (fileLock) {
+				if (logFile) {
+					if (!Directory.Exists(LogDirectory))     // Create the log directory if it doesn't exist
+						Directory.CreateDirectory(LogDirectory);
+					if (!File.Exists(LogFile))               // Create today's log file if it doesn't exist
+						File.Create(LogFile).Dispose();
+				}
+				if (errorFile || msg.Exception != null) {
+					if (!Directory.Exists(ErrorDirectory))     // Create the error directory if it doesn't exist
+						Directory.CreateDirectory(ErrorDirectory);
+					if (!File.Exists(ErrorFile))               // Create today's error file if it doesn't exist
+						File.Create(ErrorFile).Dispose();
+				}
+				if (noticeFile) {
+					if (!Directory.Exists(NoticeDirectory))     // Create the log directory if it doesn't exist
+						Directory.CreateDirectory(NoticeDirectory);
+					if (!File.Exists(NoticeFile))               // Create today's log file if it doesn't exist
+						File.Create(NoticeFile).Dispose();
+				}
 			}
 
 			string logText = FormatMessage(msg);
 
 			if (logFile) {
-				try {
-					File.AppendAllText(LogFile, logText + Environment.NewLine);     // Write the log text to a file
-				} catch (IOException) { }
+				lock (fileLock) {
+					try {
+						File.AppendAllText(LogFile, logText + Environment.NewLine);     // Write the log text to a file
+					} catch (IOException) { }
+				}
 			}
 			if (errorFile || msg.Exception != null) {
-				try {
-					File.AppendAllText(ErrorFile, logText + Environment.NewLine);     // Write the error text to a file
-				} catch (IOException) { }
+				lock (fileLock) {
+					try {
+						File.AppendAllText(ErrorFile, logText + Environment.NewLine);     // Write the error text to a file
+					} catch (IOException) { }
+				}
 			}
 			if (noticeFile) {
-				try {
-					File.AppendAllText(NoticeFile, logText + Environment.NewLine);     // Write the notice text to a file
-				} catch (IOException) { }
+				lock (fileLock) {
+					try {
+						File.AppendAllText(NoticeFile, logText + Environment.NewLine);     // Write the notice text to a file
+					} catch (IOException) { }
+				}
 			}
 
 			bool shouldPrint = msg.Severity <= LogSeverity.Info || msg.Source == "Command";

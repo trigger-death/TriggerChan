@@ -198,7 +198,6 @@ namespace TriggersTools.DiscordBots.Utils {
 		/// <summary>
 		/// Loads the specified manifest resource from the calling assembly as a byte array.
 		/// </summary>
-		/// 
 		/// <param name="path">The resource path.</param>
 		/// <returns>The byte array of the resource's data.</returns>
 		/// 
@@ -218,7 +217,6 @@ namespace TriggersTools.DiscordBots.Utils {
 		/// <summary>
 		/// Loads the specified manifest resource from the specified assembly as a byte array.
 		/// </summary>
-		/// 
 		/// <param name="assembly">The assembly to load the resource from.</param>
 		/// <param name="path">The resource path.</param>
 		/// <returns>The byte array of the resource's data.</returns>
@@ -241,7 +239,6 @@ namespace TriggersTools.DiscordBots.Utils {
 		/// Loads the specified manifest resource, scoped by the namespace of the specified type,
 		/// from this assembly as a byte array
 		/// </summary>
-		/// 
 		/// <param name="type">The type whose namespace is used to scope the manifest resource name.</param>
 		/// <param name="name">The case-sensitive name of the manifest resource being requested.</param>
 		/// <returns>The byte array of the resource's data.</returns>

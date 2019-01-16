@@ -6,29 +6,17 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using JikanDotNet;
 using JikanDotNet.Exceptions;
-using TriggersTools.DiscordBots.Utils;
 
 namespace TriggersTools.DiscordBots.TriggerChan.Profiles.Readers {
 	/// <summary>
 	/// The anime database user profile reader for the MyAnimeList service.
 	/// </summary>
 	public class MyAnimeListProfileReader : IAnimeProfileReader {
-
 		#region Constants
-
-		private const string QueryUrl = @"https://graphql.anilist.co";
-		private const string ProfileBaseUrl = @"https://anilist.co/user/";
-		private const string AnimeList = @"/animelist";
-		private const string MangaList = @"/animelist";
-
+		
 		private const string UsernamePattern = @"^(?:(?:https?\:\/\/)?(?:www.)?myanimelist\.net\/profile\/)?((?:\-|\w)+)\/?$";
 		private static readonly Regex UsernameRegex = new Regex(UsernamePattern, RegexOptions.IgnoreCase);
-
-		/// <summary>
-		/// The GraphQL Directory.
-		/// </summary>
-		private static readonly string Directory = Embedding.Combine("Profiles", "Readers", "AniList", "GraphQL");
-
+		
 		#endregion
 
 		#region Fields

@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net471;net462;netcoreapp2.1</TargetFrameworks>
+    <TargetFrameworks>net471;netcoreapp2.1</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <RootNamespace>TriggersTools.DiscordBots.TriggerChan</RootNamespace>
     <ApplicationIcon>Resources\TriggerChan.Right.ico</ApplicationIcon>
@@ -20,7 +20,7 @@
     <PackageProjectUrl>https://github.com/trigger-death/TriggerChan</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/trigger-death/TriggerChan/blob/master/License.md</PackageLicenseUrl>
     <Description>I was made by trigger_death for use in a small selection of Discord servers. My selling features are spoilers, inserting claps between words, drawing Divergence Meters, and other fun or helpful commands.</Description>
-    <Version>2.0.23-beta0001</Version>
+    <Version>2.0.25-beta0001</Version>
     <Configurations>Debug;Release;Publish</Configurations>
     <TargetLatestRuntimePatch>false</TargetLatestRuntimePatch>
   </PropertyGroup>
@@ -54,8 +54,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="TimeZoneNames" Version="3.3.4" />
+    <PackageReference Include="TimeZoneNames" Version="3.4.0" />
     <PackageReference Include="TriggersTools.Build.BuildTime" Version="1.0.0" />
     <PackageReference Include="TriggersTools.Build.CopyrightYear" Version="1.0.0" />
     <PackageReference Include="TriggersTools.SteinsGate.Divergence" Version="1.0.1" />
@@ -179,6 +178,10 @@
   <ItemGroup>
     <Folder Include="Commands\Readers\" />
     <Folder Include="Profiles\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Web" />
   </ItemGroup>
 
   <ItemGroup>

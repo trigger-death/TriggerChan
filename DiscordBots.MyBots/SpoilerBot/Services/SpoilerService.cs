@@ -22,6 +22,7 @@ using TriggersTools.DiscordBots.SpoilerBot.Database;
 using TriggersTools.DiscordBots.SpoilerBot.Model;
 using TriggersTools.DiscordBots.SpoilerBot.Utils;
 using TriggersTools.DiscordBots.Utils;
+using TriggersTools.DiscordBots.Extensions;
 
 namespace TriggersTools.DiscordBots.SpoilerBot.Services {
 	/// <summary>
@@ -594,6 +595,7 @@ namespace TriggersTools.DiscordBots.SpoilerBot.Services {
 			}
 			else if (spoiler.Context != null) {
 				embed.WithAuthorUsername(spoiler.Context.User);
+				embed.WithAuthorId(spoiler.Context.User.Id);
 			}
 			return embed.Build();
 		}
@@ -636,6 +638,7 @@ namespace TriggersTools.DiscordBots.SpoilerBot.Services {
 			};
 			if (author != null)
 				embed.WithAuthorUsername(author);
+			embed.WithAuthorId(author.Id);
 			string content = spoiler.Content;
 			/*List<StringUrl> urls = content.GetUrls();
 			if (urls.Count > 0) {

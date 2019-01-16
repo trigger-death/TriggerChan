@@ -385,7 +385,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Audio {
 				//LastStatusWatch.Restart();
 				var embed = BuildStatusEmbed();
 				try {
-					await StatusMessage.ModifyAsync(p => p.Embed = embed).ConfigureAwait(false);
+					await StatusMessage.ModifyAsync(m => m.Embed = embed).ConfigureAwait(false);
 				} catch (HttpException ex) {
 					if (ex.HttpCode == HttpStatusCode.NotFound) {
 						// Deleted, post a new message
@@ -447,7 +447,7 @@ namespace TriggersTools.DiscordBots.TriggerChan.Audio {
 			embed.AddField($"Queued Tracks: {Queue.Count}", queuedList);
 			if (string.IsNullOrEmpty(queuedList))
 				queuedList = "*No queued tracks*";*/
-			embed.PagifyField($"Queued Tracks: {Queue.Count}", ListTracks());
+			embed.PaginateField($"Queued Tracks: {Queue.Count}", ListTracks());
 			return embed.Build();
 		}
 
