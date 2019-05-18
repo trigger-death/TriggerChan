@@ -101,10 +101,11 @@
       "Metroid Prime: Trilogy",
       "Wii Sports",
       "Doki Doki Do You Lift Club!",
+      "with RetroPie",
 
       // Playing Jokes
       "with Scissor Blades",
-      "Hide the Spoiler",
+      "||t/spoiler is outdated||",
       "Fusion ha with Margarine",
 
       // Watching Anime
@@ -127,6 +128,7 @@
       // Watching Videos
       "Just Funkin' Dandy",
       "ME!ME!ME!",
+      "BRODYQUEST",
 
       // Watching Jokes
       "out for Enemy Stands",
@@ -153,7 +155,12 @@
       "Walk Like An Egyptian",
       "You Say Run",
       "PADORU PADORU",
-      "Excalibur's legend, which dates back to the 12th Century you see",
+      "Elite Tauren Chieftain",
+      "Plastic Love",
+      "When I Sleep My Heart Speaks",
+      "World.Execute (Me) ;",
+      "Everytime We Touch",
+      "MTC",
 
       // Listening Vague
       "Nep, Nep, Nep, Nep, Nep, Nep! (10 Hours)",
@@ -163,13 +170,15 @@
       "Touhou remixes",
       "Dubbed Anime OPs",
       "Radio FM-KCZ",
+      "Aztec Dubstep",
 
       // Listening Jokes
       "Leskinen's beautiful voice",
+      "Excalibur's legend, which dates back to the 12th Century you see"
 
       // Streaming
-      "$STREAMING$",
-      "Shinji getting in the Robot"
+      //"$STREAMING$",
+      //"Shinji getting in the Robot"
 
     ] /*,
     // Optional debug statuses

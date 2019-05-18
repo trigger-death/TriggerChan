@@ -37,10 +37,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Discord.Net.Providers.WS4Net" Version="2.0.2-dev-01059" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0-preview.18572.1" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="3.0.0-preview.18572.1" />
-    <PackageReference Include="TriggersTools.Build.BuildTime" Version="1.0.0" />
+    <PackageReference Include="Discord.Net.Providers.WS4Net" Version="2.0.2-dev-20190326.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0-preview4.19216.2" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="3.0.0-preview4.19216.2" />
+    <PackageReference Include="TriggersTools.Build.BuildTime" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>

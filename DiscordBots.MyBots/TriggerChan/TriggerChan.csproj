@@ -20,7 +20,7 @@
     <PackageProjectUrl>https://github.com/trigger-death/TriggerChan</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/trigger-death/TriggerChan/blob/master/License.md</PackageLicenseUrl>
     <Description>I was made by trigger_death for use in a small selection of Discord servers. My selling features are spoilers, inserting claps between words, drawing Divergence Meters, and other fun or helpful commands.</Description>
-    <Version>2.0.25-beta0001</Version>
+    <Version>2.0.27</Version>
     <Configurations>Debug;Release;Publish</Configurations>
     <TargetLatestRuntimePatch>false</TargetLatestRuntimePatch>
   </PropertyGroup>
@@ -54,9 +54,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="TimeZoneNames" Version="3.4.0" />
-    <PackageReference Include="TriggersTools.Build.BuildTime" Version="1.0.0" />
-    <PackageReference Include="TriggersTools.Build.CopyrightYear" Version="1.0.0" />
+    <PackageReference Include="TimeZoneNames" Version="4.0.0" />
+    <PackageReference Include="TriggersTools.Build.BuildTime" Version="2.0.0" />
+    <PackageReference Include="TriggersTools.Build.CopyrightYear" Version="1.0.2" />
     <PackageReference Include="TriggersTools.SteinsGate.Divergence" Version="1.0.1" />
     <PackageReference Include="WeCantSpell.Hunspell" Version="3.0.1" />
   </ItemGroup>
